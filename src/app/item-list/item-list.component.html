@@ -1,0 +1,5 @@
+<ul class="item-list">
+  <li *ngFor="let item of itemStore.items$ | async">
+    <app-item-detail [oscarItem]="item"></app-item-detail>
+  </li>
+</ul>
