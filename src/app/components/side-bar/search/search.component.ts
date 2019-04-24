@@ -8,11 +8,20 @@ import {OscarItemsService} from '../../../services/oscar/oscar-items.service';
 })
 export class SearchComponent implements OnInit {
   constructor(private oscarItemService: OscarItemsService) { }
+  error = false;
 
-  queryString = '@amenity:restaurant "Sindelfingen"';
+  queryString = '@amenity:restaurant "Stuttgart"';
   ngOnInit() {
   }
   search(): void {
-    this.oscarItemService.getItems(this.queryString);
+    let apxItemCount = 1000;
+    //this.oscarItemService.getApxItemCount(this.queryString).subscribe(apxItemCount => {
+    if (apxItemCount < 10000) {
+        this.oscarItemService.getItems(this.queryString);
+      } else {
+        this.error = true;
+    }
+    //});
+    // this.oscarItemService.getLocalItems(this.queryString);
   }
 }

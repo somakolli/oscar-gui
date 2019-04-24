@@ -1,3 +1,6 @@
-<input [(ngModel)]="queryString" (keydown.enter)="search()" type="text" class="form-control search-input" id="exampleInputEmail1" placeholder="Search" >
+<input autocomplete="off" [(ngModel)]="queryString" (keydown.enter)="search()" type="text" class="form-control search-input" id="exampleInputEmail1" placeholder="Search" >
+<div [hidden] = "!error" class="alert alert-primary" role="alert">
+  Result to large. Please refine query.
+</div>
 
 

@@ -12,4 +12,7 @@ export class MapService {
   setView(lat: number, lng: number, zoom: number) {
     this.map.setView([lat, lng], zoom);
   }
+  get bounds() {
+    return this.map.getBounds();
+  }
 }

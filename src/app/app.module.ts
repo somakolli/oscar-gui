@@ -26,7 +26,7 @@ import { ItemDetailPipe } from './components/side-bar/items/item-list/item-detai
     MapComponent,
     SideBarComponent,
     ItemsComponent,
-    ItemDetailPipe
+    ItemDetailPipe,
   ],
   imports: [
     BrowserModule,

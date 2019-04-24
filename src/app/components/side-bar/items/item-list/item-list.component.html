@@ -4,12 +4,13 @@
 <button (click)="toggleLocal()" type="button" class="btn {{localSearch ? 'btn-outline-primary': 'btn-outline-secondary'}}">
   Local <span class="badge badge-light">{{localCount}}</span>
 </button>
-
+<button class="hide-itemlist-button btn" (click) = "hidden = !hidden ">
+  {{hidden ? 'show' : 'hide'}}
+</button>
 <br>
-<div class="accordion item-list_accordion" id="accordionExample">
+<div [hidden] = "hidden" class="accordion item-list_accordion" id="accordionExample">
   <div class="card item-card" *ngFor="let item of items">
     <app-item-detail [oscarItem]="item"></app-item-detail>
   </div>
-
 </div>
 

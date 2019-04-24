@@ -47,13 +47,17 @@ export class MapComponent implements OnInit {
   onMapReady(map: L.Map) {
     this.mapService.map = map;
     this.itemStore.items$.subscribe(items => {
+      map.setView([48.43379, 9.00203], 5);
       this.setItemsToDraw(map.getBounds());
     });
     map.on('move', (event) => {
       this.setItemsToDraw(map.getBounds());
     });
     map.on('zoom', (event) => {
+      console.log('zoomlevel', map.getZoom());
+      console.log('bounds', map.getBounds());
       this.setItemsToDraw(map.getBounds());
+      // this.reDrawItems(this.itemStore.items, map.getZoom());
     });
     this.itemStore.currentItems$.subscribe(items => {
       this.reDrawItems(items, map.getZoom());
@@ -74,7 +78,7 @@ export class MapComponent implements OnInit {
     console.log('redrawing items');
     this.layerGroup.clearLayers();
 
-    if (items.length <= this.markerThreshold) {
+    if (this.itemStore.currentItems.length <= 120) {
       items.forEach(item => {
         const lat = item.bbox[0];
         const lng = item.bbox[2];

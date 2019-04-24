@@ -3,6 +3,7 @@ import {OscarItem} from '../../../../models/oscar/oscar-item';
 import {Observable} from 'rxjs';
 import {OscarItemsService} from '../../../../services/oscar/oscar-items.service';
 import {ItemStoreService} from '../../../../services/data/item-store.service';
+import {MapService} from '../../../../services/map/map.service';
 
 @Component({
   selector: 'app-item-list',
@@ -14,7 +15,8 @@ export class ItemListComponent implements OnInit {
   items: OscarItem[];
   totalCount = 0;
   localCount = 0;
-  constructor(private itemStore: ItemStoreService, private zone: NgZone) {
+  hidden = false;
+  constructor(private itemStore: ItemStoreService, private zone: NgZone, private mapService: MapService) {
   }
 
   ngOnInit() {
@@ -27,8 +29,9 @@ export class ItemListComponent implements OnInit {
       }
     });
     this.itemStore.items$.subscribe(items => {
-      this.zone.run(() => this.totalCount = items.length);
-      this.totalCount = items.length;
+      this.zone.run(() => {
+        this.totalCount = items.length;
+      });
       if (!this.localSearch) {
         this.zone.run( () => {
           this.items = items;

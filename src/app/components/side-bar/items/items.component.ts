@@ -7,6 +7,7 @@ import {ItemStoreService} from '../../../services/data/item-store.service';
   styleUrls: ['./items.component.sass']
 })
 export class ItemsComponent implements OnInit {
+  hidden = false;
 
   constructor(private itemStore: ItemStoreService) { }
 
