@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { latLng, LatLng, tileLayer, circle, polygon, marker } from 'leaflet';
-import {ItemStoreService} from '../services/data/item-store.service';
+import {ItemStoreService} from '../../services/data/item-store.service';
 import {BehaviorSubject} from 'rxjs';
-import {OscarItem} from '../models/oscar/oscar-item';
-import {MapService} from './map.service';
+import {OscarItem} from '../../models/oscar/oscar-item';
+import {MapService} from '../../services/map/map.service';
 
 declare var L;
 declare var HeatmapOverlay;
@@ -14,7 +14,7 @@ declare var HeatmapOverlay;
   styleUrls: ['./map.component.sass']
 })
 export class MapComponent implements OnInit {
-  markerThreshhold = 120;
+  markerThreshold = 120;
   data = {
     data: []
   };
@@ -26,9 +26,6 @@ export class MapComponent implements OnInit {
     lngField: 'lng',
     valueField: 'count'
   });
-
-  private readonly _visibleItems = new BehaviorSubject<OscarItem[]>([]);
-  private readonly visibleItems$ = this._visibleItems.asObservable();
 
   layerGroup: L.LayerGroup = new L.LayerGroup();
   options = {
@@ -58,12 +55,12 @@ export class MapComponent implements OnInit {
     map.on('zoom', (event) => {
       this.setItemsToDraw(map.getBounds());
     });
-    this.visibleItems$.subscribe(items => {
+    this.itemStore.currentItems$.subscribe(items => {
       this.reDrawItems(items, map.getZoom());
     });
   }
   setItemsToDraw(bounds: L.LatLngBounds) {
-    this._visibleItems.next(this.itemStore.items.filter(item => this.itemIsInBounds(item, bounds)));
+    this.itemStore.currentItems = this.itemStore.items.filter(item => this.itemIsInBounds(item, bounds));
     // console.log(this._visibleItems.getValue());
   }
 
@@ -77,7 +74,7 @@ export class MapComponent implements OnInit {
     console.log('redrawing items');
     this.layerGroup.clearLayers();
 
-    if (items.length <= this.markerThreshhold) {
+    if (items.length <= this.markerThreshold) {
       items.forEach(item => {
         const lat = item.bbox[0];
         const lng = item.bbox[2];

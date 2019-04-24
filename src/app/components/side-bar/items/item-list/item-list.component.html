@@ -1,0 +1,15 @@
+<button (click)="toggleTotal()" type="button" class="btn {{!localSearch ? 'btn-outline-primary': 'btn-outline-secondary'}}">
+  Total <span class="badge badge-light">{{totalCount}}</span>
+</button>
+<button (click)="toggleLocal()" type="button" class="btn {{localSearch ? 'btn-outline-primary': 'btn-outline-secondary'}}">
+  Local <span class="badge badge-light">{{localCount}}</span>
+</button>
+
+<br>
+<div class="accordion item-list_accordion" id="accordionExample">
+  <div class="card item-card" *ngFor="let item of items">
+    <app-item-detail [oscarItem]="item"></app-item-detail>
+  </div>
+
+</div>
+

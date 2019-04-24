@@ -1,0 +1,22 @@
+<div class="card-header item-card-header" id="headingOne">
+    <button class="btn btn-link item-name" type="button" data-toggle="collapse" [attr.data-target] = "'#item-' + oscarItem.id" aria-expanded="true" aria-controls="collapseOne">
+      {{oscarItem.name}}
+    </button>
+</div>
+
+<div id="item-{{oscarItem.id}}" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordionExample">
+  <div class="card-body">
+    <table class="table">
+      <thead>
+        <th scope="col">key</th>
+        <th scope="col">value</th>
+      </thead>
+      <tbody>
+        <tr *ngFor="let keyValue of keyValues">
+          <th scope="row">{{keyValue.k}}</th>
+          <td>{{keyValue.v}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

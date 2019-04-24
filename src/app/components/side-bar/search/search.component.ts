@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import {OscarItemsService} from '../services/oscar/oscar-items.service';
+import {OscarItemsService} from '../../../services/oscar/oscar-items.service';
 
 @Component({
   selector: 'app-search',
