@@ -17,7 +17,7 @@ export class SearchComponent implements OnInit {
     let apxItemCount = 1000;
     //this.oscarItemService.getApxItemCount(this.queryString).subscribe(apxItemCount => {
     if (apxItemCount < 10000) {
-        this.oscarItemService.getItems(this.queryString);
+        this.oscarItemService.getItemsBinary(this.queryString);
       } else {
         this.error = true;
     }

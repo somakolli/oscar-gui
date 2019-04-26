@@ -9,7 +9,7 @@ import {ItemStoreService} from '../../../services/data/item-store.service';
 export class ItemsComponent implements OnInit {
   hidden = false;
 
-  constructor(private itemStore: ItemStoreService) { }
+  constructor(public itemStore: ItemStoreService) { }
 
   ngOnInit() {
   }
