@@ -1,10 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {latLng, LatLng, tileLayer, circle, polygon, marker, icon} from 'leaflet';
 import {ItemStoreService} from '../../services/data/item-store.service';
-import {BehaviorSubject} from 'rxjs';
-import {OscarItem} from '../../models/oscar/oscar-item';
 import {MapService} from '../../services/map/map.service';
 import {OscarMinItem} from '../../models/oscar/oscar-min-item';
+import {GridService} from '../../services/data/grid.service';
 
 declare var L;
 declare var HeatmapOverlay;
@@ -40,18 +39,20 @@ export class MapComponent implements OnInit {
   };
 
   constructor(private itemStore: ItemStoreService,
-              private mapService: MapService) { }
+              private mapService: MapService,
+              private gridService: GridService) { }
 
   ngOnInit() {
   }
 
   onMapReady(map: L.Map) {
+    this.setItemsToDraw(map.getBounds());
     this.mapService.map = map;
     this.itemStore.binaryItems$.subscribe(items => {
       map.setView([48.43379, 9.00203], 5);
       this.setItemsToDraw(map.getBounds());
     });
-    map.on('move', (event) => {
+    map.on('moveend', (event) => {
       this.setItemsToDraw(map.getBounds());
     });
     map.on('zoom', (event) => {
@@ -60,51 +61,74 @@ export class MapComponent implements OnInit {
       this.setItemsToDraw(map.getBounds());
       // this.reDrawItems(this.itemStore.items, map.getZoom());
     });
-    this.itemStore.currentBinaryItems$.subscribe(items => {
-      this.reDrawItems(items, map.getZoom());
+    this.itemStore.currentBinaryItemsMap$.subscribe(items => {
+      this.reDrawItems(map.getZoom());
     });
   }
   setItemsToDraw(bounds: L.LatLngBounds) {
-    this.itemStore.currentBinaryItems = this.itemStore.binaryItems.filter(item => this.itemIsInBounds(item, bounds));
+    // this.itemStore.currentBinaryItems = this.itemStore.binaryItems.filter(item => this.itemIsInBounds(item, bounds));
+    this.itemStore.currentBinaryItemsMap = this.gridService.getItems(bounds.getSouth(), bounds.getWest(), bounds.getNorth(), bounds.getEast());
   }
 
-  itemIsInBounds(item: OscarMinItem, bounds: L.LatLngBounds): boolean {
-    return bounds.contains({lat: item.lat, lng: item.lon});
-  }
-  reDrawItems(items: OscarMinItem[], zoomLevel: number) {
+  reDrawItems(zoomLevel: number) {
     this.data = {
       data: []
     };
-    console.log('redrawing items');
     this.layerGroup.clearLayers();
+    let length = 0;
+    const itemsMap = this.itemStore.currentBinaryItemsMap;
+    itemsMap.forEach((value, key) => {
+      length += value.length;
+    });
+    // this.itemStore.currentItemIds = [];
+    const currentIds = Array<number>();
 
-    if (this.itemStore.currentBinaryItems.length <= 120) {
-      items.forEach(item => {
-        const lat = item.lat;
-        const lng = item.lon;
-        const itemMarker = marker([ lat, lng ],
-          {
-            icon: icon({
+    if (length <= this.markerThreshold) {
+      itemsMap.forEach((value, key) => {
+        value.forEach(itemPosition => {
+          const item = this.itemStore.binaryItems[itemPosition];
+          currentIds.push(item.id);
+          const lat = item.lat;
+          const lng = item.lon;
+          const itemMarker = marker([ lat, lng ],
+            {
+              icon: icon({
                 iconSize: [ 25, 41 ],
                 iconAnchor: [ 13, 41 ],
                 iconUrl: 'leaflet/marker-icon.png',
                 shadowUrl: 'leaflet/marker-shadow.png'
               }),
-            title: `${item.id}`
-          }).addTo(this.layerGroup);
-        const itemPopup = L.popup().setContent(`${item.id} <br> ${lat} ${lng}`);
-        itemMarker.bindPopup(itemPopup);
-      });
-    } else {
-      items.forEach( item => {
-        this.data.data.push({
-          lat: item.lat,
-          lng: item.lon,
-          count: 1,
-          radius: 10
+              title: `${item.id}`
+            }).addTo(this.layerGroup);
+          const itemPopup = L.popup().setContent(`${item.id} <br> ${lat} ${lng}`);
+          itemMarker.bindPopup(itemPopup);
         });
       });
+    } else {
+      let subsamplingSave = 0;
+      const subSamplingValue = 100;
+      itemsMap.forEach((value, key) => {
+        const subSampling = value.length >= 30;
+        for (let i = 0; i < value.length; i++) {
+          const item = this.itemStore.binaryItems[value[i]];
+          if (item) currentIds.push(item.id);
+          if (i % subSamplingValue !== 0 && zoomLevel < 10) {
+            subsamplingSave++;
+            continue;
+          }
+          if (item) {
+            this.data.data.push({
+              lat: item.lat,
+              lng: item.lon,
+              count: 1,
+              radius: 10
+            });
+          }
+        }
+      });
+      console.log('Subsampling saved:', subsamplingSave);
     }
+    this.itemStore.currentItemIds = [...currentIds];
     this.heatmapLayer.setData(this.data);
   }
 }

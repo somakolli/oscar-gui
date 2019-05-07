@@ -16,6 +16,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SideBarComponent } from './components/side-bar/side-bar.component';
 import { ItemsComponent } from './components/side-bar/items/items.component';
 import { ItemDetailPipe } from './components/side-bar/items/item-list/item-detail/item-detail.pipe';
+import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { ItemDetailPipe } from './components/side-bar/items/item-list/item-detai
     HttpClientModule,
     LeafletModule.forRoot(),
     BrowserAnimationsModule,
+    InfiniteScrollModule,
   ],
   providers: [OscarItemsService, ConfigService, ItemStoreService],
   bootstrap: [AppComponent]

@@ -1,16 +1,28 @@
-<button (click)="toggleTotal()" type="button" class="btn {{!localSearch ? 'btn-outline-primary': 'btn-outline-secondary'}}">
-  Total <span class="badge badge-light">{{totalCount}}</span>
-</button>
-<button (click)="toggleLocal()" type="button" class="btn {{localSearch ? 'btn-outline-primary': 'btn-outline-secondary'}}">
-  Local <span class="badge badge-light">{{localCount}}</span>
-</button>
-<button class="hide-itemlist-button btn" (click) = "hidden = !hidden ">
-  {{hidden ? 'show' : 'hide'}}
-</button>
-<br>
-<div [hidden] = "hidden" class="accordion item-list_accordion" id="accordionExample">
-  <div class="card item-card" *ngFor="let item of items">
-    <app-item-detail [oscarItem]="item"></app-item-detail>
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">Global {{totalCount}}</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-selected="false">Local {{localCount}}</a>
+  </li>
+</ul>
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+    <div infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onScrollDown()" [scrollWindow]="false"
+         class="accordion item-list_accordion" id="globalAccordion">
+      <div class="card item-card" *ngFor="let item of items">
+        <app-item-detail [oscarItem]="item" [parent]="'#globalAccordion'"></app-item-detail>
+      </div>
+    </div>
+  </div>
+  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+    <div infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="50" (scrolled)="onLocalScrollDown()" [scrollWindow]="false"
+         class="accordion item-list_accordion" id="localAccordion">
+      <div class="card item-card" *ngFor="let item of localItems">
+        <app-item-detail [oscarItem]="item" [parent]="'#localAccordion'"></app-item-detail>
+      </div>
+    </div>
   </div>
 </div>
+
 

@@ -1,11 +1,11 @@
 <div class="card-header item-card-header" id="headingOne">
     <button class="btn btn-link item-name" type="button" data-toggle="collapse" [attr.data-target] = "'#item-' + oscarItem.id" aria-expanded="true" aria-controls="collapseOne">
-      {{oscarItem.id}}
+      {{oscarItem.name}}
     </button>
     <button (click) = "panTo()" class="btn pan-to-button">Pan to</button>
 </div>
 
-<div id="item-{{oscarItem.id}}" class="collapse hide" aria-labelledby="headingOne" data-parent="#accordionExample">
+<div id="item-{{oscarItem.id}}" class="collapse hide" aria-labelledby="headingOne"  [attr.data-parent]="parent">
   <div class="card-body">
     <table class="table">
       <thead>

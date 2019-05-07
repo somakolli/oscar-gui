@@ -6,6 +6,7 @@ import {ConfigService} from '../../config/config.service';
 import {ItemStoreService} from '../data/item-store.service';
 import {MapService} from '../map/map.service';
 import {OscarMinItem} from '../../models/oscar/oscar-min-item';
+import {GridService} from '../data/grid.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,8 @@ export class OscarItemsService {
   constructor(private http: HttpClient,
               private configService: ConfigService,
               private itemStore: ItemStoreService,
-              private mapService: MapService) { }
+              private mapService: MapService,
+              private gridService: GridService) { }
 
   getItems(queryString: string) {
     const itemUrl = this.configService.getOscarUrl() + `/oscar/items/all?q=${queryString}&rf=admin_level&i=true`;
@@ -27,16 +29,16 @@ export class OscarItemsService {
   }
   getItemsBinary(queryString: string) {
     const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/itemswithlocation?q=${queryString}`;
-    let itemList;
     this.http.get(itemUrl, {responseType: 'arraybuffer'}).subscribe(itemArray => {
       const returnArray = new Uint32Array(itemArray);
-      itemList = new Array<OscarMinItem>();
+      const itemList = new Array<OscarMinItem>();
       let j = 0;
       for (let i = 0; i < returnArray.length; i += 3) {
         itemList.push({id: returnArray[i], lon: returnArray[i + 1] / Math.pow(10, 7), lat: returnArray[i + 2] / Math.pow(10, 7)});
         j++;
       }
       this.itemStore.binaryItems = itemList;
+      this.gridService.buildGrid();
     });
   }
   getLocalItems(queryString: string) {
@@ -59,5 +61,9 @@ export class OscarItemsService {
   getApxItemCount(queryString: string) {
     const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/apxStats?q=${queryString}&rf=admin_level`;
     return this.http.get<any>(itemUrl);
+  }
+  getItemsInfo(ids: number[]): Observable<OscarItem[]> {
+    const queryString = this.configService.getOscarUrl() + `/oscar/items/info?i=${JSON.stringify(ids)}`;
+    return this.http.get<OscarItem[]>(queryString);
   }
 }
