@@ -7,6 +7,8 @@ import {ItemStoreService} from '../data/item-store.service';
 import {MapService} from '../map/map.service';
 import {OscarMinItem} from '../../models/oscar/oscar-min-item';
 import {GridService} from '../data/grid.service';
+import {encodeUriQuery} from '@angular/router/src/url_tree';
+import {encode} from 'punycode';
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +20,8 @@ export class OscarItemsService {
               private mapService: MapService,
               private gridService: GridService) { }
   getItemsBinary(queryString: string) {
-    const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/itemswithlocation?q=${queryString}`;
-    this.http.get(encodeURI(itemUrl), {responseType: 'arraybuffer'}).subscribe(itemArray => {
+    const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/itemswithlocation?q=${encodeURIComponent(queryString)}`;
+    this.http.get(itemUrl, {responseType: 'arraybuffer'}).subscribe(itemArray => {
       const returnArray = new Uint32Array(itemArray);
       const itemList = new Array<OscarMinItem>();
       let j = 0;
@@ -49,7 +51,7 @@ export class OscarItemsService {
     });
   }
   getApxItemCount(queryString: string) {
-    const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/apxStats?q=${queryString}&rf=admin_level`;
+    const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/apxStats?q=${encodeURI(queryString)}&rf=admin_level`;
     return this.http.get<any>(itemUrl);
   }
   getItemsInfo(items: OscarMinItem[]): Observable<OscarItem[]> {
