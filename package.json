@@ -31,6 +31,7 @@
     "ngx-infinite-scroll": "^7.1.0",
     "rxjs": "~6.4.0",
     "tslib": "^1.9.0",
+    "underscore": "^1.9.1",
     "wasm-arrays": "^1.0.2",
     "webassembly": "^0.11.0",
     "zone.js": "~0.8.26"

@@ -23,17 +23,17 @@ export class ItemListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.itemStore.binaryItems$.subscribe((v) => {
-      this.totalCount = v.length;
+    this.itemStore.binaryItemsFinished$.subscribe(() => {
+      this.totalCount = this.itemStore.binaryItems.length;
       this.items = [];
-      if (!(v.length === 0)) {
-        this.queryNewItems(this.fetchCount, this.itemStore.binaryItems);
+      if (!(this.itemStore.binaryItems.length === 0)) {
+        this.queryNewItems(this.fetchCount);
       }
     });
-    this.itemStore.currentItemIds$.subscribe((itemIds) => {
-      this.localCount = itemIds.length;
+    this.itemStore.currentItemIdsFinished$.subscribe(() => {
+      this.localCount = this.itemStore.currentItemIds.length;
       this.localItems = [];
-      this.oscarService.getItemsInfo(itemIds.slice(0, this.fetchCount)).subscribe(
+      this.oscarService.getItemsInfo(this.itemStore.currentItemIds.slice(0, this.fetchCount)).subscribe(
         items => {
           this.zone.run( () => this.localItems.push(...items));
         }
@@ -41,7 +41,7 @@ export class ItemListComponent implements OnInit {
     });
   }
   onScrollDown() {
-    this.queryNewItems(this.fetchCount, this.itemStore.binaryItems);
+    this.queryNewItems(this.fetchCount);
   }
   onLocalScrollDown() {
     this.queryNewLocalItems(this.fetchCount);
@@ -55,12 +55,9 @@ export class ItemListComponent implements OnInit {
       }
     );
   }
-  queryNewItems(count: number, binaryItems: OscarMinItem[]) {
+  queryNewItems(count: number) {
     const currentLength = this.items.length;
-    const ids = Array<number>();
-    for (let i = currentLength; i <= currentLength + count; i++) {
-      ids.push(binaryItems[i].id);
-    }
-    this.oscarService.getItemsInfo(ids).subscribe(items => this.items.push(...items));
+    this.oscarService.getItemsInfo(this.itemStore.binaryItems.
+    slice(currentLength, currentLength + this.fetchCount)).subscribe(items => this.items.push(...items));
   }
 }

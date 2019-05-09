@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpUrlEncodingCodec} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {OscarItem} from '../../models/oscar/oscar-item';
 import {ConfigService} from '../../config/config.service';
@@ -17,27 +17,18 @@ export class OscarItemsService {
               private itemStore: ItemStoreService,
               private mapService: MapService,
               private gridService: GridService) { }
-
-  getItems(queryString: string) {
-    const itemUrl = this.configService.getOscarUrl() + `/oscar/items/all?q=${queryString}&rf=admin_level&i=true`;
-    this.http.get<OscarItem[]>(itemUrl).subscribe(value => {
-      value.map(item => {
-        item.name = item.v[item.k.indexOf('name')];
-      });
-      this.itemStore.items = value.sort(((a, b) => b.score - a.score));
-    });
-  }
   getItemsBinary(queryString: string) {
     const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/itemswithlocation?q=${queryString}`;
-    this.http.get(itemUrl, {responseType: 'arraybuffer'}).subscribe(itemArray => {
+    this.http.get(encodeURI(itemUrl), {responseType: 'arraybuffer'}).subscribe(itemArray => {
       const returnArray = new Uint32Array(itemArray);
       const itemList = new Array<OscarMinItem>();
       let j = 0;
       for (let i = 0; i < returnArray.length; i += 3) {
-        itemList.push({id: returnArray[i], lon: returnArray[i + 1] / Math.pow(10, 7), lat: returnArray[i + 2] / Math.pow(10, 7)});
+        itemList.push({id: returnArray[i], lat: this.toDoubleLat(returnArray[i + 1]), lon: this.toDoubleLon(returnArray[i + 2])});
         j++;
       }
       this.itemStore.binaryItems = itemList;
+      this.itemStore.binaryItemsFinished();
       this.gridService.buildGrid();
     });
   }
@@ -55,15 +46,24 @@ export class OscarItemsService {
         item.name = item.v[item.k.indexOf('name')];
       });
       // this.itemStore.currentItems = value;
-      console.log('localitems', value);
     });
   }
   getApxItemCount(queryString: string) {
     const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/apxStats?q=${queryString}&rf=admin_level`;
     return this.http.get<any>(itemUrl);
   }
-  getItemsInfo(ids: number[]): Observable<OscarItem[]> {
+  getItemsInfo(items: OscarMinItem[]): Observable<OscarItem[]> {
+    const ids = new Array<number>();
+    items.forEach(item => ids.push(item.id));
     const queryString = this.configService.getOscarUrl() + `/oscar/items/info?i=${JSON.stringify(ids)}`;
     return this.http.get<OscarItem[]>(queryString);
+  }
+  private toDoubleLat(lat: number) {
+    // tslint:disable-next-line:no-bitwise
+    return (lat / (1 << 24)) - 90;
+  }
+  private toDoubleLon(lon: number) {
+    // tslint:disable-next-line:no-bitwise
+    return (lon / (1 << 23)) - 180;
   }
 }
