@@ -4,8 +4,15 @@ export class OscarItem {
   type: string;
   score: number;
   bbox: number[];
-  shape: object;
+  shape: any;
   k: string[];
   v: string[];
   name: string;
+  static setName(item: OscarItem): void {
+    for (let i = 0; i < item.k.length; i++) {
+      if (item.k[i] === 'name') {
+        item.name = item.v[i];
+      }
+    }
+  }
 }

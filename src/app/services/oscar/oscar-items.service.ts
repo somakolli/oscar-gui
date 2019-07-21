@@ -9,6 +9,7 @@ import {OscarMinItem} from '../../models/oscar/oscar-min-item';
 import {GridService} from '../data/grid.service';
 import {encodeUriQuery} from '@angular/router/src/url_tree';
 import {encode} from 'punycode';
+import {OscarApxstats} from '../../models/oscar/oscar-apxstats';
 
 @Injectable({
   providedIn: 'root'
@@ -50,13 +51,21 @@ export class OscarItemsService {
       // this.itemStore.currentItems = value;
     });
   }
-  getApxItemCount(queryString: string) {
-    const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/apxStats?q=${encodeURI(queryString)}&rf=admin_level`;
-    return this.http.get<any>(itemUrl);
+  getApxItemCount(queryString: string): Observable<OscarApxstats> {
+    const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/apxstats?q=${encodeURI(queryString)}&rf=admin_level`;
+    return this.http.get<OscarApxstats>(itemUrl);
   }
   getItemsInfo(items: OscarMinItem[]): Observable<OscarItem[]> {
     const ids = new Array<number>();
     items.forEach(item => ids.push(item.id));
+    const queryString = this.configService.getOscarUrl() + `/oscar/items/info?i=${JSON.stringify(ids)}`;
+    return this.http.get<OscarItem[]>(queryString);
+  }
+  getItemsInfoById(id: number): Observable<OscarItem[]> {
+    const queryString = this.configService.getOscarUrl() + `/oscar/items/info?i=${JSON.stringify([id])}`;
+    return this.http.get<OscarItem[]>(queryString);
+  }
+  getItemsInfoByIds(ids: number[]): Observable<OscarItem[]> {
     const queryString = this.configService.getOscarUrl() + `/oscar/items/info?i=${JSON.stringify(ids)}`;
     return this.http.get<OscarItem[]>(queryString);
   }

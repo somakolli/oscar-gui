@@ -6,8 +6,8 @@ import {OscarItem} from '../../../../../models/oscar/oscar-item';
 })
 export class ItemDetailPipe implements PipeTransform {
 
-  transform(value: OscarItem, args?: any): any {
-    return null;
+  transform(value: OscarItem, args?: any): string {
+    return ``;
   }
 
 }

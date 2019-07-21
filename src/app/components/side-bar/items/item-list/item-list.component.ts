@@ -18,7 +18,7 @@ export class ItemListComponent implements OnInit {
   totalCount = 0;
   localCount = 0;
   fetchCount = 20;
-  hidden = false;
+  showTable = true;
   constructor(private itemStore: ItemStoreService, private zone: NgZone, private mapService: MapService, private oscarService: OscarItemsService) {
   }
 

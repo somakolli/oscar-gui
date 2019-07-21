@@ -7,17 +7,6 @@
 
 <div id="item-{{oscarItem.id}}" class="collapse hide" aria-labelledby="headingOne"  [attr.data-parent]="parent">
   <div class="card-body">
-    <table class="table">
-      <thead>
-        <th scope="col">key</th>
-        <th scope="col">value</th>
-      </thead>
-      <tbody>
-        <tr *ngFor="let keyValue of keyValues">
-          <th scope="row">{{keyValue.k}}</th>
-          <td>{{keyValue.v}}</td>
-        </tr>
-      </tbody>
-    </table>
+    <app-item-kv-table [oscarItem]="oscarItem"></app-item-kv-table>
   </div>
 </div>

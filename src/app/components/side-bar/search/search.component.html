@@ -1,6 +1,10 @@
-<input autocomplete="off" [(ngModel)]="queryString" (keydown.enter)="search()" type="text" class="form-control search-input" id="exampleInputEmail1" placeholder="Search" >
-<div [hidden] = "!error" class="alert alert-primary" role="alert">
+<div class="input-group">
+  <input autocomplete="off" [(ngModel)]="queryString" (keydown.enter)="search()" type="text" class="search-input" placeholder="Search" >
+</div>
+
+<div [hidden] = "!error" class="alert alert-danger" role="alert">
   Result to large. Please refine query.
 </div>
+<input type="checkbox" [checked]="this.itemStore.streets" (change)="this.itemStore.streets = !this.itemStore.streets"> streets
 
 

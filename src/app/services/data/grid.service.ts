@@ -1,7 +1,11 @@
 import { Injectable } from '@angular/core';
 import {OscarMinItem} from '../../models/oscar/oscar-min-item';
 import {ItemStoreService} from './item-store.service';
-import {BehaviorSubject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
+import {LatLngBounds} from 'leaflet';
+
+
+declare var L;
 
 @Injectable({
   providedIn: 'root'
@@ -69,5 +73,34 @@ export class GridService {
   }
   getStatus(): boolean {
     return this._buildStatus.getValue();
+  }
+  getBBox(): Observable<L.LatLngBounds> {
+    const bbox = new BehaviorSubject<LatLngBounds>(null)
+    this.buildStatus$.subscribe( state => {
+      let minLat = 100000;
+      let minLon = 100000;
+      let maxLat = -100000;
+      let maxLon = -100000;
+      this.gridMap.forEach((value, key) => {
+        const parsedKey = JSON.parse(key);
+        if (parsedKey.lat < minLat) {
+          minLat = parsedKey.lat;
+        }
+        if (parsedKey.lon < minLon) {
+          minLon = parsedKey.lon;
+        }
+        if (parsedKey.lat > maxLat) {
+          maxLat = parsedKey.lat;
+        }
+        if (parsedKey.lon > maxLon) {
+          maxLon = parsedKey.lon;
+        }
+      });
+      const southWest = L.latLng((minLat + 1) / 10, (minLon + 1) / 10);
+      const northEast = L.latLng((maxLat + 1) / 10, (maxLon + 1) / 10);
+      console.log(L.latLngBounds(southWest, northEast));
+      bbox.next(L.latLngBounds(southWest, northEast));
+    });
+    return bbox.asObservable();
   }
 }

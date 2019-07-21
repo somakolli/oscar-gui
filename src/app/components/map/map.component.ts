@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import {latLng, LatLng, tileLayer, circle, polygon, marker, icon} from 'leaflet';
+import {Component, OnInit} from '@angular/core';
+import {icon, latLng, marker, tileLayer} from 'leaflet';
 import {ItemStoreService} from '../../services/data/item-store.service';
 import {MapService} from '../../services/map/map.service';
-import {OscarMinItem} from '../../models/oscar/oscar-min-item';
 import {GridService} from '../../services/data/grid.service';
-import { _ } from 'underscore';
+import {_} from 'underscore';
 import {TimerService} from '../../services/timer.service';
-import {sample} from 'rxjs/operators';
+import {OscarItemsService} from '../../services/oscar/oscar-items.service';
+import {SearchService} from '../../services/state/search.service';
+import {SearchState} from '../../models/state/search-state.enum';
 
 declare var L;
 declare var HeatmapOverlay;
@@ -44,7 +45,9 @@ export class MapComponent implements OnInit {
   constructor(private itemStore: ItemStoreService,
               private mapService: MapService,
               private gridService: GridService,
-              private timer: TimerService) { }
+              private timer: TimerService,
+              private oscarItemsService: OscarItemsService,
+              private searchService: SearchService) { }
 
   ngOnInit() {
   }
@@ -74,26 +77,55 @@ export class MapComponent implements OnInit {
       const bounds = map.getBounds();
       this.gridService.setCurrentItems(bounds.getSouth(),
         bounds.getWest(), bounds.getNorth(), bounds.getEast());
-      // this.reDrawItems(this.itemStore.items, map.getZoom());
     });
     this.itemStore.currentItemIdsFinished$.subscribe(() => {
-      this.reDrawItems(map.getZoom());
+      this.reDrawItems(map.getZoom(), map);
     });
   }
 
-  reDrawItems(zoomLevel: number) {
+  reDrawItems(zoomLevel: number, map: L.Map) {
     this.data = {
       data: []
     };
     this.layerGroup.clearLayers();
     let length = 0;
     length = this.itemStore.currentItemIds.length;
+    const streets = true;
     if (length <= this.markerThreshold) {
-      this.itemStore.currentItemIds.forEach((item) => {
-        const lat = item.lat;
-        const lng = item.lon;
-        const itemMarker = marker([ lat, lng ],
-          {
+      if (this.itemStore.streets) {
+        this.oscarItemsService.getItemsInfo(this.itemStore.currentItemIds).subscribe(items => {
+          items.forEach((item) => {
+            const myCoordinates = [];
+            const myLines = [];
+            if (item.shape.t === 2) {
+              item.shape.v.forEach(lonLat => {
+                if (lonLat[1] && lonLat[0]) {
+                  myCoordinates.push([lonLat[1], lonLat[0]]);
+                }
+              });
+              myLines.push({type: 'LineString', coordinates: myCoordinates});
+            }
+            const myStyle = {
+              color: '#ff7800',
+              weight: 5,
+              opacity: 0.65
+            };
+            console.log(myLines);
+            L.geoJSON(myLines, {
+              title: `${item.id}`,
+              style: myStyle
+            }).addTo(this.layerGroup).on('click', (event1 => {
+              this.oscarItemsService.getItemsInfoById(parseInt(event1.target.options.title))
+                .subscribe(returnItem => this.itemStore.setHighlightedItem(returnItem[0]));
+            }));
+          });
+        });
+      } else {
+        this.itemStore.currentItemIds.forEach((item) => {
+          const lat = item.lat;
+          const lng = item.lon;
+          const itemMarker = marker([ lat, lng ],
+            {
               icon: icon({
                 iconSize: [ 25, 41 ],
                 iconAnchor: [ 13, 41 ],
@@ -101,12 +133,15 @@ export class MapComponent implements OnInit {
                 shadowUrl: 'leaflet/marker-shadow.png'
               }),
               title: `${item.id}`
-          }).addTo(this.layerGroup);
-        const itemPopup = L.popup().setContent(`${item.id} <br> ${lat} ${lng}`);
-        itemMarker.bindPopup(itemPopup);
-      });
+            }).addTo(this.layerGroup).on('click', (event1 => {
+            this.oscarItemsService.getItemsInfoById(parseInt(event1.target.options.title))
+              .subscribe(returnItem => this.itemStore.setHighlightedItem(returnItem[0]));
+          }));
+        });
+      }
     } else {
       const sampleIds = _.sample(this.itemStore.currentItemIds, 5000);
+
       for (let i = 0; i < sampleIds.length; i++) {
          const item = sampleIds[i];
          if (item) {
@@ -120,5 +155,13 @@ export class MapComponent implements OnInit {
       }
     }
     this.heatmapLayer.setData(this.data);
+    if (this.searchService.getState() !== SearchState.DrawingComplete) {
+      this.searchService.setState(SearchState.DrawingComplete);
+      this.gridService.getBBox().subscribe(bbox  => {
+        if (bbox) {
+          map.fitBounds(bbox);
+        }
+      });
+    }
   }
 }
