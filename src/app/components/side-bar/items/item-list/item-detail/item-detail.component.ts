@@ -17,7 +17,9 @@ export class ItemDetailComponent implements OnInit {
   constructor(private itemStore: ItemStoreService,
               private mapService: MapService) { }
 
-  ngOnInit() {}
+  ngOnInit() {
+    OscarItem.setName(this.oscarItem);
+  }
   panTo() {
     this.mapService.setView(this.oscarItem.bbox[0], this.oscarItem.bbox[2], 18);
   }

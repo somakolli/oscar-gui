@@ -1,0 +1,5 @@
+<ul >
+  <li *ngFor="let suggestion of currentSuggestions">
+    <app-suggestion-detail (click)="setSelectedSuggestion(suggestion)" [suggestion]="suggestion"></app-suggestion-detail>
+  </li>
+</ul>

@@ -19,6 +19,9 @@ import { ItemDetailPipe } from './components/side-bar/items/item-list/item-detai
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import { ItemInfoComponent } from './components/item-info/item-info.component';
 import { ItemKvTableComponent } from './components/item-kv-table/item-kv-table.component';
+import { LoadingComponent } from './components/loading/loading.component';
+import { SuggestionsComponent } from './components/side-bar/search/suggestions/suggestions.component';
+import { SuggestionDetailComponent } from './components/side-bar/search/suggestions/suggestion-detail/suggestion-detail.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +35,9 @@ import { ItemKvTableComponent } from './components/item-kv-table/item-kv-table.c
     ItemDetailPipe,
     ItemInfoComponent,
     ItemKvTableComponent,
+    LoadingComponent,
+    SuggestionsComponent,
+    SuggestionDetailComponent,
   ],
   imports: [
     BrowserModule,
