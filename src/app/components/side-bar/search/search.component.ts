@@ -5,6 +5,7 @@ import {SearchService} from '../../../services/state/search.service';
 import {SearchState} from '../../../models/state/search-state.enum';
 import {OsmService} from '../../../services/osm/osm.service';
 import {SuggestionsService} from '../../../services/data/suggestions.service';
+import {RefinementsService} from '../../../services/data/refinements.service';
 
 @Component({
   selector: 'app-search',
@@ -13,10 +14,11 @@ import {SuggestionsService} from '../../../services/data/suggestions.service';
 })
 export class SearchComponent implements OnInit {
   constructor(private oscarItemService: OscarItemsService, public itemStore: ItemStoreService, public searchService: SearchService,
-              private osmService: OsmService, private suggestionStore: SuggestionsService) { }
+              private osmService: OsmService, private suggestionStore: SuggestionsService, private refinementStore: RefinementsService) { }
   error = false;
-
-  queryString = '@amenity:restaurant "Stuttgart"';
+  prepend = '';
+  queryString = '';
+  prependix = '';
   ngOnInit() {
     this.suggestionStore.selectedSuggestion$.subscribe(suggestion => {
       if (suggestion) {
@@ -24,13 +26,25 @@ export class SearchComponent implements OnInit {
         this.queryString = this.queryString.replace(strings[strings.length - 1], `@${suggestion.key}:${suggestion.value}`);
       }
     });
+    this.refinementStore.keyValueRefinements$.subscribe(keyValueRefinements => {
+      this.prependix = '';
+      keyValueRefinements.forEach(refinement => {
+        this.prependix += `@${refinement.key}:${refinement.value} `;
+      });
+    });
+    this.refinementStore.keyRefinements$.subscribe(keyRefinements => {
+      this.prependix = '';
+      keyRefinements.forEach(refinement => {
+        this.prependix += `@${refinement.key} `;
+      });
+    });
   }
   search(): void {
     this.searchService.setState(SearchState.Pending);
     this.itemStore.setHighlightedItem(null);
     this.oscarItemService.getApxItemCount(this.queryString).subscribe(apxStats => {
       if (apxStats.items < 1000000) {
-        this.oscarItemService.getItemsBinary(this.queryString);
+        this.oscarItemService.getItemsBinary(this.prependix + this.queryString);
         this.searchService.setState(SearchState.Success);
         this.error = false;
       } else {
@@ -65,6 +79,15 @@ export class SearchComponent implements OnInit {
     }
     if (this.queryString.match(/@*/)) {
 
+    }
+  }
+
+  streetsChanged() {
+    this.itemStore.streets = !this.itemStore.streets;
+    if (this.itemStore.streets) {
+      this.refinementStore.addKeyRefinement({key: 'highway'});
+    } else {
+      this.refinementStore.setKeyValueRefinements([]);
     }
   }
 }
