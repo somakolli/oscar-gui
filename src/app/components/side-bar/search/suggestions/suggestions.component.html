@@ -1,5 +1,5 @@
-<ul class="suggestion-list list-group" >
-  <li class="list-group-item" *ngFor="let suggestion of currentSuggestions" (click)="setSelectedSuggestion(suggestion)" >
+<ul class="suggestion-list" >
+  <li *ngFor="let suggestion of currentSuggestions" (click)="setSelectedSuggestion(suggestion)" >
     <app-suggestion-detail [suggestion]="suggestion"></app-suggestion-detail>
   </li>
 </ul>
