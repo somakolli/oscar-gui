@@ -15,7 +15,8 @@ export class SuggestionsComponent implements OnInit {
   ngOnInit() {
     this.suggestionsStore.suggestions$.subscribe(suggestions => {
       if (suggestions) {
-        this.currentSuggestions = suggestions.data;
+        // filter out invalid values
+        this.currentSuggestions = suggestions.data.filter( suggestion => !suggestion.value.includes(' ') &&  !suggestion.key.includes(' '));
       } else {
         this.currentSuggestions = [];
       }
