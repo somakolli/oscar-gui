@@ -17,7 +17,7 @@ export class SearchComponent implements OnInit {
               private osmService: OsmService, private suggestionStore: SuggestionsService, private refinementStore: RefinementsService) { }
   error = false;
   appendix = '';
-  queryString = '';
+  queryString = '@amenity:restaurant "Stuttgart"';
   prependix = '';
   ngOnInit() {
     this.suggestionStore.selectedSuggestion$.subscribe(suggestion => {

@@ -10,6 +10,9 @@ import {GridService} from '../data/grid.service';
 import {encodeUriQuery} from '@angular/router/src/url_tree';
 import {encode} from 'punycode';
 import {OscarApxstats} from '../../models/oscar/oscar-apxstats';
+import {FacetRefinements} from '../../models/oscar/refinements';
+import {SearchState} from '../../models/state/search-state.enum';
+import {SearchService} from '../state/search.service';
 
 @Injectable({
   providedIn: 'root'
@@ -19,7 +22,8 @@ export class OscarItemsService {
               private configService: ConfigService,
               private itemStore: ItemStoreService,
               private mapService: MapService,
-              private gridService: GridService) { }
+              private gridService: GridService,
+              private searchService: SearchService) { }
   getItemsBinary(queryString: string) {
     const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/itemswithlocation?q=${encodeURIComponent(queryString)}`;
     this.http.get(itemUrl, {responseType: 'arraybuffer'}).subscribe(itemArray => {
@@ -68,6 +72,11 @@ export class OscarItemsService {
   getItemsInfoByIds(ids: number[]): Observable<OscarItem[]> {
     const queryString = this.configService.getOscarUrl() + `/oscar/items/info?i=${JSON.stringify(ids)}`;
     return this.http.get<OscarItem[]>(queryString);
+  }
+  getFacets(query: string): Observable<FacetRefinements> {
+    return this.http.get<FacetRefinements>(
+      `http://oscar-web.de/oscar/kvclustering/get?queryId=1&q=${encodeURIComponent(query)}+&rf=admin_level&type=f&maxRefinements=10&exceptions=%5B%5D&debug=true&keyExceptions=%5B%22wheelchair%22%2C+%22addr%22%2C+%22level%22%2C+%22toilets%3Awheelchair%22%2C+%22building%22%2C+%22source%22%2C+%22roof%22%5D&facetSizes=%5B%5D&defaultFacetSize=10`
+    );
   }
   private toDoubleLat(lat: number) {
     // tslint:disable-next-line:no-bitwise

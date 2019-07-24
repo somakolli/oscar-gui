@@ -22,6 +22,9 @@ import { ItemKvTableComponent } from './components/item-kv-table/item-kv-table.c
 import { LoadingComponent } from './components/loading/loading.component';
 import { SuggestionsComponent } from './components/side-bar/search/suggestions/suggestions.component';
 import { SuggestionDetailComponent } from './components/side-bar/search/suggestions/suggestion-detail/suggestion-detail.component';
+import { RefinementsComponent } from './components/side-bar/refinements/refinements.component';
+import { RefinementDetailComponent } from './components/side-bar/refinements/refinement-detail/refinement-detail.component';
+import {ThirdParyLinksComponent} from './components/third-pary-links/third-pary-links.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +41,9 @@ import { SuggestionDetailComponent } from './components/side-bar/search/suggesti
     LoadingComponent,
     SuggestionsComponent,
     SuggestionDetailComponent,
+    RefinementsComponent,
+    RefinementDetailComponent,
+    ThirdParyLinksComponent
   ],
   imports: [
     BrowserModule,

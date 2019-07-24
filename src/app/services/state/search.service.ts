@@ -21,5 +21,8 @@ export class SearchService {
   setQuery(query: string) {
     this._queryString.next(query);
   }
+  getQuery() {
+    this._queryString.getValue();
+  }
 
 }
