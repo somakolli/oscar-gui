@@ -87,7 +87,7 @@ export class SearchComponent implements OnInit {
   streetsChanged() {
     this.itemStore.streets = !this.itemStore.streets;
     if (this.itemStore.streets) {
-      this.refinementStore.addKeyRefinement({key: 'highway'});
+      this.refinementStore.addKeyRefinement({key: 'highway', id: 0});
     } else {
       this.refinementStore.setKeyValueRefinements([]);
     }
