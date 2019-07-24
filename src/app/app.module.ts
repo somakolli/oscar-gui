@@ -25,6 +25,7 @@ import { SuggestionDetailComponent } from './components/side-bar/search/suggesti
 import { RefinementsComponent } from './components/side-bar/refinements/refinements.component';
 import { RefinementDetailComponent } from './components/side-bar/refinements/refinement-detail/refinement-detail.component';
 import {ThirdParyLinksComponent} from './components/third-pary-links/third-pary-links.component';
+import { ActiveRefinementsComponent } from './components/side-bar/active-refinements/active-refinements.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import {ThirdParyLinksComponent} from './components/third-pary-links/third-pary-
     SuggestionDetailComponent,
     RefinementsComponent,
     RefinementDetailComponent,
-    ThirdParyLinksComponent
+    ThirdParyLinksComponent,
+    ActiveRefinementsComponent
   ],
   imports: [
     BrowserModule,
