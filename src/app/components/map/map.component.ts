@@ -92,6 +92,23 @@ export class MapComponent implements OnInit {
     length = this.itemStore.currentItemIds.length;
     const streets = true;
     if (length <= this.markerThreshold) {
+      this.itemStore.currentItemIds.forEach(item => {
+        const lat = item.lat;
+        const lng = item.lon;
+        const itemMarker = marker([ lat, lng ],
+          {
+            icon: icon({
+              iconSize: [ 25, 41 ],
+              iconAnchor: [ 13, 41 ],
+              iconUrl: 'leaflet/marker-icon.png',
+              shadowUrl: 'leaflet/marker-shadow.png'
+            }),
+            title: `${item.id}`
+          }).addTo(this.layerGroup).on('click', (event1 => {
+          this.oscarItemsService.getItemsInfoById(parseInt(event1.target.options.title))
+            .subscribe(returnItem => this.itemStore.setHighlightedItem(returnItem[0]));
+        }));
+      });
       this.oscarItemsService.getItemsInfo(this.itemStore.currentItemIds).subscribe(items => {
         let i = 0;
         items.forEach((item) => {
@@ -110,21 +127,7 @@ export class MapComponent implements OnInit {
              weight: 5,
              opacity: 0.65
            };
-           const lat = item.firstPoint.lat;
-           const lng = item.firstPoint.lon;
-           const itemMarker = marker([ lat, lng ],
-             {
-               icon: icon({
-                 iconSize: [ 25, 41 ],
-                 iconAnchor: [ 13, 41 ],
-                 iconUrl: 'leaflet/marker-icon.png',
-                 shadowUrl: 'leaflet/marker-shadow.png'
-               }),
-               title: `${item.id}`
-             }).addTo(this.layerGroup).on('click', (event1 => {
-             this.oscarItemsService.getItemsInfoById(parseInt(event1.target.options.title))
-               .subscribe(returnItem => this.itemStore.setHighlightedItem(returnItem[0]));
-           }));
+
            L.geoJSON(myLines, {
              title: `${item.id}`,
              style: myStyle

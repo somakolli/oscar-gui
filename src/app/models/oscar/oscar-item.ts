@@ -21,4 +21,7 @@ export class OscarItem {
       }
     }
   }
+  static setFirstPoint(item: OscarItem): void {
+
+  }
 }
