@@ -16,7 +16,7 @@ export class SearchComponent implements OnInit {
   constructor(private oscarItemService: OscarItemsService, public itemStore: ItemStoreService, public searchService: SearchService,
               private osmService: OsmService, private suggestionStore: SuggestionsService, private refinementStore: RefinementsService) { }
   error = false;
-  prepend = '';
+  appendix = '';
   queryString = '';
   prependix = '';
   ngOnInit() {
@@ -40,11 +40,13 @@ export class SearchComponent implements OnInit {
     });
   }
   search(): void {
+    const fullQueryString = this.prependix + this.queryString + this.appendix;
+    this.searchService.setQuery(fullQueryString);
     this.searchService.setState(SearchState.Pending);
     this.itemStore.setHighlightedItem(null);
-    this.oscarItemService.getApxItemCount(this.queryString).subscribe(apxStats => {
+    this.oscarItemService.getApxItemCount(fullQueryString).subscribe(apxStats => {
       if (apxStats.items < 1000000) {
-        this.oscarItemService.getItemsBinary(this.prependix + this.queryString);
+        this.oscarItemService.getItemsBinary(fullQueryString);
         this.searchService.setState(SearchState.Success);
         this.error = false;
       } else {
