@@ -14,7 +14,7 @@ import {RefinementsService} from '../../../services/data/refinements.service';
 })
 export class SearchComponent implements OnInit {
   constructor(private oscarItemService: OscarItemsService, public itemStore: ItemStoreService, public searchService: SearchService,
-              private osmService: OsmService, private suggestionStore: SuggestionsService, private refinementStore: RefinementsService) { }
+              private osmService: OsmService, private suggestionStore: SuggestionsService, public refinementStore: RefinementsService) { }
   error = false;
   appendix = '';
   queryString = '@amenity:restaurant "Stuttgart"';

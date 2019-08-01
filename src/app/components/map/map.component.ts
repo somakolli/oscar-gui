@@ -127,6 +127,16 @@ export class MapComponent implements OnInit {
           popupText += '</ul></div>';
           L.geoJSON(item, {
               title: `${item.properties.id}`,
+            pointToLayer: (geoJsonPoint, latlng) => {
+              var smallIcon = new L.Icon({
+                iconSize: [ 25, 41 ],
+                iconAnchor: [ 13, 41 ],
+                iconUrl: 'leaflet/marker-icon.png',
+                shadowUrl: 'leaflet/marker-shadow.png',
+                popupAnchor:  [1, -24],
+              });
+              return L.marker(latlng, {icon: smallIcon});
+            },
               onEachFeature: ((feature, layer) => {
                 layer.bindPopup(popupText);
               }),
