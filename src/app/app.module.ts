@@ -26,6 +26,10 @@ import { RefinementsComponent } from './components/side-bar/refinements/refineme
 import { RefinementDetailComponent } from './components/side-bar/refinements/refinement-detail/refinement-detail.component';
 import {ThirdParyLinksComponent} from './components/third-pary-links/third-pary-links.component';
 import { ActiveRefinementsComponent } from './components/side-bar/active-refinements/active-refinements.component';
+import { FacetsComponent } from './components/side-bar/refinements/facets/facets.component';
+import { FacetsDetailComponent } from './components/side-bar/refinements/facets/facets-detail/facets-detail.component';
+import { ParentsComponent } from './components/side-bar/refinements/parents/parents.component';
+import { ParentsDetailComponent } from './components/side-bar/refinements/parents/parents-detail/parents-detail.component';
 
 @NgModule({
   declarations: [
@@ -45,7 +49,11 @@ import { ActiveRefinementsComponent } from './components/side-bar/active-refinem
     RefinementsComponent,
     RefinementDetailComponent,
     ThirdParyLinksComponent,
-    ActiveRefinementsComponent
+    ActiveRefinementsComponent,
+    FacetsComponent,
+    FacetsDetailComponent,
+    ParentsComponent,
+    ParentsDetailComponent
   ],
   imports: [
     BrowserModule,

@@ -22,8 +22,7 @@ export class GridService {
   constructor(private itemStore: ItemStoreService) { }
   buildGrid() {
     this.gridMap = new Map<string, OscarMinItem[]>();
-    for (let i = 0; i < this.itemStore.binaryItems.length; i++) {
-      const item = this.itemStore.binaryItems[i];
+    for (const item of this.itemStore.binaryItems) {
       const latGridPos = this.getLatPositionInGrid(item.lat);
       const lonGridPos = this.getLonPositionInGrid(item.lon);
       if (!this.gridMap.has(JSON.stringify({lat: latGridPos, lon: lonGridPos}))) {
@@ -82,22 +81,25 @@ export class GridService {
       let maxLat = -100000;
       let maxLon = -100000;
       this.gridMap.forEach((value, key) => {
-        const parsedKey = JSON.parse(key);
-        if (parsedKey.lat < minLat) {
-          minLat = parsedKey.lat;
-        }
-        if (parsedKey.lon < minLon) {
-          minLon = parsedKey.lon;
-        }
-        if (parsedKey.lat > maxLat) {
-          maxLat = parsedKey.lat;
-        }
-        if (parsedKey.lon > maxLon) {
-          maxLon = parsedKey.lon;
-        }
+        console.log(value);
+        value.forEach( e => {
+          if (e.lat < minLat) {
+            minLat = e.lat;
+          }
+          if (e.lon < minLon) {
+            minLon = e.lon;
+          }
+          if (e.lat > maxLat) {
+            maxLat = e.lat;
+          }
+          if (e.lon > maxLon) {
+            maxLon = e.lon;
+          }
+        });
+
       });
-      const southWest = L.latLng((minLat + 1) / 10, (minLon + 1) / 10);
-      const northEast = L.latLng((maxLat + 1) / 10, (maxLon + 1) / 10);
+      const southWest = L.latLng(minLat , minLon);
+      const northEast = L.latLng(maxLat , maxLon);
       console.log(L.latLngBounds(southWest, northEast));
       bbox.next(L.latLngBounds(southWest, northEast));
     });

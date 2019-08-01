@@ -1,5 +1,5 @@
 <div *ngIf="oscarItem" class="item-info">
-  <div class="item-info__title">{{oscarItem.name}}
+  <div class="item-info__title">{{oscarItem.properties.name}}
     <i *ngIf="!showTable" class="fas fa-angle-down button-show_table" (click)="showTable = !showTable"></i>
     <i *ngIf="showTable" class="fas fa-angle-up button-show_table" (click)="showTable = !showTable"></i>
   </div>

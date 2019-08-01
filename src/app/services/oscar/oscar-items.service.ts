@@ -10,7 +10,7 @@ import {GridService} from '../data/grid.service';
 import {encodeUriQuery} from '@angular/router/src/url_tree';
 import {encode} from 'punycode';
 import {OscarApxstats} from '../../models/oscar/oscar-apxstats';
-import {FacetRefinements} from '../../models/oscar/refinements';
+import {FacetRefinements, ParentRefinements} from '../../models/oscar/refinements';
 import {SearchState} from '../../models/state/search-state.enum';
 import {SearchService} from '../state/search.service';
 
@@ -50,7 +50,7 @@ export class OscarItemsService {
     const itemUrl = this.configService.getOscarUrl() + `/oscar/items/all?q=${localQueryString}&rf=admin_level&i=true`;
     this.http.get<OscarItem[]>(itemUrl).subscribe(value => {
       value.map(item => {
-        item.name = item.v[item.k.indexOf('name')];
+        item.properties.name = item.properties.v[item.properties.k.indexOf('name')];
       });
       // this.itemStore.currentItems = value;
     });
@@ -73,10 +73,25 @@ export class OscarItemsService {
     const queryString = this.configService.getOscarUrl() + `/oscar/items/info?i=${JSON.stringify(ids)}`;
     return this.http.get<OscarItem[]>(queryString);
   }
+  getParents(query: string): Observable<ParentRefinements> {
+    return this.http.get<ParentRefinements>(
+      this.configService.getOscarUrl() + `/oscar/kvclustering/get?queryId=1&q=${encodeURIComponent(query)}+&rf=admin_level&type=p&maxRefinements=20`
+    );
+  }
   getFacets(query: string): Observable<FacetRefinements> {
     return this.http.get<FacetRefinements>(
-      `http://oscar-web.de/oscar/kvclustering/get?queryId=1&q=${encodeURIComponent(query)}+&rf=admin_level&type=f&maxRefinements=10&exceptions=%5B%5D&debug=true&keyExceptions=%5B%22wheelchair%22%2C+%22addr%22%2C+%22level%22%2C+%22toilets%3Awheelchair%22%2C+%22building%22%2C+%22source%22%2C+%22roof%22%5D&facetSizes=%5B%5D&defaultFacetSize=10`
+      this.configService.getOscarUrl() + `/oscar/kvclustering/get?queryId=1&q=${encodeURIComponent(query)}+&rf=admin_level&type=f&maxRefinements=20&exceptions=%5B%5D&debug=true&keyExceptions=%5B%22wheelchair%22%2C+%22addr%22%2C+%22level%22%2C+%22toilets%3Awheelchair%22%2C+%22building%22%2C+%22source%22%2C+%22roof%22%5D&facetSizes=%5B%5D&defaultFacetSize=10`
     );
+  }
+  getMultipleItems(items: OscarMinItem[]): any {
+    const ids = new Array<number>();
+    items.forEach(item => ids.push(item.id));
+    const formdata = new FormData();
+    formdata.append('which', JSON.stringify(ids));
+    formdata.append('format', 'geojson');
+    formdata.append('shape', 'true');
+    const queryString = this.configService.getOscarUrl() + `/oscar/itemdb/multiple`;
+    return this.http.post(queryString, formdata);
   }
   private toDoubleLat(lat: number) {
     // tslint:disable-next-line:no-bitwise

@@ -1,0 +1,5 @@
+<div class="refinements">
+  <ul class="refinement-list" *ngIf="facets">
+    <li *ngFor="let facet of facets.clustering"><app-facets-detail [facet]="facet"></app-facets-detail></li>
+  </ul>
+</div>

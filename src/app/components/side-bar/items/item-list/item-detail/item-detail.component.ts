@@ -21,7 +21,7 @@ export class ItemDetailComponent implements OnInit {
     OscarItem.setName(this.oscarItem);
   }
   panTo() {
-    this.mapService.setView(this.oscarItem.bbox[0], this.oscarItem.bbox[2], 18);
+    this.mapService.setView(this.oscarItem.firstPoint.lat, this.oscarItem.firstPoint.lon, 18);
   }
 
 }

@@ -1,0 +1,7 @@
+{{facet.key}} <button (click)="addKeyRefinement()">+</button> <button (click)="addExKeyRefinement()">-</button>
+<ul>
+  <li *ngFor="let value of facet.values">
+    {{value.name}}  {{value.count}} <button (click)="addkeyValueRefinement(value)">+</button> <button (click)="addExKeyValueRefinement(value)">-</button>
+  </li>
+</ul>
+

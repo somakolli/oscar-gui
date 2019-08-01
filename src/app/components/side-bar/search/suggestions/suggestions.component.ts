@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit, Renderer2} from '@angular/core';
 import {SuggestionsService} from '../../../../services/data/suggestions.service';
 import {Suggestion, TagSuggestion} from '../../../../models/osm/tag-suggestion';
 
@@ -10,10 +10,14 @@ import {Suggestion, TagSuggestion} from '../../../../models/osm/tag-suggestion';
 export class SuggestionsComponent implements OnInit {
 
   currentSuggestions: Suggestion[];
-  constructor(private suggestionsStore: SuggestionsService) { }
+  hidden = true;
+  constructor(private suggestionsStore: SuggestionsService, private renderer: Renderer2) { }
 
   ngOnInit() {
+    this.renderer.listen('window', 'click', (e) => {this.hidden = true;});
     this.suggestionsStore.suggestions$.subscribe(suggestions => {
+      this.hidden = false;
+
       if (suggestions) {
         // filter out invalid values
         this.currentSuggestions = suggestions.data.filter( suggestion => !suggestion.value.includes(' ') &&  !suggestion.key.includes(' '));
