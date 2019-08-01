@@ -92,17 +92,47 @@ export class MapComponent implements OnInit {
     length = this.itemStore.currentItemIds.length;
     const streets = true;
     if (length <= this.markerThreshold) {
+      /*for ( const item of this.itemStore.currentItemIds) {
+        const myMarker = L.marker([item.lat, item.lon]).addTo(this.layerGroup);
+        myMarker.bindPopup(test);
+      }*/
       this.oscarItemsService.getMultipleItems(this.itemStore.currentItemIds).subscribe(data => {
         const items = data.features;
+        // draw markers
+
         items.forEach((item) => {
-           L.geoJSON(item, {
-             title: `${item.properties.id}`,
-             style: {color: 'blue', stroke: true, fill: false, opacity: 0.7}
-           }).addTo(this.layerGroup).on('click', (event1 => {
-             this.oscarItemsService.getItemsInfoById(parseInt(event1.target.options.title))
-               .subscribe(returnItem => this.itemStore.setHighlightedItem(returnItem[0]));
-           }));
-         });
+          let keyValues  = [];
+          keyValues.push({k: 'osm-id', v: item.properties.osmid});
+          keyValues.push({k: 'oscar-id', v: item.properties.id});
+          for (let i = 0; i < item.properties.k.length; i++) {
+            keyValues.push({k : item.properties.k[i], v : item.properties.v[i]});
+            if (item.properties.k[i] === 'name') {
+              const name = item.properties.v[i];
+              if (name === '') {
+                item.properties.name = 'Item without name';
+              } else {
+                item.properties.name = item.properties.v[i];
+              }
+            }
+          }
+          let popupText = `
+            <div><h6>${item.properties.name}</h6><br>
+            <a href="https://www.openstreetmap.org/${item.properties.type}/${item.properties.osmid}" target="_blank">OSM</a>
+            <ul style="list-style-type:none;">
+          `;
+          keyValues.forEach(k => {
+            console.log(k);
+            popupText += `<li>${k.k}:${k.v}</li>`;
+          });
+          popupText += '</ul></div>';
+          L.geoJSON(item, {
+              title: `${item.properties.id}`,
+              onEachFeature: ((feature, layer) => {
+                layer.bindPopup(popupText);
+              }),
+              style: {color: 'blue', stroke: true, fill: false, opacity: 0.7}
+          }).addTo(this.layerGroup);
+          });
         });
     } else {
       const sampleIds = _.sample(this.itemStore.currentItemIds, 5000);
