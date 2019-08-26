@@ -30,6 +30,10 @@ import { FacetsComponent } from './components/side-bar/refinements/facets/facets
 import { FacetsDetailComponent } from './components/side-bar/refinements/facets/facets-detail/facets-detail.component';
 import { ParentsComponent } from './components/side-bar/refinements/parents/parents.component';
 import { ParentsDetailComponent } from './components/side-bar/refinements/parents/parents-detail/parents-detail.component';
+import {Location} from '@angular/common';
+import {RouterModule} from '@angular/router';
+import {DragDropModule} from '@angular/cdk/drag-drop';
+import {ResizableModule} from 'angular-resizable-element';
 
 @NgModule({
   declarations: [
@@ -62,6 +66,9 @@ import { ParentsDetailComponent } from './components/side-bar/refinements/parent
     LeafletModule.forRoot(),
     BrowserAnimationsModule,
     InfiniteScrollModule,
+    RouterModule,
+    DragDropModule,
+    ResizableModule
   ],
   providers: [OscarItemsService, ConfigService, ItemStoreService],
   bootstrap: [AppComponent]

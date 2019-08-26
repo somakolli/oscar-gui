@@ -17,14 +17,24 @@ export class SearchComponent implements OnInit {
               private osmService: OsmService, private suggestionStore: SuggestionsService, public refinementStore: RefinementsService) { }
   error = false;
   appendix = '';
-  queryString = '@amenity:restaurant "Stuttgart"';
+  queryString = '';
   keyPrependix = '';
   keyValuePrependix = '';
   parentPrependix = '';
   keyAppendix = '';
   keyValueAppendix = '';
   parentAppendix = '';
+  first = true;
   ngOnInit() {
+    this.searchService.partQueryString$.subscribe(queryString => {
+      if (queryString !== '') {
+        this.queryString = decodeURI(queryString);
+        if (this.first) {
+          this.search();
+          this.first = false;
+        }
+      }
+    });
     this.suggestionStore.selectedSuggestion$.subscribe(suggestion => {
       if (suggestion) {
         const strings = this.queryString.split(' ');
@@ -36,36 +46,42 @@ export class SearchComponent implements OnInit {
       keyValueRefinements.forEach(refinement => {
         this.keyValuePrependix += `@${refinement.key}:${refinement.value} `;
       });
+      this.search();
     });
     this.refinementStore.keyRefinements$.subscribe(keyRefinements => {
       this.keyPrependix = '';
       keyRefinements.forEach(refinement => {
         this.keyValuePrependix += `@${refinement.key} `;
       });
+      this.search();
     });
     this.refinementStore.parentRefinements$.subscribe(parentRefinements => {
       this.parentPrependix = '';
       parentRefinements.forEach(refinement => {
         this.parentPrependix += `"${refinement}" `;
       });
+      this.search();
     });
     this.refinementStore.exKeyValueRefinements$.subscribe(keyValueRefinements => {
       this.keyValueAppendix = '';
       keyValueRefinements.forEach(refinement => {
         this.keyValueAppendix += `-@${refinement.key}:${refinement.value} `;
       });
+      this.search();
     });
     this.refinementStore.exKeyRefinements$.subscribe(keyRefinements => {
       this.keyAppendix = '';
       keyRefinements.forEach(refinement => {
         this.keyAppendix += `-@${refinement.key} `;
       });
+      this.search();
     });
     this.refinementStore.exParentRefinements$.subscribe(parentRefinements => {
       this.parentAppendix = '';
       parentRefinements.forEach(refinement => {
         this.parentAppendix += `-"${refinement}" `;
       });
+      this.search();
     });
   }
   search(): void {
@@ -87,6 +103,7 @@ export class SearchComponent implements OnInit {
   }
 
   inputUpdate() {
+    this.searchService.setPartQueryString(this.queryString);
     const strings = this.queryString.split(' ');
     const potentialQueryString = strings[strings.length - 1];
     if (!(potentialQueryString.charAt(0) === '@') || this.queryString === '') {
@@ -101,9 +118,9 @@ export class SearchComponent implements OnInit {
       } else if (keyValue.length === 1) {
         value = keyValue[0];
       }
-      this.osmService.getTagSuggestions(key, value).subscribe(suggestions => {
-        this.suggestionStore.setSuggestions(suggestions);
-      });
+      // this.osmService.getTagSuggestions(key, value).subscribe(suggestions => {
+      //  this.suggestionStore.setSuggestions(suggestions);
+      // });
     }
   }
 

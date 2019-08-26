@@ -9,6 +9,7 @@ import {OscarItemsService} from '../../services/oscar/oscar-items.service';
 import {SearchService} from '../../services/state/search.service';
 import {SearchState} from '../../models/state/search-state.enum';
 import {LineString} from 'geojson';
+import {MapStateService} from '../../services/state/map-state.service';
 
 declare var L;
 declare var HeatmapOverlay;
@@ -20,6 +21,7 @@ declare var HeatmapOverlay;
 })
 export class MapComponent implements OnInit {
   markerThreshold = 120;
+  i = 0;
   data = {
     data: []
   };
@@ -48,7 +50,8 @@ export class MapComponent implements OnInit {
               private gridService: GridService,
               private timer: TimerService,
               private oscarItemsService: OscarItemsService,
-              private searchService: SearchService) { }
+              private searchService: SearchService,
+              private mapState: MapStateService) { }
 
   ngOnInit() {
   }
@@ -67,14 +70,14 @@ export class MapComponent implements OnInit {
       }
     });
     map.on('moveend', (event) => {
-      console.log(event);
       const bounds = map.getBounds();
+      this.mapState.setBounds(bounds);
       this.gridService.setCurrentItems(bounds.getSouth(),
         bounds.getWest(), bounds.getNorth(), bounds.getEast());
     });
     map.on('zoom', (event) => {
-      console.log(event);
       const bounds = map.getBounds();
+      this.mapState.setBounds(bounds);
       this.gridService.setCurrentItems(bounds.getSouth(),
         bounds.getWest(), bounds.getNorth(), bounds.getEast());
     });
@@ -121,7 +124,6 @@ export class MapComponent implements OnInit {
             <ul style="list-style-type:none;">
           `;
           keyValues.forEach(k => {
-            console.log(k);
             popupText += `<li>${k.k}:${k.v}</li>`;
           });
           popupText += '</ul></div>';
@@ -161,12 +163,23 @@ export class MapComponent implements OnInit {
     }
     this.heatmapLayer.setData(this.data);
     if (this.searchService.getState() !== SearchState.DrawingComplete) {
+      if (this.i === 0 && !this.searchService.getBoundingBox()){
+        this.i = 2;
+      }
+      this.i++;
       this.searchService.setState(SearchState.DrawingComplete);
-      this.gridService.getBBox().subscribe(bbox  => {
-        if (bbox) {
-          map.fitBounds(bbox);
-        }
-      });
+      console.log(this.i);
+      console.log(this.searchService.getBoundingBox());
+      if (this.searchService.getBoundingBox()) {
+        map.fitBounds(this.searchService.getBoundingBox());
+        this.searchService.setBoundingBox(null);
+      } else {
+        this.gridService.getBBox().subscribe(bbox  => {
+          if (bbox && this.i > 2) {
+            map.fitBounds(bbox);
+          }
+        });
+      }
     }
   }
 }

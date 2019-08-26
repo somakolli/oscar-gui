@@ -1,6 +1,6 @@
 export enum SearchState {
-  Pending,
-  Success,
-  DrawingComplete,
-  ToManyItems,
+  Pending = 0x1,
+  Success = 0x2,
+  DrawingComplete = 0x4,
+  ToManyItems = 0x8
 }

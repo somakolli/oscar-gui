@@ -1,11 +1,10 @@
 <div class="input-group">
   <input autocomplete="off" [(ngModel)]="queryString" (ngModelChange)="inputUpdate()" (keydown.enter)="search()" type="text" class="search-input" placeholder="Search" >
 </div>
-<app-suggestions></app-suggestions>
 <div [hidden] = "!error" class="alert alert-danger" role="alert">
   Result to large. Please refine query.
 </div>
-<input type="checkbox" [checked]="this.refinementStore.hasKeyRefinement({id: 0, key: 'highway'})" (change)="streetsChanged()"> streets
+<!--<input type="checkbox" [checked]="this.refinementStore.hasKeyRefinement({id: 0, key: 'highway'})" (change)="streetsChanged()"> streets-->
 <app-active-refinements></app-active-refinements>
 
 

@@ -7,8 +7,6 @@ import {ItemStoreService} from '../data/item-store.service';
 import {MapService} from '../map/map.service';
 import {OscarMinItem} from '../../models/oscar/oscar-min-item';
 import {GridService} from '../data/grid.service';
-import {encodeUriQuery} from '@angular/router/src/url_tree';
-import {encode} from 'punycode';
 import {OscarApxstats} from '../../models/oscar/oscar-apxstats';
 import {FacetRefinements, ParentRefinements} from '../../models/oscar/refinements';
 import {SearchState} from '../../models/state/search-state.enum';

@@ -81,7 +81,6 @@ export class GridService {
       let maxLat = -100000;
       let maxLon = -100000;
       this.gridMap.forEach((value, key) => {
-        console.log(value);
         value.forEach( e => {
           if (e.lat < minLat) {
             minLat = e.lat;
@@ -100,7 +99,6 @@ export class GridService {
       });
       const southWest = L.latLng(minLat , minLon);
       const northEast = L.latLng(maxLat , maxLon);
-      console.log(L.latLngBounds(southWest, northEast));
       bbox.next(L.latLngBounds(southWest, northEast));
     });
     return bbox.asObservable();

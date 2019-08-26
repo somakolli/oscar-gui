@@ -96,5 +96,19 @@ export class RefinementsService {
   hasKeyRefinement(refinement: KeyRefinement): boolean {
     return _.contains(this._keyRefinements.getValue(), refinement);
   }
-
+  getParentRefinements(): string[] {
+    return this._parentRefinements.getValue();
+  }
+  getKeyRefinements(): KeyRefinement[] {
+    return this._keyRefinements.getValue();
+  }
+  getExKeyRefinements(): KeyRefinement[] {
+    return this._exKeyRefinements.getValue();
+  }
+  getKeyValueRefinements(): KeyValueRefinement[] {
+    return this._keyValueRefinements.getValue();
+  }
+  getExKeyValueRefinements(): KeyValueRefinement[] {
+    return this._exKeyValueRefinements.getValue();
+  }
 }

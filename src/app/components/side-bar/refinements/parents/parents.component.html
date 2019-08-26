@@ -1,6 +1,6 @@
 <div class="refinements">
-  <ul class="refinement-list" *ngIf="parents">
-    <li *ngFor="let parent of parents.clustering">
+  <ul class="refinement-list list-group" *ngIf="parents">
+    <li class="list-group-item refinement-item" *ngFor="let parent of parents.clustering">
       <app-parents-detail [parent]="parent"></app-parents-detail>
     </li>
   </ul>

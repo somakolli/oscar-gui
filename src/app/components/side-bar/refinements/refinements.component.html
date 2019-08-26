@@ -6,7 +6,9 @@
     <a class="nav-link" id="facets-tab" data-toggle="tab" href="#facets" role="tab" aria-controls="profile" aria-selected="false">Facets</a>
   </li>
 </ul>
-<div class="tab-content" id="myTabContent">
+<i *ngIf="!showTable" class="fas fa-angle-down button-show_table" (click)="showTable = !showTable"></i>
+<i *ngIf="showTable" class="fas fa-angle-up button-show_table" (click)="showTable = !showTable"></i>
+<div *ngIf="showTable"  class="tab-content" id="myTabContent">
   <div class="tab-pane fade show active" id="parents" role="tabpanel" aria-labelledby="parents-tab">
     <app-parents></app-parents>
   </div>
