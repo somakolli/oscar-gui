@@ -15,4 +15,15 @@ export class MapService {
   get bounds() {
     return this.map.getBounds();
   }
+  getPosition(): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resp => {
+        console.log(resp);
+        resolve({lng: resp.coords.longitude, lat: resp.coords.latitude});
+      },
+        err => {
+          reject(err);
+        });
+    });
+  }
 }

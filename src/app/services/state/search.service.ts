@@ -13,7 +13,7 @@ export class SearchService {
   private readonly _queryString = new BehaviorSubject<string>('');
   readonly queryString$ = this._queryString.asObservable();
   private readonly _partQueryString = new BehaviorSubject<string>('');
-  readonly partQueryString$ = this._partQueryString.asObservable()
+  readonly inputQueryString$ = this._partQueryString.asObservable()
   private readonly _latLongBounds = new BehaviorSubject<LatLngBounds>(null);
   readonly latLongBounds$ = this._latLongBounds.asObservable();
   constructor() { }
@@ -27,9 +27,9 @@ export class SearchService {
     this._queryString.next(query);
   }
   getQuery() {
-    this._queryString.getValue();
+    return this._queryString.getValue();
   }
-  setPartQueryString(query: string) {
+  setInputQueryString(query: string) {
     this._partQueryString.next(query);
   }
 

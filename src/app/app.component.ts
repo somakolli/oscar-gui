@@ -4,6 +4,7 @@ import { Location, LocationStrategy, PathLocationStrategy } from '@angular/commo
 import {MapStateService} from './services/state/map-state.service';
 import {RefinementsService} from './services/data/refinements.service';
 import * as L from 'leaflet';
+import {MapService} from './services/map/map.service';
 
 @Component({
   selector: 'app-root',
@@ -16,7 +17,7 @@ export class AppComponent implements OnInit {
   title = 'oscar-gui';
   query = '';
   constructor(private searchService: SearchService, private location: Location, private mapState: MapStateService,
-              private refinementService: RefinementsService) {
+              private refinementService: RefinementsService, private mapService: MapService) {
   }
   ngOnInit(): void {
     if (this.location.path() !== '') {
@@ -25,7 +26,7 @@ export class AppComponent implements OnInit {
         const keyValuePair = param.split('=');
         console.log(keyValuePair[0]);
         if (keyValuePair[0] === 'q') {
-          this.searchService.setPartQueryString(keyValuePair[1]);
+          this.searchService.setInputQueryString(keyValuePair[1]);
         }
         if (keyValuePair[0] === 'b') {
           const bounds = keyValuePair[1].split(',');
@@ -70,7 +71,7 @@ export class AppComponent implements OnInit {
         }
       }
     }
-    this.searchService.partQueryString$.subscribe(queryString => {
+    this.searchService.inputQueryString$.subscribe(queryString => {
       this.query = queryString;
       this.changeUrl();
     });
@@ -82,6 +83,7 @@ export class AppComponent implements OnInit {
     this.refinementService.keyValueRefinements$.subscribe(() => this.changeUrl());
     this.refinementService.exKeyValueRefinements$.subscribe(() => this.changeUrl());
     this.refinementService.parentRefinements$.subscribe(() => this.changeUrl());
+    this.mapService.getPosition().then(pos => this.mapService.setView(pos.lat, pos.lng, 15));
   }
 
   changeUrl() {
