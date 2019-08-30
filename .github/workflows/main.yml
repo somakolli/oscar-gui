@@ -1,0 +1,14 @@
+name: CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: get npm
+      run: apt install npm
+    - name: get angular
+      run: npm i @angular/cli
