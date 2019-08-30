@@ -12,5 +12,7 @@ jobs:
       run: sudo apt install npm
     - name: get angular
       run: sudo npm i -g @angular/cli
+    - name: check folder
+      run: ls
     - name: build
       run: ng build --prod
