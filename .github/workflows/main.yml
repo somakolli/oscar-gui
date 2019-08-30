@@ -9,6 +9,6 @@ jobs:
     
     steps:
     - name: get npm
-      run: apt install npm
+      run: sudo apt install npm
     - name: get angular
-      run: npm i @angular/cli
+      run: sudo npm i @angular/cli
