@@ -105,6 +105,7 @@ export class SearchComponent implements OnInit {
     });
   }
   search(): void {
+    this.searchService.queryId++;
     this.searchService.setInputQueryString(this.inputString);
     const fullQueryString = this.keyPrependix + this.keyValuePrependix + this.parentPrependix
       + this.inputString + this.keyAppendix + this.parentAppendix + this.keyValueAppendix;

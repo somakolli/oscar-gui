@@ -71,14 +71,16 @@ export class OscarItemsService {
     const queryString = this.configService.getOscarUrl() + `/oscar/items/info?i=${JSON.stringify(ids)}`;
     return this.http.get<OscarItem[]>(queryString);
   }
-  getParents(query: string): Observable<ParentRefinements> {
+  getParents(query: string, queryId: number): Observable<ParentRefinements> {
+    console.log(queryId);
     return this.http.get<ParentRefinements>(
-      this.configService.getOscarUrl() + `/oscar/kvclustering/get?queryId=1&q=${encodeURIComponent(query)}+&rf=admin_level&type=p&maxRefinements=20`
+
+      this.configService.getOscarUrl() + `/oscar/kvclustering/get?queryId=${queryId}&q=${encodeURIComponent(query)}+&rf=admin_level&type=p&maxRefinements=20`
     );
   }
-  getFacets(query: string): Observable<FacetRefinements> {
+  getFacets(query: string, queryId: number): Observable<FacetRefinements> {
     return this.http.get<FacetRefinements>(
-      this.configService.getOscarUrl() + `/oscar/kvclustering/get?queryId=1&q=${encodeURIComponent(query)}+&rf=admin_level&type=f&maxRefinements=20&exceptions=%5B%5D&debug=true&keyExceptions=%5B%22wheelchair%22%2C+%22addr%22%2C+%22level%22%2C+%22toilets%3Awheelchair%22%2C+%22building%22%2C+%22source%22%2C+%22roof%22%5D&facetSizes=%5B%5D&defaultFacetSize=10`
+      this.configService.getOscarUrl() + `/oscar/kvclustering/get?queryId=${queryId}&q=${encodeURIComponent(query)}+&rf=admin_level&type=f&maxRefinements=20&exceptions=%5B%5D&debug=true&keyExceptions=%5B%22wheelchair%22%2C+%22addr%22%2C+%22level%22%2C+%22toilets%3Awheelchair%22%2C+%22building%22%2C+%22source%22%2C+%22roof%22%5D&facetSizes=%5B%5D&defaultFacetSize=10`
     );
   }
   getMultipleItems(items: OscarMinItem[]): any {

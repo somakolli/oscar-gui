@@ -7,6 +7,6 @@ export class ConfigService {
 
   constructor() { }
   getOscarUrl(): string {
-    return 'http://localoscar';
+    return 'https://oscar-web.de';
   }
 }

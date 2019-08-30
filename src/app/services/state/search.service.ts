@@ -16,6 +16,7 @@ export class SearchService {
   readonly inputQueryString$ = this._partQueryString.asObservable()
   private readonly _latLongBounds = new BehaviorSubject<LatLngBounds>(null);
   readonly latLongBounds$ = this._latLongBounds.asObservable();
+  queryId = 0;
   constructor() { }
   setState(state: SearchState) {
     this._newQuery.next(state);
