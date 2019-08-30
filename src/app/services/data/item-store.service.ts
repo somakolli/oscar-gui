@@ -7,46 +7,36 @@ import {OscarMinItem} from '../../models/oscar/oscar-min-item';
   providedIn: 'root'
 })
 export class ItemStoreService {
-  private readonly _items = new BehaviorSubject<OscarItem[]>([]);
-  readonly items$ = this._items.asObservable();
-  private readonly _currentItems = new BehaviorSubject<OscarItem[]>([]);
-  readonly currentItems$ = this._currentItems.asObservable();
-  private readonly _binaryItems = new BehaviorSubject<OscarMinItem[]>([]);
-  readonly binaryItems$ = this._binaryItems.asObservable();
-  private readonly _currentBinaryItems = new BehaviorSubject<OscarMinItem[]>([]);
-  readonly currentBinaryItems$ = this._currentBinaryItems.asObservable();
+  // tslint:disable-next-line:variable-name
+  private readonly _binaryItemsFinished = new BehaviorSubject<number>(0);
+  readonly binaryItemsFinished$ = this._binaryItemsFinished.asObservable();
+  // tslint:disable-next-line:variable-name
+  private readonly _currentItemIdsFinished = new BehaviorSubject<number>(0);
+  readonly currentItemIdsFinished$ = this._currentItemIdsFinished.asObservable();
+  // tslint:disable-next-line:variable-name
+  private readonly _itemIdsSortedByDistanceFinished = new BehaviorSubject<number>(0);
+  readonly itemIdsSortedByDistanceFinished$ = this._itemIdsSortedByDistanceFinished.asObservable();
+  // tslint:disable-next-line:variable-name
+  private readonly _highlightedItem = new BehaviorSubject<OscarItem>(null);
+  readonly highlightedItem$ = this._highlightedItem.asObservable();
+  currentItemIds = new Array<OscarMinItem>();
+  binaryItems = new Array<OscarMinItem>();
+  distanceSortedItems = new Array<OscarMinItem>();
+  streets = false;
   constructor() { }
-  get items(): OscarItem[] {
-    return this._items.getValue();
+  currentItemIdsFinished() {
+    this._currentItemIdsFinished.next(this._currentItemIdsFinished.getValue() + 1);
   }
-  set items(val: OscarItem[]) {
-    this._items.next(val);
+  binaryItemsFinished() {
+    this._binaryItemsFinished.next(this._binaryItemsFinished.getValue() + 1);
   }
-  get currentItems(): OscarItem[] {
-    return this._currentItems.getValue();
+  sortedItemsFinished() {
+    this._itemIdsSortedByDistanceFinished.next(this._itemIdsSortedByDistanceFinished.getValue() + 1);
   }
-  set currentItems(val: OscarItem[]) {
-    this._currentItems.next(val);
+  get currentItemIdsStatus() {
+    return this._currentItemIdsFinished.getValue();
   }
-  get binaryItems(): OscarMinItem[] {
-    return this._binaryItems.getValue();
-  }
-  set binaryItems(val: OscarMinItem[]) {
-    this._binaryItems.next(val);
-  }
-  get currentBinaryItems(): OscarMinItem[] {
-    return this._currentBinaryItems.getValue();
-  }
-  set currentBinaryItems(val: OscarMinItem[]) {
-    this._currentBinaryItems.next(val);
-  }
-  addItem(item: OscarItem) {
-    this.items = [
-      ...this.items,
-      item
-    ];
-  }
-  removeItem(id: number) {
-    this.items = this.items.filter(item => item.id !== id);
+  setHighlightedItem(item: OscarItem) {
+    this._highlightedItem.next(item);
   }
 }

@@ -1,0 +1,11 @@
+<ul class="list-group">
+  <li class="list-group-item refinement-item"><b>{{facet.key}}</b>
+    <i class ="fa fa-lg fa-plus-circle refinement-button including-refinement" (click)="addKeyRefinement()"></i>
+    <i class ="fa fa-lg fa-minus-circle refinement-button excluding-refinement" (click)="addExKeyRefinement()"></i></li>
+  <li class="list-group-item refinement-item" *ngFor="let value of facet.values">
+    {{value.name}} <i class ="fa fa-lg fa-plus-circle refinement-button including-refinement" (click)="addkeyValueRefinement(value)"></i>
+    <i class ="fa fa-lg fa-minus-circle refinement-button excluding-refinement" (click)="addExKeyValueRefinement(value)"></i>
+    <span class = "item-count badge badge-primary badge-pill">{{value.count}}</span>
+  </li>
+</ul>
+

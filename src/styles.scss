@@ -2,3 +2,28 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.refinement-item{
+  font-size: small
+}
+.item-count{
+  float: right
+}
+.refinement-list{
+
+  margin-top: 10px;
+  width: 90%;
+  margin-left: 5%;
+}
+
+.refinement-button{
+  cursor: pointer;
+  margin-top: -10px;
+}
+
+.including-refinement {
+  size: 20px;
+  color: green;
+}
+.excluding-refinement {
+  color: #db4969;
+}

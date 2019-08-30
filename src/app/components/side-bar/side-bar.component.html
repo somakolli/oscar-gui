@@ -1,4 +1,5 @@
 <div class="side-bar">
   <app-search></app-search>
+  <app-refinements [hidden]="itemStore.binaryItems.length == 0" cdkDrag class="refinements"></app-refinements>
   <app-items></app-items>
 </div>
