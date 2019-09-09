@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {OscarItemsService} from '../../services/oscar/oscar-items.service';
 import {ItemStoreService} from '../../services/data/item-store.service';
 import {SearchService} from '../../services/state/search.service';
-import {SearchState} from '../../models/state/search-state.enum';
+import {InitState, SearchState} from '../../models/state/search-state.enum';
 import {OsmService} from '../../services/osm/osm.service';
 import {SuggestionsService} from '../../services/data/suggestions.service';
 import {RefinementsService} from '../../services/data/refinements.service';
@@ -25,11 +25,23 @@ export class SearchComponent implements OnInit {
   keyAppendix = '';
   keyValueAppendix = '';
   parentAppendix = '';
+  initKeyPrependix = true;
+  initKeyValuePrependix = true;
+  initParentPrependix = true;
+  initKeyAppendix = true;
+  initKeyValueAppendix = true;
+  initParentAppendix = true;
   first = true;
   ngOnInit() {
+    this.searchService.initState$.subscribe(state => {
+      console.log(state);
+      if (state === InitState.LoadedRefinements) {
+        this.search();
+      }
+    });
     this.searchService.inputQueryString$.subscribe(queryString => {
       this.inputString = decodeURI(queryString);
-      if (queryString !== '' && this.first ) {
+      if (queryString !== '' && this.first) {
         this.first = false;
         this.search();
       }
@@ -45,7 +57,8 @@ export class SearchComponent implements OnInit {
     });
     this.refinementStore.keyValueRefinements$.subscribe(keyValueRefinements => {
       this.keyValuePrependix = '';
-      if (keyValueRefinements.length === 0) {
+      if (this.initKeyValuePrependix) {
+        this.initKeyValuePrependix = false;
         return;
       }
       keyValueRefinements.forEach(refinement => {
@@ -55,17 +68,19 @@ export class SearchComponent implements OnInit {
     });
     this.refinementStore.keyRefinements$.subscribe(keyRefinements => {
       this.keyPrependix = '';
-      if (keyRefinements.length === 0) {
+      if (this.initKeyPrependix) {
+        this.initKeyPrependix = false;
         return;
       }
       keyRefinements.forEach(refinement => {
-        this.keyValuePrependix += `@${refinement.key} `;
+        this.keyPrependix += `@${refinement.key} `;
       });
       this.search();
     });
     this.refinementStore.parentRefinements$.subscribe(parentRefinements => {
       this.parentPrependix = '';
-      if (parentRefinements.length === 0) {
+      if (this.parentPrependix) {
+        this.initParentPrependix = false;
         return;
       }
       parentRefinements.forEach(refinement => {
@@ -75,7 +90,8 @@ export class SearchComponent implements OnInit {
     });
     this.refinementStore.exKeyValueRefinements$.subscribe(keyValueRefinements => {
       this.keyValueAppendix = '';
-      if (keyValueRefinements.length === 0) {
+      if (this.initKeyValueAppendix) {
+        this.initKeyValueAppendix = false;
         return;
       }
       keyValueRefinements.forEach(refinement => {
@@ -85,7 +101,8 @@ export class SearchComponent implements OnInit {
     });
     this.refinementStore.exKeyRefinements$.subscribe(keyRefinements => {
       this.keyAppendix = '';
-      if (keyRefinements.length === 0) {
+      if (this.initKeyAppendix) {
+        this.initKeyAppendix = false;
         return;
       }
       keyRefinements.forEach(refinement => {
@@ -95,7 +112,8 @@ export class SearchComponent implements OnInit {
     });
     this.refinementStore.exParentRefinements$.subscribe(parentRefinements => {
       this.parentAppendix = '';
-      if (parentRefinements.length === 0) {
+      if (this.initParentAppendix) {
+        this.initParentAppendix = false;
         return;
       }
       parentRefinements.forEach(refinement => {
@@ -105,14 +123,17 @@ export class SearchComponent implements OnInit {
     });
   }
   search(): void {
+    if (this.searchService.getInitState() === InitState.SetQuery) {
+      return;
+    }
     this.searchService.queryId++;
-    this.searchService.setInputQueryString(this.inputString);
     const fullQueryString = this.keyPrependix + this.keyValuePrependix + this.parentPrependix
       + this.inputString + this.keyAppendix + this.parentAppendix + this.keyValueAppendix;
     if (fullQueryString === '') {
       this.searchService.setState(SearchState.NoQuery);
       return;
     }
+    this.searchService.setInputQueryString(this.inputString);
     this.searchService.setQuery(fullQueryString);
     this.searchService.setState(SearchState.Pending);
     this.itemStore.setHighlightedItem(null);

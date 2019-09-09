@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {SearchService} from './services/state/search.service';
-import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import {Location, LocationStrategy, PathLocationStrategy} from '@angular/common';
 import {MapStateService} from './services/state/map-state.service';
 import {RefinementsService} from './services/data/refinements.service';
 import * as L from 'leaflet';
 import {MapService} from './services/map/map.service';
+import {InitState} from './models/state/search-state.enum';
 
 @Component({
   selector: 'app-root',
@@ -20,11 +21,10 @@ export class AppComponent implements OnInit {
               private refinementService: RefinementsService, private mapService: MapService) {
   }
   ngOnInit(): void {
-    if (this.location.path() !== '') {
+    if (this.location.path() !== '' && this.location.path() !== '/') {
       const params = this.location.path().replace('/', '').replace('?', '').split('&');
       for (const param of params) {
         const keyValuePair = param.split('=');
-        console.log(keyValuePair[0]);
         if (keyValuePair[0] === 'q') {
           this.searchService.setInputQueryString(keyValuePair[1]);
         }
@@ -70,6 +70,9 @@ export class AppComponent implements OnInit {
           }
         }
       }
+      this.searchService.setInitState(InitState.LoadedRefinements);
+    } else {
+      this.searchService.setInitState(InitState.InitFinished);
     }
     this.searchService.inputQueryString$.subscribe(queryString => {
       this.query = queryString;
@@ -83,7 +86,7 @@ export class AppComponent implements OnInit {
     this.refinementService.keyValueRefinements$.subscribe(() => this.changeUrl());
     this.refinementService.exKeyValueRefinements$.subscribe(() => this.changeUrl());
     this.refinementService.parentRefinements$.subscribe(() => this.changeUrl());
-    this.mapService.getPosition().then(pos => this.mapService.setView(pos.lat, pos.lng, 15));
+    // this.mapService.getPosition().then(pos => this.mapService.setView(pos.lat, pos.lng, 15));
   }
 
   changeUrl() {

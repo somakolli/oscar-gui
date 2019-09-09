@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {SearchState} from '../../models/state/search-state.enum';
+import {InitState, SearchState} from '../../models/state/search-state.enum';
 import {LatLngBounds} from 'leaflet';
 
 @Injectable({
@@ -10,10 +10,12 @@ export class SearchService {
 
   private readonly _newQuery = new BehaviorSubject<SearchState>(0);
   readonly newQuery$ = this._newQuery.asObservable();
+  private readonly _initState = new BehaviorSubject<InitState>(0);
+  readonly initState$ = this._initState.asObservable();
   private readonly _queryString = new BehaviorSubject<string>('');
   readonly queryString$ = this._queryString.asObservable();
   private readonly _partQueryString = new BehaviorSubject<string>('');
-  readonly inputQueryString$ = this._partQueryString.asObservable()
+  readonly inputQueryString$ = this._partQueryString.asObservable();
   private readonly _latLongBounds = new BehaviorSubject<LatLngBounds>(null);
   readonly latLongBounds$ = this._latLongBounds.asObservable();
   queryId = 0;
@@ -24,6 +26,12 @@ export class SearchService {
   getState(): SearchState {
     return this._newQuery.getValue();
   }
+  setInitState(state: InitState) {
+    this._initState.next(state);
+  }
+  getInitState(): InitState {
+    return this._initState.getValue();
+  }
   setQuery(query: string) {
     this._queryString.next(query);
   }
@@ -31,6 +39,7 @@ export class SearchService {
     return this._queryString.getValue();
   }
   setInputQueryString(query: string) {
+    console.log(query);
     this._partQueryString.next(query);
   }
 

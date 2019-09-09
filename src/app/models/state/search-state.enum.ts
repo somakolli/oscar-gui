@@ -5,3 +5,10 @@ export enum SearchState {
   ToManyItems = 0x8,
   NoQuery = 0x16
 }
+
+export enum InitState {
+  SetQuery,
+  LoadedRefinements,
+  ItemsDrawn,
+  InitFinished
+}

@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {icon, latLng, marker, tileLayer} from 'leaflet';
+import {latLng, tileLayer} from 'leaflet';
 import {ItemStoreService} from '../../services/data/item-store.service';
 import {MapService} from '../../services/map/map.service';
 import {GridService} from '../../services/data/grid.service';
@@ -7,8 +7,7 @@ import {_} from 'underscore';
 import {TimerService} from '../../services/timer.service';
 import {OscarItemsService} from '../../services/oscar/oscar-items.service';
 import {SearchService} from '../../services/state/search.service';
-import {SearchState} from '../../models/state/search-state.enum';
-import {LineString} from 'geojson';
+import {InitState, SearchState} from '../../models/state/search-state.enum';
 import {MapStateService} from '../../services/state/map-state.service';
 
 declare var L;
@@ -58,34 +57,25 @@ export class MapComponent implements OnInit {
 
   onMapReady(map: L.Map) {
     this.mapService.map = map;
-    this.itemStore.binaryItemsFinished$.subscribe((status) => {
-      if (!status) {
-        return;
-      }
-      const bounds = map.getBounds();
-      if (!this.gridService.getStatus()) {
-        this.gridService.buildStatus$.subscribe((buildStatus) => {
-          if (buildStatus) {
-            this.gridService.setCurrentItems(bounds.getSouth(),
-              bounds.getWest(), bounds.getNorth(), bounds.getEast());
-          }
-        });
-      }
-    });
     map.on('moveend', (event) => {
+      console.log('move');
       const bounds = map.getBounds();
       this.mapState.setBounds(bounds);
       this.gridService.setCurrentItems(bounds.getSouth(),
         bounds.getWest(), bounds.getNorth(), bounds.getEast());
     });
+
     map.on('zoom', (event) => {
+      console.log('zoom');
       const bounds = map.getBounds();
       this.mapState.setBounds(bounds);
       this.gridService.setCurrentItems(bounds.getSouth(),
         bounds.getWest(), bounds.getNorth(), bounds.getEast());
     });
-    this.itemStore.currentItemIdsFinished$.subscribe(() => {
-      this.reDrawItems(map.getZoom(), map);
+    this.itemStore.currentItemIdsFinished$.subscribe((state) => {
+      if (state !== 0) {
+        this.reDrawItems(map.getZoom(), map);
+      }
     });
   }
 
@@ -96,21 +86,13 @@ export class MapComponent implements OnInit {
     this.layerGroup.clearLayers();
     let length = 0;
     length = this.itemStore.currentItemIds.length;
-    if (length === 0) {
-      return;
-    }
-    const streets = true;
     if (length <= this.markerThreshold) {
-      /*for ( const item of this.itemStore.currentItemIds) {
-        const myMarker = L.marker([item.lat, item.lon]).addTo(this.layerGroup);
-        myMarker.bindPopup(test);
-      }*/
       this.oscarItemsService.getMultipleItems(this.itemStore.currentItemIds).subscribe(data => {
         const items = data.features;
         // draw markers
 
         items.forEach((item) => {
-          let keyValues  = [];
+          const keyValues  = [];
           keyValues.push({k: 'osm-id', v: item.properties.osmid});
           keyValues.push({k: 'oscar-id', v: item.properties.id});
           for (let i = 0; i < item.properties.k.length; i++) {
@@ -136,7 +118,7 @@ export class MapComponent implements OnInit {
           L.geoJSON(item, {
               title: `${item.properties.id}`,
             pointToLayer: (geoJsonPoint, latlng) => {
-              var smallIcon = new L.Icon({
+              const smallIcon = new L.Icon({
                 iconSize: [ 25, 41 ],
                 iconAnchor: [ 13, 41 ],
                 iconUrl: 'leaflet/marker-icon.png',
@@ -168,24 +150,22 @@ export class MapComponent implements OnInit {
       }
     }
     this.heatmapLayer.setData(this.data);
-    if (this.searchService.getState() !== SearchState.DrawingComplete) {
-      if (this.i === 0 && !this.searchService.getBoundingBox()){
-        this.i = 2;
-      }
-      this.i++;
-      this.searchService.setState(SearchState.DrawingComplete);
+    if (this.searchService.getInitState() !== InitState.InitFinished) {
+      this.searchService.setInitState(InitState.InitFinished);
       console.log(this.i);
-      console.log(this.searchService.getBoundingBox());
-      if (this.searchService.getBoundingBox()) {
-        map.fitBounds(this.searchService.getBoundingBox());
-        this.searchService.setBoundingBox(null);
-      } else {
-        this.gridService.getBBox().subscribe(bbox  => {
-          if (bbox && this.i > 2) {
-            map.fitBounds(bbox);
+      map.fitBounds(this.searchService.getBoundingBox());
+    }
+    if (this.searchService.getState() !== SearchState.DrawingComplete && this.searchService.getInitState() === InitState.InitFinished) {
+      this.searchService.setState(SearchState.DrawingComplete);
+      this.gridService.getBBox().then(bbox  => {
+        if (bbox) {
+          if (this.searchService.getInitState() !== InitState.InitFinished) {
+            this.searchService.setInitState(InitState.InitFinished);
+            return;
           }
-        });
-      }
+          map.fitBounds(bbox);
+        }
+      });
     }
   }
 }

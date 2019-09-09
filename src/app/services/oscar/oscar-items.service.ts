@@ -35,6 +35,9 @@ export class OscarItemsService {
       this.itemStore.binaryItems = itemList;
       this.itemStore.binaryItemsFinished();
       this.gridService.buildGrid();
+      const bounds = this.mapService.bounds;
+      this.gridService.setCurrentItems(bounds.getSouth(),
+        bounds.getWest(), bounds.getNorth(), bounds.getEast());
     });
   }
   getLocalItems(queryString: string) {

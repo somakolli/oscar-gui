@@ -14,12 +14,13 @@ export class GridService {
   gridMap = new Map<string, OscarMinItem[]>();
   gridSizeY = 3600;
   gridSizeX = 1800;
-  private readonly _buildStatus = new BehaviorSubject<boolean>(false);
-  buildStatus$ = this._buildStatus.asObservable();
+  private buildStatus = false;
   // divide lat and long fields by gridSize lat = [-90, +90] long = [-180,180]
   divLat = 180 / this.gridSizeX;
   divLon = 360 / this.gridSizeY;
-  constructor(private itemStore: ItemStoreService) { }
+  constructor(private itemStore: ItemStoreService) {
+
+  }
   buildGrid() {
     this.gridMap = new Map<string, OscarMinItem[]>();
     for (const item of this.itemStore.binaryItems) {
@@ -30,7 +31,7 @@ export class GridService {
       }
       this.gridMap.get(JSON.stringify({lat: latGridPos, lon: lonGridPos})).push(item);
     }
-    this.buildGridFinished();
+    this.buildStatus = true;
   }
   setCurrentItems(minLat: number, minLon: number, maxLat: number, maxLon: number) {
     this.itemStore.currentItemIds = [];
@@ -67,15 +68,11 @@ export class GridService {
     // calculate distance from the first cell in the grid divided by the divisor("resolution") and rounded down
     return Math.floor(lon / this.divLon);
   }
-  private buildGridFinished() {
-    this._buildStatus.next(true);
-  }
-  getStatus(): boolean {
-    return this._buildStatus.getValue();
-  }
-  getBBox(): Observable<L.LatLngBounds> {
-    const bbox = new BehaviorSubject<LatLngBounds>(null)
-    this.buildStatus$.subscribe( state => {
+  getBBox(): Promise<L.LatLngBounds> {
+    return new Promise((resolve, reject) => {
+      if (!this.buildStatus) {
+        reject('grid not finished');
+      }
       let minLat = 100000;
       let minLon = 100000;
       let maxLat = -100000;
@@ -99,8 +96,7 @@ export class GridService {
       });
       const southWest = L.latLng(minLat , minLon);
       const northEast = L.latLng(maxLat , maxLon);
-      bbox.next(L.latLngBounds(southWest, northEast));
+      resolve(new L.latLngBounds(southWest, northEast));
     });
-    return bbox.asObservable();
   }
 }
