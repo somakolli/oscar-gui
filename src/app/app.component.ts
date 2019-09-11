@@ -7,6 +7,7 @@ import * as L from 'leaflet';
 import {MapService} from './services/map/map.service';
 import {InitState} from './models/state/search-state.enum';
 import {RefinementType} from './models/gui/refinement';
+import keyValueTags from '../assets/keyValueTags.json';
 
 @Component({
   selector: 'app-root',
