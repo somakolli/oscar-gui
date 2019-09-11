@@ -5,6 +5,7 @@ import {OscarItemsService} from '../../../services/oscar/oscar-items.service';
 import {ItemStoreService} from '../../../services/data/item-store.service';
 import {MapService} from '../../../services/map/map.service';
 import {OscarMinItem} from '../../../models/oscar/oscar-min-item';
+import {LocationService} from '../../../services/location.service';
 
 @Component({
   selector: 'app-item-list',
@@ -12,17 +13,22 @@ import {OscarMinItem} from '../../../models/oscar/oscar-min-item';
   styleUrls: ['./item-list.component.sass']
 })
 export class ItemListComponent implements OnInit {
-  localSearch = true;
+  position;
+  geoLocationItem: OscarItem;
   items: OscarItem[] = new Array<OscarItem>();
   localItems: OscarItem[] = new Array<OscarItem>();
   totalCount = 0;
   localCount = 0;
   fetchCount = 20;
   showTable = true;
-  constructor(private itemStore: ItemStoreService, private zone: NgZone, private mapService: MapService, private oscarService: OscarItemsService) {
+  constructor(private itemStore: ItemStoreService, private zone: NgZone, private mapService: MapService, private oscarService: OscarItemsService,
+              private locationService: LocationService) {
   }
 
   ngOnInit() {
+    this.locationService.getPosition().then(location => {
+      this.position = location;
+    }, (err) => {});
     this.itemStore.binaryItemsFinished$.subscribe(() => {
       if (this.itemStore.binaryItems.length === 0) {
         return;

@@ -2,6 +2,7 @@
     <button class="btn btn-link item-name" type="button" data-toggle="collapse" [attr.data-target] = "'#item-' + oscarItem.properties.id" aria-expanded="true" aria-controls="collapseOne">
       {{oscarItem.properties.name}}
     </button>
+    <span *ngIf="distance" class="badge" style="background-color: lightblue">{{distance}} km</span>
     <i (click) = "panTo()" class="fas fa-greater-than pan-to-button"></i>
 </div>
 

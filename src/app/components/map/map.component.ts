@@ -9,6 +9,7 @@ import {OscarItemsService} from '../../services/oscar/oscar-items.service';
 import {SearchService} from '../../services/state/search.service';
 import {InitState, SearchState} from '../../models/state/search-state.enum';
 import {MapStateService} from '../../services/state/map-state.service';
+import {LocationService} from '../../services/location.service';
 
 declare var L;
 declare var HeatmapOverlay;
@@ -50,7 +51,8 @@ export class MapComponent implements OnInit {
               private timer: TimerService,
               private oscarItemsService: OscarItemsService,
               private searchService: SearchService,
-              private mapState: MapStateService) { }
+              private mapState: MapStateService,
+              private locationService: LocationService) { }
 
   ngOnInit() {
   }
@@ -86,6 +88,18 @@ export class MapComponent implements OnInit {
     this.layerGroup.clearLayers();
     let length = 0;
     length = this.itemStore.currentItemIds.length;
+    this.locationService.getPosition().then(location => {
+      const greenIcon = new L.Icon({
+        iconUrl: 'https://cdn.rawgit.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowSize: [41, 41]
+      });
+      const marker = L.marker([location.lat, location.lng], {icon: greenIcon}).addTo(this.layerGroup);
+      marker.bindPopup('This is your current location.');
+    }, () => {});
     if (length <= this.markerThreshold) {
       this.oscarItemsService.getMultipleItems(this.itemStore.currentItemIds).subscribe(data => {
         const items = data.features;

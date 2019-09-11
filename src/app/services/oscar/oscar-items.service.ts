@@ -11,6 +11,7 @@ import {OscarApxstats} from '../../models/oscar/oscar-apxstats';
 import {FacetRefinements, ParentRefinements} from '../../models/oscar/refinements';
 import {SearchState} from '../../models/state/search-state.enum';
 import {SearchService} from '../state/search.service';
+import {LocationService} from '../location.service';
 
 @Injectable({
   providedIn: 'root'
@@ -21,7 +22,8 @@ export class OscarItemsService {
               private itemStore: ItemStoreService,
               private mapService: MapService,
               private gridService: GridService,
-              private searchService: SearchService) { }
+              private searchService: SearchService,
+              private locationService: LocationService) { }
   getItemsBinary(queryString: string) {
     const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/itemswithlocation?q=${encodeURIComponent(queryString)}`;
     this.http.get(itemUrl, {responseType: 'arraybuffer'}).subscribe(itemArray => {
@@ -32,12 +34,18 @@ export class OscarItemsService {
         itemList.push({id: returnArray[i], lat: this.toDoubleLat(returnArray[i + 1]), lon: this.toDoubleLon(returnArray[i + 2])});
         j++;
       }
-      this.itemStore.binaryItems = itemList;
-      this.itemStore.binaryItemsFinished();
-      this.gridService.buildGrid();
-      const bounds = this.mapService.bounds;
-      this.gridService.setCurrentItems(bounds.getSouth(),
-        bounds.getWest(), bounds.getNorth(), bounds.getEast());
+      this.locationService.getPosition().then((location) => {
+        this.itemStore.binaryItems = itemList.sort((a, b) => {
+          return this.locationService.getDistanceFromLatLonInKm(a.lat, a.lon, location.lat, location.lng) -
+            this.locationService.getDistanceFromLatLonInKm(b.lat, b.lon, location.lat, location.lng);
+        });
+      }, (err) => { this.itemStore.binaryItems = itemList; }).finally(() => {
+        this.itemStore.binaryItemsFinished();
+        this.gridService.buildGrid();
+        const bounds = this.mapService.bounds;
+        this.gridService.setCurrentItems(bounds.getSouth(),
+          bounds.getWest(), bounds.getNorth(), bounds.getEast());
+      });
     });
   }
   getLocalItems(queryString: string) {
