@@ -179,7 +179,7 @@ export class MapComponent implements OnInit {
           }
           map.fitBounds(bbox);
         }
-      });
+      }).catch();
     }
   }
 }
