@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Facet} from '../../../../models/oscar/refinements';
+import {Facet} from '../../../models/oscar/refinements';
 
 @Component({
   selector: 'app-refinement-detail',

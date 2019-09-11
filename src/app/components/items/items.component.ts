@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {ItemStoreService} from '../../../services/data/item-store.service';
-import {SearchService} from '../../../services/state/search.service';
-import {SearchState} from '../../../models/state/search-state.enum';
+import {ItemStoreService} from '../../services/data/item-store.service';
+import {SearchService} from '../../services/state/search.service';
+import {SearchState} from '../../models/state/search-state.enum';
 
 @Component({
   selector: 'app-items',

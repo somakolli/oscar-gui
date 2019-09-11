@@ -59,6 +59,9 @@ export class MapComponent implements OnInit {
   onMapReady(map: L.Map) {
     this.mapService.map = map;
     this.itemStore.binaryItemsFinished$.subscribe((status) => {
+      if (!status) {
+        return;
+      }
       const bounds = map.getBounds();
       if (!this.gridService.getStatus()) {
         this.gridService.buildStatus$.subscribe((buildStatus) => {
@@ -93,6 +96,9 @@ export class MapComponent implements OnInit {
     this.layerGroup.clearLayers();
     let length = 0;
     length = this.itemStore.currentItemIds.length;
+    if (length === 0) {
+      return;
+    }
     const streets = true;
     if (length <= this.markerThreshold) {
       /*for ( const item of this.itemStore.currentItemIds) {

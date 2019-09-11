@@ -1,6 +1,6 @@
 import {Component, OnInit, Renderer2} from '@angular/core';
-import {SuggestionsService} from '../../../../services/data/suggestions.service';
-import {Suggestion, TagSuggestion} from '../../../../models/osm/tag-suggestion';
+import {SuggestionsService} from '../../../services/data/suggestions.service';
+import {Suggestion, TagSuggestion} from '../../../models/osm/tag-suggestion';
 
 @Component({
   selector: 'app-suggestions',

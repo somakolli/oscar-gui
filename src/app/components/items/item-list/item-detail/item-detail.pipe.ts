@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {OscarItem} from '../../../../../models/oscar/oscar-item';
+import {OscarItem} from '../../../../models/oscar/oscar-item';
 
 @Pipe({
   name: 'itemDetail'

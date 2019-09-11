@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Suggestion} from '../../../../../models/osm/tag-suggestion';
+import {Suggestion} from '../../../../models/osm/tag-suggestion';
 
 @Component({
   selector: 'app-suggestion-detail',

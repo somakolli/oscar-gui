@@ -1,8 +1,8 @@
 import {Component, Input, NgZone, OnInit} from '@angular/core';
-import {OscarItem} from '../../../../../models/oscar/oscar-item';
-import {ItemStoreService} from '../../../../../services/data/item-store.service';
-import {MapService} from '../../../../../services/map/map.service';
-import {OscarMinItem} from '../../../../../models/oscar/oscar-min-item';
+import {OscarItem} from '../../../../models/oscar/oscar-item';
+import {ItemStoreService} from '../../../../services/data/item-store.service';
+import {MapService} from '../../../../services/map/map.service';
+import {OscarMinItem} from '../../../../models/oscar/oscar-min-item';
 
 @Component({
   selector: 'app-item-detail',

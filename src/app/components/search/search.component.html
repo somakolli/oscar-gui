@@ -1,5 +1,5 @@
 <div class="input-group">
-  <input autocomplete="off" [(ngModel)]="queryString" (ngModelChange)="inputUpdate()" (keydown.enter)="search()" type="text" class="search-input" placeholder="Search" >
+  <input autocomplete="off" [(ngModel)]="inputString" (ngModelChange)="inputUpdate()" (keydown.enter)="search()" type="text" class="search-input" placeholder="Search" >
 </div>
 <div [hidden] = "!error" class="alert alert-danger" role="alert">
   Result to large. Please refine query.
