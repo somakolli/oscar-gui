@@ -1,7 +1,14 @@
-export class KeyRefinement {
+export enum RefinementType {
+  Parent,
+  Key,
+  KeyValue
+}
+export class Refinement {
   id: number;
   key = '';
-}
-export class KeyValueRefinement extends KeyRefinement {
   value = '';
+  refinementType: RefinementType;
+}
+export class ActiveRefinement extends Refinement {
+  excluding: boolean;
 }

@@ -22,7 +22,6 @@ import { ItemKvTableComponent } from './components/item-kv-table/item-kv-table.c
 import { SuggestionsComponent } from './components/search/suggestions/suggestions.component';
 import { SuggestionDetailComponent } from './components/search/suggestions/suggestion-detail/suggestion-detail.component';
 import { RefinementsComponent } from './components/refinements/refinements.component';
-import { RefinementDetailComponent } from './components/refinements/refinement-detail/refinement-detail.component';
 import { ActiveRefinementsComponent } from './components/active-refinements/active-refinements.component';
 import { FacetsComponent } from './components/refinements/facets/facets.component';
 import { FacetsDetailComponent } from './components/refinements/facets/facets-detail/facets-detail.component';
@@ -47,7 +46,6 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     SuggestionsComponent,
     SuggestionDetailComponent,
     RefinementsComponent,
-    RefinementDetailComponent,
     ActiveRefinementsComponent,
     FacetsComponent,
     FacetsDetailComponent,

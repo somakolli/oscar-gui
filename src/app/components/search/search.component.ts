@@ -6,6 +6,7 @@ import {InitState, SearchState} from '../../models/state/search-state.enum';
 import {OsmService} from '../../services/osm/osm.service';
 import {SuggestionsService} from '../../services/data/suggestions.service';
 import {RefinementsService} from '../../services/data/refinements.service';
+import {RefinementType} from '../../models/gui/refinement';
 
 @Component({
   selector: 'app-search',
@@ -16,7 +17,6 @@ export class SearchComponent implements OnInit {
   constructor(private oscarItemService: OscarItemsService, public itemStore: ItemStoreService, public searchService: SearchService,
               private osmService: OsmService, private suggestionStore: SuggestionsService, public refinementStore: RefinementsService) { }
   error = false;
-  appendix = '';
   inputString = '';
   queryString = '';
   keyPrependix = '';
@@ -25,12 +25,6 @@ export class SearchComponent implements OnInit {
   keyAppendix = '';
   keyValueAppendix = '';
   parentAppendix = '';
-  initKeyPrependix = true;
-  initKeyValuePrependix = true;
-  initParentPrependix = true;
-  initKeyAppendix = true;
-  initKeyValueAppendix = true;
-  initParentAppendix = true;
   first = true;
   ngOnInit() {
     this.searchService.initState$.subscribe(state => {
@@ -55,70 +49,37 @@ export class SearchComponent implements OnInit {
         this.error = false;
       }
     });
-    this.refinementStore.keyValueRefinements$.subscribe(keyValueRefinements => {
+    this.refinementStore.refinements$.subscribe(refinements => {
       this.keyValuePrependix = '';
-      if (this.initKeyValuePrependix) {
-        this.initKeyValuePrependix = false;
-        return;
-      }
-      keyValueRefinements.forEach(refinement => {
-        this.keyValuePrependix += `@${refinement.key}:${refinement.value} `;
-      });
-      this.search();
-    });
-    this.refinementStore.keyRefinements$.subscribe(keyRefinements => {
+      refinements.filter(refinement => refinement.refinementType === RefinementType.KeyValue && refinement.excluding === false)
+        .forEach(refinement => {
+          this.keyValuePrependix += `@${refinement.key}:${refinement.value} `;
+        });
       this.keyPrependix = '';
-      if (this.initKeyPrependix) {
-        this.initKeyPrependix = false;
-        return;
-      }
-      keyRefinements.forEach(refinement => {
-        this.keyPrependix += `@${refinement.key} `;
-      });
-      this.search();
-    });
-    this.refinementStore.parentRefinements$.subscribe(parentRefinements => {
+      refinements.filter(refinement => refinement.refinementType === RefinementType.Key && refinement.excluding === false)
+        .forEach(refinement => {
+          this.keyValuePrependix += `@${refinement.key} `;
+        });
       this.parentPrependix = '';
-      if (this.parentPrependix) {
-        this.initParentPrependix = false;
-        return;
-      }
-      parentRefinements.forEach(refinement => {
-        this.parentPrependix += `"${refinement}" `;
-      });
-      this.search();
-    });
-    this.refinementStore.exKeyValueRefinements$.subscribe(keyValueRefinements => {
+      refinements.filter(refinement => refinement.refinementType === RefinementType.Parent && refinement.excluding === false)
+        .forEach(refinement => {
+          this.parentPrependix += `"${refinement.value}" `;
+        });
       this.keyValueAppendix = '';
-      if (this.initKeyValueAppendix) {
-        this.initKeyValueAppendix = false;
-        return;
-      }
-      keyValueRefinements.forEach(refinement => {
-        this.keyValueAppendix += `-@${refinement.key}:${refinement.value} `;
-      });
-      this.search();
-    });
-    this.refinementStore.exKeyRefinements$.subscribe(keyRefinements => {
+      refinements.filter(refinement => refinement.refinementType === RefinementType.KeyValue && refinement.excluding === true)
+        .forEach(refinement => {
+          this.keyValueAppendix += `-@${refinement.key}:${refinement.value} `;
+        });
       this.keyAppendix = '';
-      if (this.initKeyAppendix) {
-        this.initKeyAppendix = false;
-        return;
-      }
-      keyRefinements.forEach(refinement => {
-        this.keyAppendix += `-@${refinement.key} `;
-      });
-      this.search();
-    });
-    this.refinementStore.exParentRefinements$.subscribe(parentRefinements => {
+      refinements.filter(refinement => refinement.refinementType === RefinementType.Key && refinement.excluding === true)
+        .forEach(refinement => {
+          this.keyAppendix += `-@${refinement.key} `;
+        });
       this.parentAppendix = '';
-      if (this.initParentAppendix) {
-        this.initParentAppendix = false;
-        return;
-      }
-      parentRefinements.forEach(refinement => {
-        this.parentAppendix += `-"${refinement}" `;
-      });
+      refinements.filter(refinement => refinement.refinementType === RefinementType.Parent && refinement.excluding === true)
+        .forEach(refinement => {
+          this.parentAppendix += `-"${refinement}" `;
+        });
       this.search();
     });
   }
@@ -162,18 +123,6 @@ export class SearchComponent implements OnInit {
       } else if (keyValue.length === 1) {
         value = keyValue[0];
       }
-      // this.osmService.getTagSuggestions(key, value).subscribe(suggestions => {
-      //  this.suggestionStore.setSuggestions(suggestions);
-      // });
-    }
-  }
-
-  streetsChanged() {
-    this.itemStore.streets = !this.itemStore.streets;
-    if (this.itemStore.streets) {
-      this.refinementStore.addKeyRefinement({key: 'highway', id: 0});
-    } else {
-      this.refinementStore.hasKeyRefinement({key: 'highway', id: 0});
     }
   }
 }

@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Facet, FacetValues} from '../../../../models/oscar/refinements';
 import {RefinementsService} from '../../../../services/data/refinements.service';
+import {RefinementType} from '../../../../models/gui/refinement';
 
 @Component({
   selector: 'app-facets-detail',
@@ -16,17 +17,21 @@ export class FacetsDetailComponent implements OnInit {
   }
 
   addKeyRefinement() {
-    this.refinementService.addKeyRefinement({key: this.facet.key, id: this.facet.keyId});
+    this.refinementService
+      .addRefinement({key: this.facet.key, value: '', id: this.facet.keyId, refinementType: RefinementType.Key, excluding: false});
   }
 
   addkeyValueRefinement(value: FacetValues) {
-    this.refinementService.addKeyValueRefinement({id: 0, value: value.name, key: this.facet.key});
+    this.refinementService
+      .addRefinement({key: this.facet.key, value: value.name, id: this.facet.keyId, refinementType: RefinementType.KeyValue, excluding: false});
   }
   addExKeyRefinement() {
-    this.refinementService.addExKeyRefinement({key: this.facet.key, id: this.facet.keyId});
+    this.refinementService
+      .addRefinement({key: this.facet.key, value: '', id: this.facet.keyId, refinementType: RefinementType.Key, excluding: true});
   }
 
   addExKeyValueRefinement(value: FacetValues) {
-    this.refinementService.addExKeyValueRefinement({id: 0, value: value.name, key: this.facet.key});
+    this.refinementService
+      .addRefinement({key: this.facet.key, value: value.name, id: this.facet.keyId, refinementType: RefinementType.KeyValue, excluding: true});
   }
 }
