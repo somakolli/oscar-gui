@@ -99,6 +99,9 @@ export class MapComponent implements OnInit {
         const myMarker = L.marker([item.lat, item.lon]).addTo(this.layerGroup);
         myMarker.bindPopup(test);
       }*/
+      if (this.itemStore.currentItemIds.length === 0) {
+        return;
+      }
       this.oscarItemsService.getMultipleItems(this.itemStore.currentItemIds).subscribe(data => {
         const items = data.features;
         // draw markers
@@ -163,7 +166,7 @@ export class MapComponent implements OnInit {
     }
     this.heatmapLayer.setData(this.data);
     if (this.searchService.getState() !== SearchState.DrawingComplete) {
-      if (this.i === 0 && !this.searchService.getBoundingBox()){
+      if (this.i === 0 && !this.searchService.getBoundingBox()) {
         this.i = 2;
       }
       this.i++;

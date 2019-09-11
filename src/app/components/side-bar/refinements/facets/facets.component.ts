@@ -15,6 +15,9 @@ export class FacetsComponent implements OnInit {
   facets: FacetRefinements;
   ngOnInit() {
     this.searchService.queryString$.subscribe(queryString => {
+      if (queryString === '') {
+        return;
+      }
       this.oscarService.getFacets(queryString).subscribe( facets => {
         this.facets = facets;
       });

@@ -13,14 +13,7 @@ export class RefinementsComponent implements OnInit {
   constructor(private searchService: SearchService, private oscarService: OscarItemsService) { }
 
   showTable = true;
-  facets: FacetRefinements;
   ngOnInit() {
-    this.searchService.queryString$.subscribe(queryString => {
-      console.log(queryString);
-      this.oscarService.getFacets(queryString).subscribe( facets => {
-        this.facets = facets;
-      });
-    });
   }
 
 }

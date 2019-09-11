@@ -6,6 +6,7 @@ import {SearchState} from '../../../models/state/search-state.enum';
 import {OsmService} from '../../../services/osm/osm.service';
 import {SuggestionsService} from '../../../services/data/suggestions.service';
 import {RefinementsService} from '../../../services/data/refinements.service';
+import {RefinementType} from '../../../models/gui/refinement';
 
 @Component({
   selector: 'app-search',
@@ -26,65 +27,44 @@ export class SearchComponent implements OnInit {
   parentAppendix = '';
   first = true;
   ngOnInit() {
-    this.searchService.partQueryString$.subscribe(queryString => {
-      if (queryString !== '') {
-        this.queryString = decodeURI(queryString);
-        if (this.first) {
-          this.search();
-          this.first = false;
-        }
-      }
-    });
-    this.suggestionStore.selectedSuggestion$.subscribe(suggestion => {
-      if (suggestion) {
-        const strings = this.queryString.split(' ');
-        this.queryString = this.queryString.replace(strings[strings.length - 1], `@${suggestion.key}:${suggestion.value}`);
-      }
-    });
-    this.refinementStore.keyValueRefinements$.subscribe(keyValueRefinements => {
+    this.refinementStore.refinements$.subscribe(refinements => {
       this.keyValuePrependix = '';
-      keyValueRefinements.forEach(refinement => {
+      refinements.filter(refinement => refinement.refinementType === RefinementType.KeyValue && refinement.excluding === false)
+        .forEach(refinement => {
         this.keyValuePrependix += `@${refinement.key}:${refinement.value} `;
       });
-      this.search();
-    });
-    this.refinementStore.keyRefinements$.subscribe(keyRefinements => {
       this.keyPrependix = '';
-      keyRefinements.forEach(refinement => {
+      refinements.filter(refinement => refinement.refinementType === RefinementType.Key && refinement.excluding === false)
+        .forEach(refinement => {
         this.keyValuePrependix += `@${refinement.key} `;
       });
-      this.search();
-    });
-    this.refinementStore.parentRefinements$.subscribe(parentRefinements => {
       this.parentPrependix = '';
-      parentRefinements.forEach(refinement => {
-        this.parentPrependix += `"${refinement}" `;
+      refinements.filter(refinement => refinement.refinementType === RefinementType.Parent && refinement.excluding === false)
+        .forEach(refinement => {
+        this.parentPrependix += `"${refinement.value}" `;
       });
-      this.search();
-    });
-    this.refinementStore.exKeyValueRefinements$.subscribe(keyValueRefinements => {
       this.keyValueAppendix = '';
-      keyValueRefinements.forEach(refinement => {
+      refinements.filter(refinement => refinement.refinementType === RefinementType.KeyValue && refinement.excluding === true)
+        .forEach(refinement => {
         this.keyValueAppendix += `-@${refinement.key}:${refinement.value} `;
       });
-      this.search();
-    });
-    this.refinementStore.exKeyRefinements$.subscribe(keyRefinements => {
       this.keyAppendix = '';
-      keyRefinements.forEach(refinement => {
+      refinements.filter(refinement => refinement.refinementType === RefinementType.Key && refinement.excluding === true)
+        .forEach(refinement => {
         this.keyAppendix += `-@${refinement.key} `;
       });
-      this.search();
-    });
-    this.refinementStore.exParentRefinements$.subscribe(parentRefinements => {
       this.parentAppendix = '';
-      parentRefinements.forEach(refinement => {
+      refinements.filter(refinement => refinement.refinementType === RefinementType.Parent && refinement.excluding === true)
+        .forEach(refinement => {
         this.parentAppendix += `-"${refinement}" `;
       });
       this.search();
     });
   }
   search(): void {
+    if (this.queryString === '') {
+      return;
+    }
     const fullQueryString = this.keyPrependix + this.keyValuePrependix + this.parentPrependix
       + this.queryString + this.keyAppendix + this.parentAppendix + this.keyValueAppendix;
     this.searchService.setQuery(fullQueryString);
@@ -121,15 +101,6 @@ export class SearchComponent implements OnInit {
       // this.osmService.getTagSuggestions(key, value).subscribe(suggestions => {
       //  this.suggestionStore.setSuggestions(suggestions);
       // });
-    }
-  }
-
-  streetsChanged() {
-    this.itemStore.streets = !this.itemStore.streets;
-    if (this.itemStore.streets) {
-      this.refinementStore.addKeyRefinement({key: 'highway', id: 0});
-    } else {
-      this.refinementStore.hasKeyRefinement({key: 'highway', id: 0});
     }
   }
 }

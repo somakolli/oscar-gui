@@ -31,13 +31,13 @@ export class ItemListComponent implements OnInit {
       }
     });
     this.itemStore.currentItemIdsFinished$.subscribe(() => {
-      this.localCount = this.itemStore.currentItemIds.length;
+      console.log('current item ids finished');
       this.localItems = [];
-      this.oscarService.getItemsInfo(this.itemStore.currentItemIds.slice(0, this.fetchCount)).subscribe(
-        items => {
-          this.zone.run( () => this.localItems.push(...items));
-        }
-      );
+      this.zone.run( () => this.localCount = this.itemStore.currentItemIds.length);
+      if (this.localCount === 0) {
+        return;
+      }
+      this.queryNewLocalItems(this.fetchCount);
     });
   }
   onScrollDown() {
@@ -45,19 +45,22 @@ export class ItemListComponent implements OnInit {
   }
   onLocalScrollDown() {
     this.queryNewLocalItems(this.fetchCount);
-    console.log('scroll-down');
   }
   queryNewLocalItems(count: number) {
+    console.log('query new local items');
     const currentLength = this.localItems.length;
     this.oscarService.getItemsInfo(this.itemStore.currentItemIds.slice(currentLength, currentLength + this.fetchCount)).subscribe(
       items => {
-          this.localItems.push(...items);
+          this.zone.run(() => this.localItems.push(...items));
       }
     );
   }
   queryNewItems(count: number) {
+    console.log('query new global items');
     const currentLength = this.items.length;
     this.oscarService.getItemsInfo(this.itemStore.binaryItems.
-    slice(currentLength, currentLength + this.fetchCount)).subscribe(items => this.items.push(...items));
+      slice(currentLength, currentLength + this.fetchCount)).subscribe(
+        items => this.zone.run(() => this.items.push(...items))
+    );
   }
 }

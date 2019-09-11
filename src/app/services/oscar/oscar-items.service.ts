@@ -23,6 +23,9 @@ export class OscarItemsService {
               private gridService: GridService,
               private searchService: SearchService) { }
   getItemsBinary(queryString: string) {
+    if (queryString === '') {
+      return;
+    }
     const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/itemswithlocation?q=${encodeURIComponent(queryString)}`;
     this.http.get(itemUrl, {responseType: 'arraybuffer'}).subscribe(itemArray => {
       const returnArray = new Uint32Array(itemArray);
@@ -38,6 +41,9 @@ export class OscarItemsService {
     });
   }
   getLocalItems(queryString: string) {
+    if (queryString === '') {
+      return;
+    }
     const northEast = this.mapService.bounds.getNorthEast();
     const southWest = this.mapService.bounds.getSouthWest();
     const minLat = Math.max(southWest.lat, -90);
@@ -54,10 +60,16 @@ export class OscarItemsService {
     });
   }
   getApxItemCount(queryString: string): Observable<OscarApxstats> {
+    if (queryString === '') {
+      return;
+    }
     const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/apxstats?q=${encodeURI(queryString)}&rf=admin_level`;
     return this.http.get<OscarApxstats>(itemUrl);
   }
   getItemsInfo(items: OscarMinItem[]): Observable<OscarItem[]> {
+    if (items.length === 0) {
+      return;
+    }
     const ids = new Array<number>();
     items.forEach(item => ids.push(item.id));
     const queryString = this.configService.getOscarUrl() + `/oscar/items/info?i=${JSON.stringify(ids)}`;
@@ -72,16 +84,25 @@ export class OscarItemsService {
     return this.http.get<OscarItem[]>(queryString);
   }
   getParents(query: string): Observable<ParentRefinements> {
+    if (query === '') {
+      return;
+    }
     return this.http.get<ParentRefinements>(
       this.configService.getOscarUrl() + `/oscar/kvclustering/get?queryId=1&q=${encodeURIComponent(query)}+&rf=admin_level&type=p&maxRefinements=20`
     );
   }
   getFacets(query: string): Observable<FacetRefinements> {
+    if (query === '') {
+      return;
+    }
     return this.http.get<FacetRefinements>(
       this.configService.getOscarUrl() + `/oscar/kvclustering/get?queryId=1&q=${encodeURIComponent(query)}+&rf=admin_level&type=f&maxRefinements=20&exceptions=%5B%5D&debug=true&keyExceptions=%5B%22wheelchair%22%2C+%22addr%22%2C+%22level%22%2C+%22toilets%3Awheelchair%22%2C+%22building%22%2C+%22source%22%2C+%22roof%22%5D&facetSizes=%5B%5D&defaultFacetSize=10`
     );
   }
   getMultipleItems(items: OscarMinItem[]): any {
+    if (items.length === 0) {
+      return;
+    }
     const ids = new Array<number>();
     items.forEach(item => ids.push(item.id));
     const formdata = new FormData();

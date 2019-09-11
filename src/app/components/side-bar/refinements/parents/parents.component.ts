@@ -15,6 +15,9 @@ export class ParentsComponent implements OnInit {
 
   ngOnInit() {
     this.searchService.queryString$.subscribe(queryString => {
+      if (queryString === '') {
+        return;
+      }
       this.oscarService.getParents(queryString).subscribe( parents => {
         this.parents = parents;
       });

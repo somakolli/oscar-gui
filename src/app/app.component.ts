@@ -1,9 +1,10 @@
 import {Component, OnInit} from '@angular/core';
 import {SearchService} from './services/state/search.service';
-import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import {Location, LocationStrategy, PathLocationStrategy} from '@angular/common';
 import {MapStateService} from './services/state/map-state.service';
 import {RefinementsService} from './services/data/refinements.service';
 import * as L from 'leaflet';
+import {RefinementType} from './models/gui/refinement';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +24,6 @@ export class AppComponent implements OnInit {
       const params = this.location.path().replace('/', '').replace('?', '').split('&');
       for (const param of params) {
         const keyValuePair = param.split('=');
-        console.log(keyValuePair[0]);
         if (keyValuePair[0] === 'q') {
           this.searchService.setPartQueryString(keyValuePair[1]);
         }
@@ -37,7 +37,9 @@ export class AppComponent implements OnInit {
           const keyRefinements = keyValuePair[1].split(',');
           for (const keyRefinementString of keyRefinements) {
             if (keyRefinementString !== '') {
-              this.refinementService.addKeyRefinement({id: 0, key: decodeURI(keyRefinementString)});
+              this.refinementService.addRefinement(
+                {id: 0, key: decodeURI(keyRefinementString), value: '', refinementType: RefinementType.Key, excluding: false}
+                );
             }
           }
         }
@@ -45,7 +47,7 @@ export class AppComponent implements OnInit {
           const keyRefinements = keyValuePair[1].split(',');
           for (const keyRefinementString of keyRefinements) {
             if (keyRefinementString !== '') {
-              this.refinementService.addExKeyRefinement({id: 0, key: decodeURI(keyRefinementString)});
+              this.refinementService.addRefinement({id: 0, key: decodeURI(keyRefinementString), value: '', refinementType: RefinementType.Key, excluding: true});
             }
           }
         }
@@ -54,8 +56,8 @@ export class AppComponent implements OnInit {
           for (const keyValueRefinementString of keyValueRefinements) {
             if (keyValueRefinementString !== '') {
               const refinementKeyValuePair = keyValueRefinementString.split(':');
-              this.refinementService.addKeyValueRefinement(
-                {id: 0, key: decodeURI(refinementKeyValuePair[0]), value: decodeURI(refinementKeyValuePair[1])}
+              this.refinementService.addRefinement(
+                {id: 0, key: decodeURI(refinementKeyValuePair[0]), value: decodeURI(refinementKeyValuePair[1]), refinementType: RefinementType.KeyValue, excluding: false}
                 );
             }
           }
@@ -64,7 +66,15 @@ export class AppComponent implements OnInit {
           const parentRefinements = keyValuePair[1].split(',');
           for (const parent of parentRefinements) {
             if (parent !== '') {
-              this.refinementService.addParentRefinement(decodeURI(parent));
+              this.refinementService.addRefinement({id: 0, value: decodeURI(parent), key: '', refinementType: RefinementType.KeyValue, excluding: false});
+            }
+          }
+        }
+        if (keyValuePair[0] === 'ep') {
+          const parentRefinements = keyValuePair[1].split(',');
+          for (const parent of parentRefinements) {
+            if (parent !== '') {
+              this.refinementService.addRefinement({id: 0, value: decodeURI(parent), key: '', refinementType: RefinementType.KeyValue, excluding: true});
             }
           }
         }
@@ -77,11 +87,7 @@ export class AppComponent implements OnInit {
     this.mapState.bounds$.subscribe(b => {
       this.changeUrl();
     });
-    this.refinementService.keyRefinements$.subscribe(() => this.changeUrl());
-    this.refinementService.exKeyRefinements$.subscribe(() => this.changeUrl());
-    this.refinementService.keyValueRefinements$.subscribe(() => this.changeUrl());
-    this.refinementService.exKeyValueRefinements$.subscribe(() => this.changeUrl());
-    this.refinementService.parentRefinements$.subscribe(() => this.changeUrl());
+    this.refinementService.refinements$.subscribe(() => this.changeUrl());
   }
 
   changeUrl() {
@@ -93,31 +99,33 @@ export class AppComponent implements OnInit {
       return;
     }
     let parentRefinementsString = 'p=';
-    const parentRefinements = this.refinementService.getParentRefinements();
-    for (const parentRefinement of parentRefinements) {
-      parentRefinementsString += encodeURI(parentRefinement) + ',';
-    }
+    this.refinementService.getRefinements()
+      .filter(refinement => refinement.refinementType === RefinementType.Parent && refinement.excluding === false)
+      .forEach(parentRefinement => parentRefinementsString += encodeURI(parentRefinement.value) + ',');
+    let exParentRefinementsString = 'ep=';
+    this.refinementService.getRefinements()
+      .filter(refinement => refinement.refinementType === RefinementType.Parent && refinement.excluding === true)
+      .forEach(parentRefinement => exParentRefinementsString += encodeURI(parentRefinement.value) + ',');
     let keyRefinementsString = 'k=';
-    const keyRefinements = this.refinementService.getKeyRefinements();
-    for (const keyRefinement of keyRefinements) {
-      keyRefinementsString += encodeURI(keyRefinement.key) + ',';
-    }
+    this.refinementService.getRefinements()
+      .filter(refinement => refinement.refinementType === RefinementType.Key && refinement.excluding === false)
+      .forEach(keyRefinement => keyRefinementsString += encodeURI(keyRefinement.key) + ',');
     let exKeyRefinementsString = 'ek=';
-    const exKeyRefinements = this.refinementService.getExKeyRefinements();
-    for (const keyRefinement of exKeyRefinements) {
-      exKeyRefinementsString += encodeURI(keyRefinement.key) + ',';
-    }
+    this.refinementService.getRefinements()
+      .filter(refinement => refinement.refinementType === RefinementType.Key && refinement.excluding === true)
+      .forEach(exKeyRefinement => exKeyRefinementsString += encodeURI(exKeyRefinement.key) + ',');
     let keyValueRefinementsString = 'kv=';
-    const keyValueRefinements = this.refinementService.getKeyValueRefinements();
-    for (const keyValueRefinement of keyValueRefinements) {
-      keyValueRefinementsString += encodeURI(keyValueRefinement.key) + ':' + keyValueRefinement.value + ',';
-    }
+    this.refinementService.getRefinements()
+      .filter(refinement => refinement.refinementType === RefinementType.KeyValue && refinement.excluding === false)
+      .forEach(keyValueRefinement => keyValueRefinementsString += encodeURI(keyValueRefinement.key) + ':' + keyValueRefinement.value + ',');
     let exKeyValueRefinementsString = 'ekv=';
-    const exKeyValueRefinements = this.refinementService.getExKeyValueRefinements();
-    for (const keyValueRefinement of exKeyValueRefinements) {
-      exKeyValueRefinementsString += encodeURI(keyValueRefinement.key) + ':' + keyValueRefinement.value + ',';
-    }
-    let urlString = `?q=${this.query}&b=${latLong.toBBoxString()}&${keyRefinementsString}&${exKeyRefinementsString}&${keyValueRefinementsString}&${exKeyValueRefinementsString}&${parentRefinementsString}`;
+    const exKeyValueRefinements = this.refinementService.getRefinements()
+      .filter(refinement => refinement.refinementType === RefinementType.KeyValue && refinement.excluding === true)
+      .forEach(
+        exKeyValueRefinement => exKeyValueRefinementsString += encodeURI(exKeyValueRefinement.key) + ':' + exKeyValueRefinement.value + ','
+      );
+    const urlString =
+      `?q=${this.query}&b=${latLong.toBBoxString()}&${keyRefinementsString}&${exKeyRefinementsString}&${keyValueRefinementsString}&${exKeyValueRefinementsString}&${parentRefinementsString}&${exParentRefinementsString}`;
     this.location.go(urlString);
   }
 
