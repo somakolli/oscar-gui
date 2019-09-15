@@ -20,13 +20,9 @@ export class ParentsComponent implements OnInit {
       if (searchState === SearchState.Success || searchState === SearchState.ToManyItems) {
         this.parents = null;
         this.queryId++;
-        console.log(this.queryId);
         this.oscarService.getParents(this.searchService.getQuery(), this.queryId).subscribe( parents => {
-          console.log(this.queryId);
-          console.log(parents.queryId);
           if (parents.queryId === this.queryId) {
               this.parents = parents;
-              console.log(this.parents);
           }
         });
       }
