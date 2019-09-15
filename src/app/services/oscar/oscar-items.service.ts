@@ -65,7 +65,7 @@ export class OscarItemsService {
     });
   }
   getApxItemCount(queryString: string): Observable<OscarApxstats> {
-    const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/apxstats?q=${encodeURI(queryString)}&rf=admin_level`;
+    const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/apxstats?q=${encodeURIComponent(queryString)}&rf=admin_level`;
     return this.http.get<OscarApxstats>(itemUrl);
   }
   getItemsInfo(items: OscarMinItem[]): Observable<OscarItem[]> {

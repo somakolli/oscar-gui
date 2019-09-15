@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { AppComponent } from './app.component';
 import { SearchComponent } from './components/search/search.component';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {OscarItemsService} from './services/oscar/oscar-items.service';
 import {HttpClientModule} from '@angular/common/http';
 import {ConfigService} from './config/config.service';
@@ -27,9 +27,10 @@ import { FacetsComponent } from './components/refinements/facets/facets.componen
 import { FacetsDetailComponent } from './components/refinements/facets/facets-detail/facets-detail.component';
 import { ParentsComponent } from './components/refinements/parents/parents.component';
 import { ParentsDetailComponent } from './components/refinements/parents/parents-detail/parents-detail.component';
-import {Location} from '@angular/common';
 import {RouterModule} from '@angular/router';
 import {DragDropModule} from '@angular/cdk/drag-drop';
+import {OverlayModule} from '@angular/cdk/overlay';
+import {MatAutocompleteModule, MatInputModule} from '@angular/material';
 
 @NgModule({
   declarations: [
@@ -60,7 +61,11 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     BrowserAnimationsModule,
     InfiniteScrollModule,
     RouterModule,
-    DragDropModule
+    DragDropModule,
+    ReactiveFormsModule,
+    OverlayModule,
+    MatInputModule,
+    MatAutocompleteModule
   ],
   providers: [OscarItemsService, ConfigService, ItemStoreService],
   bootstrap: [AppComponent]

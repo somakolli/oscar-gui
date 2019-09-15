@@ -7,7 +7,9 @@ import {OsmService} from '../../services/osm/osm.service';
 import {SuggestionsService} from '../../services/data/suggestions.service';
 import {RefinementsService} from '../../services/data/refinements.service';
 import {RefinementType} from '../../models/gui/refinement';
-
+import {FormControl} from '@angular/forms';
+declare function getOscarQuery(input);
+declare function autoFillSuggestions(input);
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
@@ -26,6 +28,10 @@ export class SearchComponent implements OnInit {
   keyValueAppendix = '';
   parentAppendix = '';
   first = true;
+  naturalInput = '';
+  suggestions = [];
+  myControl = new FormControl();
+  options: string[] = ['One', 'Two', 'Three'];
   ngOnInit() {
     this.searchService.initState$.subscribe(state => {
       console.log(state);
@@ -34,7 +40,7 @@ export class SearchComponent implements OnInit {
       }
     });
     this.searchService.inputQueryString$.subscribe(queryString => {
-      this.inputString = decodeURI(queryString);
+      this.inputString = decodeURIComponent(queryString);
       if (queryString !== '' && this.first) {
         this.first = false;
         this.search();
@@ -94,6 +100,8 @@ export class SearchComponent implements OnInit {
       this.searchService.setState(SearchState.NoQuery);
       return;
     }
+    console.log('translated query', getOscarQuery(this.inputString));
+    console.log('suggestions query', autoFillSuggestions(this.inputString));
     this.searchService.setInputQueryString(this.inputString);
     this.searchService.setQuery(fullQueryString);
     this.searchService.setState(SearchState.Pending);
@@ -109,20 +117,37 @@ export class SearchComponent implements OnInit {
   }
 
   inputUpdate() {
-    const strings = this.queryString.split(' ');
-    const potentialQueryString = strings[strings.length - 1];
-    if (!(potentialQueryString.charAt(0) === '@') || this.queryString === '') {
-      this.suggestionStore.setSuggestions(null);
-    } else {
-      const keyValue = potentialQueryString.replace('@', '').split(':');
-      let key = '';
-      let value = '';
-      if (keyValue.length === 2) {
-        key = keyValue[0];
-        value = keyValue[1];
-      } else if (keyValue.length === 1) {
-        value = keyValue[0];
+    console.log(getOscarQuery(this.naturalInput));
+    console.log(autoFillSuggestions(this.naturalInput));
+  }
+
+  naturalUpdate($event) {
+    this.naturalInput = $event;
+    console.log('naturalInput', this.naturalInput);
+    this.inputString = getOscarQuery(this.naturalInput);
+    this.suggestions = autoFillSuggestions(this.naturalInput);
+    console.log(this.suggestions);
+  }
+
+  selectEvent($event: any) {
+    console.log($event);
+    const splitValues = this.naturalInput.split(' ');
+    this.naturalInput.replace(splitValues[splitValues.length - 1], $event);
+  }
+
+  onFocused($event: void) {
+
+  }
+
+  inputWithoutLastWord(input: string) {
+    const charArray = [...input];
+    let endNormalString = 0;
+    for (let i = charArray.length - 1; i >= 0; i--) {
+      if (charArray[i] === ' ') {
+        endNormalString = i;
+        break;
       }
     }
+    return input.slice(0, endNormalString);
   }
 }

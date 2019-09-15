@@ -47,7 +47,7 @@ export class ItemListComponent implements OnInit {
       this.localItems = [];
       this.oscarService.getItemsInfo(this.itemStore.currentItemIds.slice(0, this.fetchCount)).subscribe(
         items => {
-          this.zone.run( () => this.localItems.push(...items));
+          this.localItems.push(...items);
         }
       );
     });

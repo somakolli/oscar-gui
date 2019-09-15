@@ -21,8 +21,7 @@ export class FacetsComponent implements OnInit {
         this.facets = null;
         this.oscarService.getFacets(this.searchService.getQuery(), this.queryId).subscribe( facets => {
           if (facets.queryId === this.queryId) {
-            this.zone.run(() => this.facets = facets);
-            console.log(facets);
+            this.facets = facets;
           }
         });
       } else {

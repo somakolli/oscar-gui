@@ -19,7 +19,7 @@ export class ItemInfoComponent implements OnInit {
     this.itemStore.highlightedItem$.subscribe(item => {
       if (item) {
         OscarItem.setName(item);
-        this.zone.run(() => this.oscarItem = item);
+        this.oscarItem = item;
       } else {
         this.oscarItem = null;
       }
