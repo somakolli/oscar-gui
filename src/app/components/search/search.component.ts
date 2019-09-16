@@ -144,7 +144,7 @@ export class SearchComponent implements OnInit {
     let endNormalString = 0;
     for (let i = charArray.length - 1; i >= 0; i--) {
       if (charArray[i] === ' ') {
-        endNormalString = i;
+        endNormalString = i + 1;
         break;
       }
     }
