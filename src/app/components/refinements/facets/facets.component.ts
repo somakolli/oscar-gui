@@ -13,15 +13,20 @@ export class FacetsComponent implements OnInit {
 
   constructor(private searchService: SearchService, private oscarService: OscarItemsService, private zone: NgZone) { }
   queryId = 0;
+  lastQuery = '';
   facets: FacetRefinements;
   ngOnInit() {
     this.searchService.newQuery$.subscribe(queryState => {
-      if (queryState === SearchState.Success) {
-        this.queryId++;
+      if (queryState !== SearchState.ToManyItems ) {
+        if (this.searchService.getQuery() !== this.lastQuery) {
+          this.queryId++;
+          this.lastQuery = this.searchService.getQuery();
+        }
         this.facets = null;
         this.oscarService.getFacets(this.searchService.getQuery(), this.queryId).subscribe( facets => {
           if (facets.queryId === this.queryId) {
-            this.facets = facets;
+            console.log(facets);
+            this.zone.run(() => this.facets = facets);
           }
         });
       } else {

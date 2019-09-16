@@ -1,5 +1,5 @@
 <div class="input-group">
-  <input autocomplete="off" [(ngModel)]="inputString" (ngModelChange)="inputUpdate()" (keydown.enter)="search()" type="text" class="search-input" placeholder="Search" >
+  <input autocomplete="off" [(ngModel)]="inputString" (keydown.enter)="search()" type="text" class="search-input" placeholder="Search" >
   <form class="search-input-form">
     <input name="natural-input" class="search-input" placeholder="Natural Language Search" (ngModelChange)="naturalUpdate($event)" (keydown.enter)="search()" [formControl]="myControl" [matAutocomplete]="auto">
     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectEvent($event)">
