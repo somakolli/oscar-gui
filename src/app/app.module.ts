@@ -31,6 +31,7 @@ import {RouterModule} from '@angular/router';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {OverlayModule} from '@angular/cdk/overlay';
 import {MatAutocompleteModule, MatInputModule} from '@angular/material';
+import { KeepHtmlPipe } from './components/search/keep-html.pipe';
 
 @NgModule({
   declarations: [
@@ -51,7 +52,8 @@ import {MatAutocompleteModule, MatInputModule} from '@angular/material';
     FacetsComponent,
     FacetsDetailComponent,
     ParentsComponent,
-    ParentsDetailComponent
+    ParentsDetailComponent,
+    KeepHtmlPipe
   ],
   imports: [
     BrowserModule,

@@ -8,8 +8,14 @@ import {SuggestionsService} from '../../services/data/suggestions.service';
 import {RefinementsService} from '../../services/data/refinements.service';
 import {RefinementType} from '../../models/gui/refinement';
 import {FormControl} from '@angular/forms';
+import {getSortHeaderNotContainedWithinSortError} from '@angular/material/sort/typings/sort-errors';
+import {ColorTag} from '../../models/natural-language/color-tag';
+import {DomSanitizer} from '@angular/platform-browser';
+import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 declare function getOscarQuery(input);
 declare function autoFillSuggestions(input);
+declare function coloredInput(input);
+import keyValueTags from '../../../assets/keyValueTags.json';
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
@@ -17,7 +23,8 @@ declare function autoFillSuggestions(input);
 })
 export class SearchComponent implements OnInit {
   constructor(private oscarItemService: OscarItemsService, public itemStore: ItemStoreService, public searchService: SearchService,
-              private osmService: OsmService, private suggestionStore: SuggestionsService, public refinementStore: RefinementsService) { }
+              private osmService: OsmService, private suggestionStore: SuggestionsService, public refinementStore: RefinementsService,
+              private sanitizer: DomSanitizer) { }
   error = false;
   inputString = '';
   queryString = '';
@@ -31,7 +38,9 @@ export class SearchComponent implements OnInit {
   naturalInput = '';
   suggestions = [];
   myControl = new FormControl();
+  normalControl = new FormControl();
   options: string[] = ['One', 'Two', 'Three'];
+  normalSuggestions = [];
   ngOnInit() {
     this.searchService.initState$.subscribe(state => {
       console.log(state);
@@ -116,15 +125,44 @@ export class SearchComponent implements OnInit {
     });
   }
 
-  inputUpdate() {
-    console.log(getOscarQuery(this.naturalInput));
-    console.log(autoFillSuggestions(this.naturalInput));
+  inputUpdate($event) {
+    const splitString = $event.split(' ');
+    const lastWord = splitString[splitString.length - 1];
+    if (lastWord.charAt(0) === '@') {
+      if (lastWord.charAt(lastWord.length - 1) === ' ') {
+        this.normalSuggestions = [];
+      } else {
+        //console.log(lastWord);
+        let i = 0;
+        this.normalSuggestions = keyValueTags.filter((item => {
+          if (i > 100) {
+            return false;
+          }
+          const keyValueTag = item.k + ':' + item.v;
+          const isMatch = keyValueTag.match(new RegExp(lastWord.slice(1), 'i'));
+          if (isMatch) {
+            ++i;
+          }
+          return isMatch;
+        }));
+      }
+    } else {
+      this.normalSuggestions = [];
+    }
   }
 
   naturalUpdate($event) {
     this.naturalInput = $event;
-    console.log('naturalInput', this.naturalInput);
-    this.inputString = getOscarQuery(this.naturalInput);
+    let colorInputTags: ColorTag[];
+    colorInputTags = coloredInput(this.naturalInput);
+    console.log(colorInputTags);
+    let colorOutputTags: ColorTag[];
+    colorOutputTags = getOscarQuery(this.naturalInput);
+    this.inputString = '';
+    colorOutputTags.forEach(colorTag => {
+      this.inputString += `${colorTag.tags} `;
+    });
+
     this.suggestions = autoFillSuggestions(this.naturalInput);
     console.log(this.suggestions);
   }
@@ -149,5 +187,13 @@ export class SearchComponent implements OnInit {
       }
     }
     return input.slice(0, endNormalString);
+  }
+
+  spanChange($event: Event) {
+    console.log($event);
+  }
+
+  normalSelectEvent($event: MatAutocompleteSelectedEvent) {
+
   }
 }

@@ -4,7 +4,7 @@ import {Injectable} from '@angular/core';
   providedIn: 'root'
 })
 export class LocationService {
-  // source: https://stackoverflow.com/a/27943
+
 
   constructor() { }
   getPosition(): Promise<any> {
@@ -19,6 +19,7 @@ export class LocationService {
         });
     });
   }
+  // source: https://stackoverflow.com/a/27943
   getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2): number {
     const R = 6371; // Radius of the earth in km
     const dLat = this.deg2rad(lat2 - lat1);  // deg2rad below

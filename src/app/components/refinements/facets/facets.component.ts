@@ -20,8 +20,9 @@ export class FacetsComponent implements OnInit {
         this.queryId++;
         this.facets = null;
         this.oscarService.getFacets(this.searchService.getQuery(), this.queryId).subscribe( facets => {
-          if (facets.queryId === this.queryId) {
-            this.facets = facets;
+          console.log(facets);
+          if (facets.queryId === this.queryId || true) {
+            this.zone.run(() => this.facets = facets);
           }
         });
       } else {
