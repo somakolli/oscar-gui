@@ -47,6 +47,20 @@ export class OscarItemsService {
           bounds.getWest(), bounds.getNorth(), bounds.getEast());
       });
     });
+    //this.removeWithRadius(1);
+  }
+  removeWithRadius(radius: number) {
+    this.locationService.getPosition().then((location) => {
+      this.itemStore.binaryItems = this.itemStore.binaryItems.filter((item) => {
+        return this.locationService.getDistanceFromLatLonInKm(item.lat, item.lon, location.lat, location.lng) < radius;
+      });
+    }, (err) => {}).finally(() => {
+      this.itemStore.binaryItemsFinished();
+      this.gridService.buildGrid();
+      const bounds = this.mapService.bounds;
+      this.gridService.setCurrentItems(bounds.getSouth(),
+        bounds.getWest(), bounds.getNorth(), bounds.getEast());
+    });
   }
   getLocalItems(queryString: string) {
     const northEast = this.mapService.bounds.getNorthEast();

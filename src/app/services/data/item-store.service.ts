@@ -19,6 +19,8 @@ export class ItemStoreService {
   // tslint:disable-next-line:variable-name
   private readonly _highlightedItem = new BehaviorSubject<OscarItem>(null);
   readonly highlightedItem$ = this._highlightedItem.asObservable();
+  private readonly _radiusChange = new BehaviorSubject<number>(10000);
+  readonly radiusChange$ = this._radiusChange.asObservable();
   currentItemIds = new Array<OscarMinItem>();
   binaryItems = new Array<OscarMinItem>();
   distanceSortedItems = new Array<OscarMinItem>();
@@ -38,5 +40,11 @@ export class ItemStoreService {
   }
   setHighlightedItem(item: OscarItem) {
     this._highlightedItem.next(item);
+  }
+  get radius() {
+    return this._radiusChange.getValue();
+  }
+  changeRadius(radius: number) {
+    this._radiusChange.next(radius);
   }
 }

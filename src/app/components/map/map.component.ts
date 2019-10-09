@@ -76,12 +76,15 @@ export class MapComponent implements OnInit {
     });
     this.itemStore.currentItemIdsFinished$.subscribe((state) => {
       if (state !== 0) {
-        this.reDrawItems(map.getZoom(), map);
+        this.reDrawItems(map.getZoom(), map, this.itemStore.radius);
       }
+    });
+    this.itemStore.radiusChange$.subscribe(radius => {
+      this.reDrawItems(map.getZoom(), map, radius);
     });
   }
 
-  reDrawItems(zoomLevel: number, map: L.Map) {
+  reDrawItems(zoomLevel: number, map: L.Map, radius: number) {
     this.data = {
       data: []
     };
@@ -149,19 +152,25 @@ export class MapComponent implements OnInit {
           });
         });
     } else {
-      const sampleIds = _.sample(this.itemStore.currentItemIds, 5000);
-
-      for (let i = 0; i < sampleIds.length; i++) {
-         const item = sampleIds[i];
-         if (item) {
-           this.data.data.push({
-             lat: item.lat,
-             lng: item.lon,
-             count: 1,
-             radius: 10
-           });
-         }
-      }
+      let sampleIds = _.sample(this.itemStore.currentItemIds, 5000);
+      this.locationService.getPosition().then((location) => {
+        sampleIds = sampleIds.filter((item) => {
+          return this.locationService.getDistanceFromLatLonInKm(item.lat, item.lon, location.lat, location.lng) < radius;
+        });
+      }, (err) => {}).finally(() => {
+        for (let i = 0; i < sampleIds.length; i++) {
+          const item = sampleIds[i];
+          if (item) {
+            this.data.data.push({
+              lat: item.lat,
+              lng: item.lon,
+              count: 1,
+              radius: 10
+            });
+          }
+        }
+        this.heatmapLayer.setData(this.data);
+      });
     }
     this.heatmapLayer.setData(this.data);
     if (this.searchService.getInitState() !== InitState.InitFinished) {

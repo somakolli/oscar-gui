@@ -32,6 +32,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import {OverlayModule} from '@angular/cdk/overlay';
 import {MatAutocompleteModule, MatInputModule} from '@angular/material';
 import { KeepHtmlPipe } from './components/search/keep-html.pipe';
+import {MatSliderModule} from '@angular/material/slider';
 
 @NgModule({
   declarations: [
@@ -67,7 +68,8 @@ import { KeepHtmlPipe } from './components/search/keep-html.pipe';
     ReactiveFormsModule,
     OverlayModule,
     MatInputModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    MatSliderModule
   ],
   providers: [OscarItemsService, ConfigService, ItemStoreService],
   bootstrap: [AppComponent]

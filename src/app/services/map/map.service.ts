@@ -27,8 +27,8 @@ export class MapService {
           if (state !== 0) {
             this.itemStore.distanceSortedItems = this.itemStore.binaryItems;
             this.itemStore.distanceSortedItems.sort((a: OscarMinItem, b: OscarMinItem): number => {
-              const distanceA = Math.sqrt(Math.pow(lng - a.lon, 2) + Math.pow(lat - a.lat, 2));
-              const distanceB = Math.sqrt(Math.pow(lng - b.lon, 2) + Math.pow(lat - b.lat, 2));
+              const distanceA = Math.pow(lng - a.lon, 2) + Math.pow(lat - a.lat, 2);
+              const distanceB = Math.pow(lng - b.lon, 2) + Math.pow(lat - b.lat, 2);
               return distanceA - distanceB;
             });
             console.log(this.itemStore.binaryItems);

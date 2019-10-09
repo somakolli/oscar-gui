@@ -153,18 +153,13 @@ export class SearchComponent implements OnInit {
 
   naturalUpdate($event) {
     this.naturalInput = $event;
-    let colorInputTags: ColorTag[];
-    colorInputTags = coloredInput(this.naturalInput);
-    console.log(colorInputTags);
     let colorOutputTags: ColorTag[];
     colorOutputTags = getOscarQuery(this.naturalInput);
     this.inputString = '';
     colorOutputTags.forEach(colorTag => {
       this.inputString += `${colorTag.tags} `;
     });
-
     this.suggestions = autoFillSuggestions(this.naturalInput);
-    console.log(this.suggestions);
   }
 
   selectEvent($event: any) {
@@ -195,5 +190,9 @@ export class SearchComponent implements OnInit {
 
   normalSelectEvent($event: MatAutocompleteSelectedEvent) {
 
+  }
+
+  radiusChange($event: number) {
+    this.itemStore.changeRadius($event);
   }
 }
