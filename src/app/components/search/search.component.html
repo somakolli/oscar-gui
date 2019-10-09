@@ -15,7 +15,7 @@
 <div [hidden] = "!error" class="alert alert-danger" role="alert">
   Result to large. Please refine query.
 </div>
-<mat-slider (valueChange)="radiusChange($event)" style="width: 400px" min="0.1" max="50000" step="0.5" value="50000"></mat-slider>
+<mat-slider thumbLabel (valueChange)="radiusChange($event)" style="width: 400px" min="0.1" max="1000" step="0.5" value="1000"></mat-slider>
 <!--<input type="checkbox" [checked]="this.refinementStore.hasKeyRefinement({id: 0, key: 'highway'})" (change)="streetsChanged()"> streets-->
 <app-active-refinements></app-active-refinements>
 

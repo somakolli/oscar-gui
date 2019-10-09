@@ -42,6 +42,7 @@ export class SearchComponent implements OnInit {
   options: string[] = ['One', 'Two', 'Three'];
   normalSuggestions = [];
   ngOnInit() {
+    console.log('number of keyValueTags:', keyValueTags.length);
     this.searchService.initState$.subscribe(state => {
       console.log(state);
       if (state === InitState.LoadedRefinements) {
@@ -154,6 +155,8 @@ export class SearchComponent implements OnInit {
   naturalUpdate($event) {
     this.naturalInput = $event;
     let colorOutputTags: ColorTag[];
+    console.log('naturalInput', this.naturalInput);
+    console.log('translation', getOscarQuery(this.naturalInput));
     colorOutputTags = getOscarQuery(this.naturalInput);
     this.inputString = '';
     colorOutputTags.forEach(colorTag => {
@@ -193,6 +196,10 @@ export class SearchComponent implements OnInit {
   }
 
   radiusChange($event: number) {
-    this.itemStore.changeRadius($event);
+    let radius = $event;
+    if ($event === 1000) {
+      radius = 100000;
+    }
+    this.itemStore.changeRadius(radius);
   }
 }
