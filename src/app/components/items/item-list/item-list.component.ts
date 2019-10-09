@@ -63,13 +63,13 @@ export class ItemListComponent implements OnInit {
     const currentLength = this.localItems.length;
     this.oscarService.getItemsInfo(this.itemStore.currentItemIds.slice(currentLength, currentLength + this.fetchCount)).subscribe(
       items => {
-          this.localItems.push(...items);
+        this.zone.run(() => this.localItems.push(...items));
       }
     );
   }
   queryNewItems(count: number) {
     const currentLength = this.items.length;
     this.oscarService.getItemsInfo(this.itemStore.binaryItems.
-    slice(currentLength, currentLength + this.fetchCount)).subscribe(items => this.items.push(...items));
+    slice(currentLength, currentLength + this.fetchCount)).subscribe(items => this.zone.run(() => this.items.push(...items)));
   }
 }

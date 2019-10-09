@@ -11,18 +11,23 @@ import {SearchState} from '../../../models/state/search-state.enum';
 })
 export class ParentsComponent implements OnInit {
   parents: ParentRefinements;
+  lastQuery = '';
   queryId: 0;
   constructor(private searchService: SearchService, private oscarService: OscarItemsService, private zone: NgZone) { }
 
   ngOnInit() {
     this.queryId = 0;
     this.searchService.newQuery$.subscribe(searchState => {
-      if (searchState === SearchState.Success || searchState === SearchState.ToManyItems) {
+      if (true) {
         this.parents = null;
-        this.queryId++;
+        if (this.lastQuery !== this.searchService.getQuery()) {
+          this.queryId++;
+          this.lastQuery = this.searchService.getQuery();
+        }
         this.oscarService.getParents(this.searchService.getQuery(), this.queryId).subscribe( parents => {
           if (parents.queryId === this.queryId) {
-              this.parents = parents;
+            console.log(parents);
+            this.zone.run(() => this.parents = parents);
           }
         });
       }
