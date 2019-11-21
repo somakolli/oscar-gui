@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, NgZone, OnInit} from '@angular/core';
 import {latLng, tileLayer} from 'leaflet';
 import {ItemStoreService} from '../../services/data/item-store.service';
 import {MapService} from '../../services/map/map.service';
@@ -52,7 +52,8 @@ export class MapComponent implements OnInit {
               private oscarItemsService: OscarItemsService,
               private searchService: SearchService,
               private mapState: MapStateService,
-              private locationService: LocationService) { }
+              private locationService: LocationService,
+              private zone: NgZone) { }
 
   ngOnInit() {
   }
@@ -76,11 +77,11 @@ export class MapComponent implements OnInit {
     });
     this.itemStore.currentItemIdsFinished$.subscribe((state) => {
       if (state !== 0) {
-        this.reDrawItems(map.getZoom(), map, this.itemStore.radius);
+        this.zone.run(() => this.reDrawItems(map.getZoom(), map, this.itemStore.radius));
       }
     });
     this.itemStore.radiusChange$.subscribe(radius => {
-      this.reDrawItems(map.getZoom(), map, radius);
+      this.zone.run(() => this.reDrawItems(map.getZoom(), map, radius));
     });
   }
 
@@ -169,7 +170,7 @@ export class MapComponent implements OnInit {
             });
           }
         }
-        this.heatmapLayer.setData(this.data);
+        this.zone.run(() => this.heatmapLayer.setData(this.data));
       });
     }
     this.heatmapLayer.setData(this.data);
@@ -188,7 +189,7 @@ export class MapComponent implements OnInit {
           }
           map.fitBounds(bbox);
         }
-      }).catch();
+      }).catch((reason => console.log(reason)));
     }
   }
 }

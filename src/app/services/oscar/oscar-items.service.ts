@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, NgZone} from '@angular/core';
 import {HttpClient, HttpUrlEncodingCodec} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {OscarItem} from '../../models/oscar/oscar-item';
@@ -23,7 +23,8 @@ export class OscarItemsService {
               private mapService: MapService,
               private gridService: GridService,
               private searchService: SearchService,
-              private locationService: LocationService) { }
+              private locationService: LocationService,
+              private zone: NgZone) { }
   getItemsBinary(queryString: string) {
     const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/itemswithlocation?q=${encodeURIComponent(queryString)}`;
     this.http.get(itemUrl, {responseType: 'arraybuffer'}).subscribe(itemArray => {
@@ -35,9 +36,11 @@ export class OscarItemsService {
         j++;
       }
       this.locationService.getPosition().then((location) => {
-        this.itemStore.binaryItems = itemList.sort((a, b) => {
-          return this.locationService.getDistanceFromLatLonInKm(a.lat, a.lon, location.lat, location.lng) -
-            this.locationService.getDistanceFromLatLonInKm(b.lat, b.lon, location.lat, location.lng);
+        this.zone.run(() => {
+          this.itemStore.binaryItems = itemList.sort((a, b) => {
+            return this.locationService.getDistanceFromLatLonInKm(a.lat, a.lon, location.lat, location.lng) -
+              this.locationService.getDistanceFromLatLonInKm(b.lat, b.lon, location.lat, location.lng);
+          });
         });
       }, (err) => { this.itemStore.binaryItems = itemList; }).finally(() => {
         this.itemStore.binaryItemsFinished();
