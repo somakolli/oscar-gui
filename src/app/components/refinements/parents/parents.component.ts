@@ -26,8 +26,7 @@ export class ParentsComponent implements OnInit {
         }
         this.oscarService.getParents(this.searchService.getQuery(), this.queryId).subscribe( parents => {
           if (parents.queryId === this.queryId) {
-            console.log(parents);
-            this.zone.run(() => this.parents = parents);
+            this.parents = parents;
           }
         });
       }

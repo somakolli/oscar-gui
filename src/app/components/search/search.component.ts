@@ -8,7 +8,6 @@ import {SuggestionsService} from '../../services/data/suggestions.service';
 import {RefinementsService} from '../../services/data/refinements.service';
 import {RefinementType} from '../../models/gui/refinement';
 import {FormControl} from '@angular/forms';
-import {getSortHeaderNotContainedWithinSortError} from '@angular/material/sort/typings/sort-errors';
 import {ColorTag} from '../../models/natural-language/color-tag';
 import {DomSanitizer} from '@angular/platform-browser';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
@@ -36,7 +35,10 @@ export class SearchComponent implements OnInit {
   parentAppendix = '';
   first = true;
   naturalInput = '';
+  eventCount = 0;
   suggestions = [];
+  naturalPrefix = [];
+  waitTime = 200;
   myControl = new FormControl();
   normalControl = new FormControl();
   options: string[] = ['One', 'Two', 'Three'];
@@ -133,7 +135,6 @@ export class SearchComponent implements OnInit {
       if (lastWord.charAt(lastWord.length - 1) === ' ') {
         this.normalSuggestions = [];
       } else {
-        //console.log(lastWord);
         let i = 0;
         this.normalSuggestions = keyValueTags.filter((item => {
           if (i > 100) {
@@ -155,18 +156,26 @@ export class SearchComponent implements OnInit {
   naturalUpdate($event) {
     this.naturalInput = $event;
     let colorOutputTags: ColorTag[];
-    console.log('naturalInput', this.naturalInput);
-    console.log('translation', getOscarQuery(this.naturalInput));
     colorOutputTags = getOscarQuery(this.naturalInput);
     this.inputString = '';
     colorOutputTags.forEach(colorTag => {
       this.inputString += `${colorTag.tags} `;
     });
-    this.suggestions = autoFillSuggestions(this.naturalInput);
+    this.eventCount++;
+    setTimeout(() => this.showSuggestions(10, this.eventCount), 10);
+  }
+  showSuggestions(waitTime: number, eventId: number) {
+    if (this.eventCount !== eventId) {
+      return;
+    }
+    if (waitTime >= this.waitTime) {
+      this.suggestions = autoFillSuggestions(this.naturalInput);
+      return;
+    }
+    setTimeout(() => this.showSuggestions(waitTime + 10, eventId), 10);
   }
 
   selectEvent($event: any) {
-    console.log($event);
     const splitValues = this.naturalInput.split(' ');
     this.naturalInput.replace(splitValues[splitValues.length - 1], $event);
   }

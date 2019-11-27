@@ -8,7 +8,7 @@
   <form class="search-input-form">
     <input name="natural-input" class="search-input" placeholder="Natural Language Search" (ngModelChange)="naturalUpdate($event)" (keydown.enter)="search()" [formControl]="myControl" [matAutocomplete]="auto">
     <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectEvent($event)">
-      <mat-option *ngFor="let option of suggestions" [value]="inputWithoutLastWord(naturalInput) + option">{{option}}</mat-option>
+      <mat-option *ngFor="let option of suggestions" [value]="option.prefix + option.suggestion">{{option.suggestion}}</mat-option>
     </mat-autocomplete>
   </form>
 </div>
