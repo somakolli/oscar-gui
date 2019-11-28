@@ -44,7 +44,6 @@ export class SearchComponent implements OnInit {
   options: string[] = ['One', 'Two', 'Three'];
   normalSuggestions = [];
   ngOnInit() {
-    console.log('number of keyValueTags:', keyValueTags.length);
     this.searchService.initState$.subscribe(state => {
       console.log(state);
       if (state === InitState.LoadedRefinements) {

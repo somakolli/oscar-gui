@@ -1,6 +1,6 @@
 <div class="input-group">
   <form class="search-input-form">
-    <input [formControl]="normalControl" [matAutocomplete]="normal_auto" [(ngModel)]="inputString" (ngModelChange)="inputUpdate($event)" (keydown.enter)="search()" type="text" class="search-input" placeholder="Search" >
+    <input name="normal_input" [matAutocomplete]="normal_auto" [(ngModel)]="inputString" (ngModelChange)="inputUpdate($event)" (keydown.enter)="search()" type="text" class="search-input" placeholder="Search" >
     <mat-autocomplete #normal_auto="matAutocomplete" (optionSelected)="normalSelectEvent($event)">
       <mat-option *ngFor="let option of normalSuggestions" [value]="inputWithoutLastWord(inputString) + '@' + option.k + ':' + option.v">@{{option.k}}:{{option.v}}</mat-option>
     </mat-autocomplete>
@@ -15,7 +15,7 @@
 <div [hidden] = "!error" class="alert alert-danger" role="alert">
   Result to large. Please refine query.
 </div>
-<mat-slider thumbLabel (valueChange)="radiusChange($event)" style="width: 400px" min="0.1" max="1000" step="0.5" value="1000"></mat-slider>
+<!--<mat-slider thumbLabel (valueChange)="radiusChange($event)" style="width: 400px" min="0.1" max="1000" step="0.5" value="1000"></mat-slider>-->
 <!--<input type="checkbox" [checked]="this.refinementStore.hasKeyRefinement({id: 0, key: 'highway'})" (change)="streetsChanged()"> streets-->
 <app-active-refinements></app-active-refinements>
 

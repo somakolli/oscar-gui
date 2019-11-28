@@ -8,7 +8,8 @@ import {ActiveRefinement} from '../../models/gui/refinement';
   providedIn: 'root'
 })
 export class RefinementsService {
-
+  loadedParentRefinements = false;
+  loadedFacetRefinements = false;
   // tslint:disable-next-line:variable-name
   private readonly _refinements = new BehaviorSubject<ActiveRefinement[]>([]);
   readonly refinements$ = this._refinements.asObservable();

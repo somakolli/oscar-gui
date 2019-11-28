@@ -3,6 +3,7 @@ import {FacetRefinements} from '../../../models/oscar/refinements';
 import {SearchService} from '../../../services/state/search.service';
 import {OscarItemsService} from '../../../services/oscar/oscar-items.service';
 import {SearchState} from '../../../models/state/search-state.enum';
+import {RefinementsService} from '../../../services/data/refinements.service';
 
 @Component({
   selector: 'app-facets',
@@ -11,19 +12,16 @@ import {SearchState} from '../../../models/state/search-state.enum';
 })
 export class FacetsComponent implements OnInit {
 
-  constructor(private searchService: SearchService, private oscarService: OscarItemsService, private zone: NgZone) { }
+  constructor(private searchService: SearchService, private oscarService: OscarItemsService, private zone: NgZone, private refinementsService: RefinementsService) { }
   queryId = 0;
   facets: FacetRefinements;
   ngOnInit() {
     this.searchService.newQuery$.subscribe(queryState => {
-      if (queryState === SearchState.Success) {
         this.facets = null;
         this.oscarService.getFacets(this.searchService.getQuery(), this.queryId).subscribe( facets => {
           this.facets = facets;
+          this.refinementsService.loadedFacetRefinements = this.facets.clustering.length > 0;
         });
-      } else {
-        this.facets = null;
-      }
     });
   }
 }
