@@ -3,6 +3,7 @@ import {SearchService} from '../../../services/state/search.service';
 import {OscarItemsService} from '../../../services/oscar/oscar-items.service';
 import {ParentRefinements} from '../../../models/oscar/refinements';
 import {SearchState} from '../../../models/state/search-state.enum';
+import {RefinementsService} from '../../../services/data/refinements.service';
 
 @Component({
   selector: 'app-parents',
@@ -13,7 +14,7 @@ export class ParentsComponent implements OnInit {
   parents: ParentRefinements;
   lastQuery = '';
   queryId: 0;
-  constructor(private searchService: SearchService, private oscarService: OscarItemsService, private zone: NgZone) { }
+  constructor(private searchService: SearchService, private oscarService: OscarItemsService, private zone: NgZone, private refinementsService: RefinementsService) { }
 
   ngOnInit() {
     this.queryId = 0;
@@ -24,6 +25,7 @@ export class ParentsComponent implements OnInit {
       }
       this.oscarService.getParents(this.searchService.getQuery(), this.queryId).subscribe( parents => {
           this.parents = parents;
+          this.refinementsService.loadedParentRefinements = parents.clustering.length > 0;
       });
     });
   }
