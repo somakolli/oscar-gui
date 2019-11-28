@@ -18,18 +18,13 @@ export class ParentsComponent implements OnInit {
   ngOnInit() {
     this.queryId = 0;
     this.searchService.newQuery$.subscribe(searchState => {
-      if (true) {
-        this.parents = null;
-        if (this.lastQuery !== this.searchService.getQuery()) {
-          this.queryId++;
-          this.lastQuery = this.searchService.getQuery();
-        }
-        this.oscarService.getParents(this.searchService.getQuery(), this.queryId).subscribe( parents => {
-          if (parents.queryId === this.queryId) {
-            this.parents = parents;
-          }
-        });
+      if (this.lastQuery !== this.searchService.getQuery()) {
+        this.queryId++;
+        this.lastQuery = this.searchService.getQuery();
       }
+      this.oscarService.getParents(this.searchService.getQuery(), this.queryId).subscribe( parents => {
+          this.parents = parents;
+      });
     });
   }
 

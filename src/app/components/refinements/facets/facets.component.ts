@@ -16,14 +16,10 @@ export class FacetsComponent implements OnInit {
   facets: FacetRefinements;
   ngOnInit() {
     this.searchService.newQuery$.subscribe(queryState => {
-      if (queryState === SearchState.Success) {
         this.facets = null;
         this.oscarService.getFacets(this.searchService.getQuery(), this.queryId).subscribe( facets => {
           this.facets = facets;
         });
-      } else {
-        this.facets = null;
-      }
     });
   }
 }
