@@ -27,7 +27,7 @@
     "fs-js": "^1.0.6",
     "gulp-cli": "^2.2.0",
     "hammerjs": "^2.0.8",
-    "jquery": "^3.4.0",
+    "jquery": "^3.5.0",
     "leaflet-heatmap": "^1.0.0",
     "ngx-infinite-scroll": "^7.1.0",
     "popper.js": "^1.15.0",
