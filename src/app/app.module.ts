@@ -30,7 +30,8 @@ import { ParentsDetailComponent } from './components/refinements/parents/parents
 import {RouterModule} from '@angular/router';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {OverlayModule} from '@angular/cdk/overlay';
-import {MatAutocompleteModule, MatInputModule} from '@angular/material';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatInputModule } from '@angular/material/input';
 import { KeepHtmlPipe } from './components/search/keep-html.pipe';
 import {MatSliderModule} from '@angular/material/slider';
 

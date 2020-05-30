@@ -3,13 +3,13 @@ import {latLng, tileLayer} from 'leaflet';
 import {ItemStoreService} from '../../services/data/item-store.service';
 import {MapService} from '../../services/map/map.service';
 import {GridService} from '../../services/data/grid.service';
-import {_} from 'underscore';
 import {TimerService} from '../../services/timer.service';
 import {OscarItemsService} from '../../services/oscar/oscar-items.service';
 import {SearchService} from '../../services/state/search.service';
 import {InitState, SearchState} from '../../models/state/search-state.enum';
 import {MapStateService} from '../../services/state/map-state.service';
 import {LocationService} from '../../services/location.service';
+import * as _ from 'lodash';
 
 declare var L;
 declare var HeatmapOverlay;
@@ -37,7 +37,7 @@ export class MapComponent implements OnInit {
   layerGroup: L.LayerGroup = new L.LayerGroup();
   options = {
     layers: [
-      tileLayer('https://tiles.fmi.uni-stuttgart.de/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '...' }),
+      tileLayer('https://tiles.fmi.uni-stuttgart.de/{z}/{x}/{y}.png', { maxZoom: 17, attribution: '...' }),
       this.heatmapLayer,
       this.layerGroup
     ],
@@ -153,14 +153,13 @@ export class MapComponent implements OnInit {
           });
         });
     } else {
-      let sampleIds = _.sample(this.itemStore.currentItemIds, 5000);
+      let sampleIds = _.sampleSize(this.itemStore.currentItemIds, 5000);
       this.locationService.getPosition().then((location) => {
         sampleIds = sampleIds.filter((item) => {
           return this.locationService.getDistanceFromLatLonInKm(item.lat, item.lon, location.lat, location.lng) < radius;
         });
       }, (err) => {}).finally(() => {
-        for (let i = 0; i < sampleIds.length; i++) {
-          const item = sampleIds[i];
+        for (const item of sampleIds) {
           if (item) {
             this.data.data.push({
               lat: item.lat,

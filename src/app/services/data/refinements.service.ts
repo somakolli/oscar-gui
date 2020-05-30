@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
 import {TagSuggestion} from '../../models/osm/tag-suggestion';
-import {_} from 'underscore';
 import {ActiveRefinement} from '../../models/gui/refinement';
+import * as _ from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +23,6 @@ export class RefinementsService {
   addRefinement(keyValueRefinement: ActiveRefinement) {
     this._refinements.next(this._refinements.getValue().concat(keyValueRefinement));
   }
-
   removeRefinement(refinement: ActiveRefinement) {
     this._refinements.next(_.reject(this._refinements.getValue(),
       el => {

@@ -133,5 +133,4 @@ export class AppComponent implements OnInit {
     let urlString = `?q=${encodeURIComponent(this.query)}&b=${latLong.toBBoxString()}&${keyRefinementsString}&${exKeyRefinementsString}&${keyValueRefinementsString}&${exKeyValueRefinementsString}&${parentRefinementsString}&${exParentRefinementsString}`;
     this.location.go(urlString);
   }
-
 }
