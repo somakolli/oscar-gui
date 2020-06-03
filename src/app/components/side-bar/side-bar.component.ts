@@ -11,8 +11,12 @@ import {RefinementsService} from '../../services/data/refinements.service';
 })
 export class SideBarComponent implements OnInit {
 
-  constructor(public itemStore: ItemStoreService, public refinementsService: RefinementsService) { }
+  constructor(public itemStore: ItemStoreService, public refinementsService: RefinementsService, public searchState: SearchService) { }
+  routing = false;
   ngOnInit() {
+    this.searchState.showRouting$.subscribe(
+      visible => this.routing = visible
+    );
   }
 
 }

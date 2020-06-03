@@ -43,6 +43,7 @@ export class SearchComponent implements OnInit {
   normalControl = new FormControl();
   options: string[] = ['One', 'Two', 'Three'];
   normalSuggestions = [];
+  oscarQuery = true;
   ngOnInit() {
     this.searchService.initState$.subscribe(state => {
       console.log(state);
@@ -209,5 +210,8 @@ export class SearchComponent implements OnInit {
       radius = 100000;
     }
     this.itemStore.changeRadius(radius);
+  }
+  showRouting() {
+    this.searchService.setShowRouting(true);
   }
 }

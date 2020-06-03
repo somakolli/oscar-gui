@@ -34,6 +34,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { KeepHtmlPipe } from './components/search/keep-html.pipe';
 import {MatSliderModule} from '@angular/material/slider';
+import {RoutingComponent} from './components/routing/routing.component';
 
 @NgModule({
   declarations: [
@@ -55,7 +56,8 @@ import {MatSliderModule} from '@angular/material/slider';
     FacetsDetailComponent,
     ParentsComponent,
     ParentsDetailComponent,
-    KeepHtmlPipe
+    KeepHtmlPipe,
+    RoutingComponent
   ],
   imports: [
     BrowserModule,

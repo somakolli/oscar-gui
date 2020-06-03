@@ -18,6 +18,8 @@ export class SearchService {
   readonly inputQueryString$ = this._partQueryString.asObservable();
   private readonly _latLongBounds = new BehaviorSubject<LatLngBounds>(null);
   readonly latLongBounds$ = this._latLongBounds.asObservable();
+  private readonly _showRouting = new BehaviorSubject<boolean>(false);
+  readonly showRouting$ = this._showRouting.asObservable();
   queryId = 0;
   constructor() { }
   setState(state: SearchState) {
@@ -48,5 +50,11 @@ export class SearchService {
   }
   getBoundingBox(): LatLngBounds {
     return this._latLongBounds.getValue();
+  }
+  getShowRouting(): boolean {
+    return this._showRouting.getValue();
+  }
+  setShowRouting(visibility: boolean) {
+    this._showRouting.next(visibility);
   }
 }
