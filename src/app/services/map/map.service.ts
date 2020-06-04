@@ -4,6 +4,7 @@ import {OscarMinItem} from '../../models/oscar/oscar-min-item';
 import {GeoPoint} from '../../models/geo-point';
 import {BehaviorSubject} from 'rxjs';
 import {ActiveRefinement} from '../../models/gui/refinement';
+import {polyline} from 'leaflet';
 declare var L;
 
 @Injectable({
@@ -14,7 +15,15 @@ export class MapService {
   markers = new Map<string, L.Marker>();
   private readonly _mapReady = new BehaviorSubject<boolean>(false);
   readonly onMapReady$ = this._mapReady.asObservable();
-  constructor(private itemStore: ItemStoreService) { }
+  route: L.Polyline = new L.polyline([], {
+    color: 'red',
+    weight: 3,
+    opacity: 0.5,
+    smoothFactor: 1
+  });
+  constructor(private itemStore: ItemStoreService) {
+
+  }
 
   setView(lat: number, lng: number, zoom: number) {
     this._map.setView([lat, lng], zoom);
@@ -34,6 +43,14 @@ export class MapService {
     }
   }
   setMapReady(condition: boolean) {
+    this.route.addTo(this.map);
     this._mapReady.next(condition);
+  }
+  drawRoute(route: GeoPoint[]) {
+    console.log(route);
+    this.route.setLatLngs([]);
+    for (const point of route) {
+      this.route.addLatLng([point.lat, point.lon]);
+    }
   }
 }
