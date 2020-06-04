@@ -59,7 +59,8 @@ export class MapComponent implements OnInit {
   }
 
   onMapReady(map: L.Map) {
-    this.mapService.map = map;
+    this.mapService._map = map;
+    this.mapService.setMapReady(true);
     map.on('moveend', (event) => {
       console.log('move');
       const bounds = map.getBounds();
