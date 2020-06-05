@@ -36,6 +36,7 @@ import { KeepHtmlPipe } from './components/search/keep-html.pipe';
 import {MatSliderModule} from '@angular/material/slider';
 import {RoutingComponent} from './components/routing/routing.component';
 import { GeoPointViewComponent } from './components/routing/geo-point-view/geo-point-view.component';
+import { SearchResultViewComponent } from './components/search-result-view/search-result-view.component';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import { GeoPointViewComponent } from './components/routing/geo-point-view/geo-p
     ParentsDetailComponent,
     KeepHtmlPipe,
     RoutingComponent,
-    GeoPointViewComponent
+    GeoPointViewComponent,
+    SearchResultViewComponent
   ],
   imports: [
     BrowserModule,

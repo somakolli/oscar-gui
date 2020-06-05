@@ -1,10 +1,8 @@
-import {Component, NgZone, OnInit} from '@angular/core';
+import {Component, Input, NgZone, OnInit} from '@angular/core';
 import {OscarItem} from '../../../models/oscar/oscar-item';
-import {Observable} from 'rxjs';
 import {OscarItemsService} from '../../../services/oscar/oscar-items.service';
 import {ItemStoreService} from '../../../services/data/item-store.service';
 import {MapService} from '../../../services/map/map.service';
-import {OscarMinItem} from '../../../models/oscar/oscar-min-item';
 import {LocationService} from '../../../services/location.service';
 
 @Component({
@@ -15,7 +13,9 @@ import {LocationService} from '../../../services/location.service';
 export class ItemListComponent implements OnInit {
   position;
   geoLocationItem: OscarItem;
+  @Input()
   items: OscarItem[] = new Array<OscarItem>();
+  @Input()
   localItems: OscarItem[] = new Array<OscarItem>();
   totalCount = 0;
   localCount = 0;
@@ -29,28 +29,6 @@ export class ItemListComponent implements OnInit {
     this.locationService.getPosition().then(location => {
       this.position = location;
     }, (err) => {});
-    this.itemStore.binaryItemsFinished$.subscribe(() => {
-      if (this.itemStore.binaryItems.length === 0) {
-        return;
-      }
-      this.totalCount = this.itemStore.binaryItems.length;
-      this.items = [];
-      if (!(this.itemStore.binaryItems.length === 0)) {
-        this.queryNewItems(this.fetchCount);
-      }
-    });
-    this.itemStore.currentItemIdsFinished$.subscribe(() => {
-      if (this.itemStore.currentItemIds.length === 0) {
-        return;
-      }
-      this.localCount = this.itemStore.currentItemIds.length;
-      this.localItems = [];
-      this.oscarService.getItemsInfo(this.itemStore.currentItemIds.slice(0, this.fetchCount)).subscribe(
-        items => {
-          this.zone.run(() => this.localItems.push(...items));
-        }
-      );
-    });
   }
   onScrollDown() {
     this.queryNewItems(this.fetchCount);

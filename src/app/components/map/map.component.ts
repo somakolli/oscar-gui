@@ -61,6 +61,7 @@ export class MapComponent implements OnInit {
   onMapReady(map: L.Map) {
     this.mapService._map = map;
     this.mapService.setMapReady(true);
+    /*
     map.on('moveend', (event) => {
       console.log('move');
       const bounds = map.getBounds();
@@ -74,7 +75,7 @@ export class MapComponent implements OnInit {
       const bounds = map.getBounds();
       this.mapState.setBounds(bounds);
       this.gridService.setCurrentItems(bounds.getSouth(),
-        bounds.getWest(), bounds.getNorth(), bounds.getEast());
+        //bounds.getWest(), bounds.getNorth(), bounds.getEast());
     });
     this.itemStore.currentItemIdsFinished$.subscribe((state) => {
       if (state !== 0) {
@@ -84,8 +85,10 @@ export class MapComponent implements OnInit {
     this.itemStore.radiusChange$.subscribe(radius => {
       this.zone.run(() => this.reDrawItems(map.getZoom(), map, radius));
     });
+     */
   }
 
+  /*
   reDrawItems(zoomLevel: number, map: L.Map, radius: number) {
     this.data = {
       data: []
@@ -192,4 +195,5 @@ export class MapComponent implements OnInit {
       }).catch((reason => console.log(reason)));
     }
   }
+  */
 }

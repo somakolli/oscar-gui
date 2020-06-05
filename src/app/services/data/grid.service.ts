@@ -18,12 +18,12 @@ export class GridService {
   // divide lat and long fields by gridSize lat = [-90, +90] long = [-180,180]
   divLat = 180 / this.gridSizeX;
   divLon = 360 / this.gridSizeY;
-  constructor(private itemStore: ItemStoreService) {
+  constructor() {
 
   }
-  buildGrid() {
+  buildGrid(items: OscarMinItem[]) {
     this.gridMap = new Map<string, OscarMinItem[]>();
-    for (const item of this.itemStore.binaryItems) {
+    for (const item of items) {
       const latGridPos = this.getLatPositionInGrid(item.lat);
       const lonGridPos = this.getLonPositionInGrid(item.lon);
       if (!this.gridMap.has(JSON.stringify({lat: latGridPos, lon: lonGridPos}))) {
@@ -33,8 +33,8 @@ export class GridService {
     }
     this.buildStatus = true;
   }
-  setCurrentItems(minLat: number, minLon: number, maxLat: number, maxLon: number) {
-    this.itemStore.currentItemIds = [];
+  getCurrentItems(minLat: number, minLon: number, maxLat: number, maxLon: number): OscarMinItem[] {
+    const currentMinItems: OscarMinItem[] = [];
     const bbox = {
       minLonPos : ( (minLon) / this.divLon),
       minLatPos : ( (minLat) / this.divLat),
@@ -49,16 +49,16 @@ export class GridService {
           value.forEach( item => {
             if (item) {
               if (item.lat >= minLat && item.lon >= minLon && item.lat <= maxLat && item.lon <= maxLon) {
-                this.itemStore.currentItemIds.push(item);
+                currentMinItems.push(item);
               }
             }
           });
         } else {
-          this.itemStore.currentItemIds.push(...value);
+          currentMinItems.push(...value);
         }
       }
     });
-    this.itemStore.currentItemIdsFinished();
+    return currentMinItems;
   }
   getLatPositionInGrid(lat: number): number {
     // calculate distance from the first cell in the grid divided by the divisor("resolution") and rounded down

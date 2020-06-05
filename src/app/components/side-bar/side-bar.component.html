@@ -1,8 +1,7 @@
 <div class="side-bar">
   <div [hidden]="routing">
     <app-search></app-search>
-    <app-refinements [hidden]="!refinementsService.loadedFacetRefinements && !refinementsService.loadedParentRefinements" cdkDrag class="refinements"></app-refinements>
-    <app-items></app-items>
+    <app-search-result-view></app-search-result-view>
   </div>
   <app-routing [hidden]="!routing"></app-routing>
 </div>

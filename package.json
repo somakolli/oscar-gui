@@ -28,6 +28,7 @@
     "gulp-cli": "^2.2.1",
     "jquery": "^3.5.1",
     "leaflet-heatmap": "^1.0.0",
+    "leaflet-webgl-heatmap": "^0.2.7",
     "lodash": "^4.17.15",
     "ngx-infinite-scroll": "^7.1.0",
     "popper.js": "^1.16.1",

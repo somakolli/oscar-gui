@@ -23,11 +23,12 @@ export class GeoPointViewComponent implements OnInit {
         this.mapInitialized = true;
         this.map = mapService._map;
         console.log(this.mapService._map);
-        this.map.on('click', (event) => {
+        this.map.on('click', (event: any) => {
           if (this.selected) {
             zone.run(() => {
-              this.geoPoint.lat = event.latlng.lat;
-              this.geoPoint.lon = event.latlng.lng;
+              const {lng, lat} = event.latlng;
+              this.geoPoint.lat = lat;
+              this.geoPoint.lon = lng;
             });
             this.mapService.setMarker(this.geoPoint, this.name);
           }

@@ -40,6 +40,7 @@
             ],
             "scripts": [
               "./node_modules/leaflet/dist/leaflet.js",
+              "node_modules/leaflet-webgl-heatmap/dist/leaflet-webgl-heatmap.min.js",
               "./node_modules/heatmap.js/build/heatmap.js",
               "./node_modules/leaflet-heatmap/leaflet-heatmap.js",
               "./node_modules/jquery/dist/jquery.min.js",

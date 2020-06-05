@@ -18,68 +18,26 @@ import {LocationService} from '../location.service';
 })
 export class OscarItemsService {
   constructor(private http: HttpClient,
-              private configService: ConfigService,
-              private itemStore: ItemStoreService,
-              private mapService: MapService,
-              private gridService: GridService,
-              private searchService: SearchService,
-              private locationService: LocationService,
-              private zone: NgZone) { }
-  getItemsBinary(queryString: string) {
+              private configService: ConfigService,) { }
+  getItemsBinary(queryString: string): Observable<any> {
     const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/itemswithlocation?q=${encodeURIComponent(queryString)}`;
-    this.http.get(itemUrl, {responseType: 'arraybuffer'}).subscribe(itemArray => {
-      const returnArray = new Uint32Array(itemArray);
-      const itemList = new Array<OscarMinItem>();
-      let j = 0;
-      for (let i = 0; i < returnArray.length; i += 3) {
-        itemList.push({id: returnArray[i], lat: this.toDoubleLat(returnArray[i + 1]), lon: this.toDoubleLon(returnArray[i + 2])});
-        j++;
-      }
+    return this.http.get(itemUrl, {responseType: 'arraybuffer'});
+    /*
       this.locationService.getPosition().then((location) => {
-        this.zone.run(() => {
-          this.itemStore.binaryItems = itemList.sort((a, b) => {
-            return this.locationService.getDistanceFromLatLonInKm(a.lat, a.lon, location.lat, location.lng) -
-              this.locationService.getDistanceFromLatLonInKm(b.lat, b.lon, location.lat, location.lng);
-          });
-        });
-      }, (err) => { this.itemStore.binaryItems = itemList; }).finally(() => {
-        this.itemStore.binaryItemsFinished();
-        this.gridService.buildGrid();
-        const bounds = this.mapService.bounds;
-        this.gridService.setCurrentItems(bounds.getSouth(),
-          bounds.getWest(), bounds.getNorth(), bounds.getEast());
+      itemList = itemList.sort((a, b) => {
+        return this.locationService.getDistanceFromLatLonInKm(a.lat, a.lon, location.lat, location.lng) -
+          this.locationService.getDistanceFromLatLonInKm(b.lat, b.lon, location.lat, location.lng);
       });
-    });
-    //this.removeWithRadius(1);
+    */
+    // this.removeWithRadius(1);
   }
-  removeWithRadius(radius: number) {
-    this.locationService.getPosition().then((location) => {
-      this.itemStore.binaryItems = this.itemStore.binaryItems.filter((item) => {
-        return this.locationService.getDistanceFromLatLonInKm(item.lat, item.lon, location.lat, location.lng) < radius;
-      });
-    }, (err) => {}).finally(() => {
-      this.itemStore.binaryItemsFinished();
-      this.gridService.buildGrid();
-      const bounds = this.mapService.bounds;
-      this.gridService.setCurrentItems(bounds.getSouth(),
-        bounds.getWest(), bounds.getNorth(), bounds.getEast());
-    });
-  }
-  getLocalItems(queryString: string) {
-    const northEast = this.mapService.bounds.getNorthEast();
-    const southWest = this.mapService.bounds.getSouthWest();
-    const minLat = Math.max(southWest.lat, -90);
-    const maxLat = Math.min(northEast.lat, 90);
-    const minLng = Math.max(southWest.lng, -180);
-    const maxLng = Math.min(northEast.lng, 180);
-    const localQueryString = "(" + queryString + ") $geo:" + minLng + "," + minLat + "," + maxLng + "," + maxLat;
-    const itemUrl = this.configService.getOscarUrl() + `/oscar/items/all?q=${localQueryString}&rf=admin_level&i=true`;
-    this.http.get<OscarItem[]>(itemUrl).subscribe(value => {
-      value.map(item => {
-        item.properties.name = item.properties.v[item.properties.k.indexOf('name')];
-      });
-      // this.itemStore.currentItems = value;
-    });
+  public binaryItemsToOscarMin(itemArray): OscarMinItem[] {
+    const itemList = new Array<OscarMinItem>();
+    const returnArray = new Uint32Array(itemArray);
+    for (let i = 0; i < returnArray.length; i += 3) {
+      itemList.push({id: returnArray[i], lat: this.toDoubleLat(returnArray[i + 1]), lon: this.toDoubleLon(returnArray[i + 2])});
+    }
+    return itemList;
   }
   getApxItemCount(queryString: string): Observable<OscarApxstats> {
     const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/apxstats?q=${encodeURIComponent(queryString)}&rf=admin_level`;

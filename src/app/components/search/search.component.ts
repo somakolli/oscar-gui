@@ -44,6 +44,7 @@ export class SearchComponent implements OnInit {
   options: string[] = ['One', 'Two', 'Three'];
   normalSuggestions = [];
   oscarQuery = true;
+  maxitems = 100000000;
   ngOnInit() {
     this.searchService.initState$.subscribe(state => {
       console.log(state);
@@ -119,7 +120,7 @@ export class SearchComponent implements OnInit {
     this.searchService.setState(SearchState.Pending);
     this.itemStore.setHighlightedItem(null);
     this.oscarItemService.getApxItemCount(fullQueryString).subscribe(apxStats => {
-      if (apxStats.items < 1000000) {
+      if (apxStats.items < this.maxitems) {
         this.oscarItemService.getItemsBinary(fullQueryString);
         this.searchService.setState(SearchState.Success);
       } else {
