@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, NgZone, OnInit} from '@angular/core';
 import {OscarMinItem} from '../../models/oscar/oscar-min-item';
 import {SearchService} from '../../services/state/search.service';
 import {MapService} from '../../services/map/map.service';
@@ -15,7 +15,8 @@ export class SearchResultViewComponent implements OnInit {
   constructor(private searchService: SearchService,
               private mapService: MapService,
               private oscarItemsService: OscarItemsService,
-              private gridService: GridService) { }
+              private gridService: GridService,
+              private zone: NgZone) { }
   items: OscarMinItem[] = [];
   currentItems: OscarMinItem[] = [];
   markerThreshHold = 300;
@@ -26,14 +27,7 @@ export class SearchResultViewComponent implements OnInit {
           this.mapService.clearAllLayers();
           this.items = this.oscarItemsService.binaryItemsToOscarMin(itemsArray);
           this.gridService.buildGrid(this.items);
-          const bounds = this.mapService.bounds;
-          this.currentItems = this.gridService.getCurrentItems(bounds.getSouth(),
-            bounds.getWest(), bounds.getNorth(), bounds.getEast());
-          if (this.items.length < this.markerThreshHold ) {
-            this.mapService.drawItemsMarker(this.items);
-          } else {
-            this.mapService.drawItemsHeatmap(this.items);
-          }
+          this.reDrawSearchMarkers();
         });
       }
     });
@@ -51,11 +45,12 @@ export class SearchResultViewComponent implements OnInit {
   reDrawSearchMarkers() {
     this.mapService.clearSearchMarkers();
     const bounds = this.mapService.bounds;
-    this.currentItems = this.gridService.getCurrentItems(bounds.getSouth(),
-      bounds.getWest(), bounds.getNorth(), bounds.getEast());
-
+    this.zone.run(() => this.currentItems = this.gridService.getCurrentItems(bounds.getSouth(),
+      bounds.getWest(), bounds.getNorth(), bounds.getEast()));
     if (this.currentItems.length < this.markerThreshHold) {
       this.mapService.drawItemsMarker(this.currentItems);
+    } else {
+      this.mapService.drawItemsHeatmap(this.currentItems);
     }
   }
 

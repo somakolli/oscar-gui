@@ -4,6 +4,7 @@ import {OscarItemsService} from '../../../services/oscar/oscar-items.service';
 import {ItemStoreService} from '../../../services/data/item-store.service';
 import {MapService} from '../../../services/map/map.service';
 import {LocationService} from '../../../services/location.service';
+import {OscarMinItem} from '../../../models/oscar/oscar-min-item';
 
 @Component({
   selector: 'app-item-list',
@@ -13,10 +14,12 @@ import {LocationService} from '../../../services/location.service';
 export class ItemListComponent implements OnInit {
   position;
   geoLocationItem: OscarItem;
-  @Input()
   items: OscarItem[] = new Array<OscarItem>();
-  @Input()
   localItems: OscarItem[] = new Array<OscarItem>();
+  @Input()
+  currentMinItems: OscarMinItem[] = new Array<OscarMinItem>();
+  @Input()
+  minItems: OscarMinItem[] = new Array<OscarMinItem>();
   totalCount = 0;
   localCount = 0;
   fetchCount = 20;
@@ -39,7 +42,7 @@ export class ItemListComponent implements OnInit {
   }
   queryNewLocalItems(count: number) {
     const currentLength = this.localItems.length;
-    this.oscarService.getItemsInfo(this.itemStore.currentItemIds.slice(currentLength, currentLength + this.fetchCount)).subscribe(
+    this.oscarService.getItemsInfo(this.currentMinItems.slice(currentLength, currentLength + this.fetchCount)).subscribe(
       items => {
         this.zone.run(() => this.localItems.push(...items));
       }
@@ -47,7 +50,7 @@ export class ItemListComponent implements OnInit {
   }
   queryNewItems(count: number) {
     const currentLength = this.items.length;
-    this.oscarService.getItemsInfo(this.itemStore.binaryItems.
+    this.oscarService.getItemsInfo(this.minItems.
     slice(currentLength, currentLength + this.fetchCount)).subscribe(items => this.zone.run(() => this.items.push(...items)));
   }
 }
