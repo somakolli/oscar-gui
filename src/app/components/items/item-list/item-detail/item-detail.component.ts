@@ -1,4 +1,4 @@
-import {Component, Input, NgZone, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, NgZone, OnInit, Output} from '@angular/core';
 import {OscarItem} from '../../../../models/oscar/oscar-item';
 import {ItemStoreService} from '../../../../services/data/item-store.service';
 import {MapService} from '../../../../services/map/map.service';
@@ -14,6 +14,8 @@ import {LocationService} from '../../../../services/location.service';
 export class ItemDetailComponent implements OnInit {
   @Input() oscarItem: OscarItem;
   @Input() parent: string;
+  @Output()
+  public itemClick = new EventEmitter<OscarItem>();
   keyValues: object[] = [];
   distance = null;
   constructor(private itemStore: ItemStoreService,
@@ -28,6 +30,9 @@ export class ItemDetailComponent implements OnInit {
   }
   panTo() {
     this.mapService.setView(this.oscarItem.firstPoint.lat, this.oscarItem.firstPoint.lon, 18);
+  }
+  handleClick(event: MouseEvent) {
+    this.itemClick.emit(this.oscarItem);
   }
 
 }

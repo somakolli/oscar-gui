@@ -1,13 +1,7 @@
 <div class="card-header item-card-header" id="headingOne">
-    <button class="btn btn-link item-name" type="button" data-toggle="collapse" [attr.data-target] = "'#item-' + oscarItem.properties.id" aria-expanded="true" aria-controls="collapseOne">
+    <button (click)="handleClick($event)" class="btn btn-link item-name" type="button">
       {{oscarItem.properties.name}}
       <span *ngIf="distance" class="badge distance_badge">{{distance}} km</span>
     </button>
-    <i (click) = "panTo()" class="fas fa-greater-than pan-to-button"></i>
-</div>
-
-<div id="item-{{oscarItem.properties.id}}" class="collapse hide" aria-labelledby="headingOne"  [attr.data-parent]="parent">
-  <div class="card-body">
-    <app-item-kv-table [oscarItem]="oscarItem"></app-item-kv-table>
-  </div>
+    <i (click) = "panTo()" class="fas fa-map-marker-alt pan-to-button"></i>
 </div>

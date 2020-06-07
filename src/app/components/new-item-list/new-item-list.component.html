@@ -1,0 +1,12 @@
+<div class="scrolling-wrapper">
+  <div #listDiv class="list-div" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="30" (scrolled)="onScrollDown()" [scrollWindow]="false">
+    <div class="item-list" class="card item-card" *ngFor="let item of items">
+      <app-item-detail (itemClick)="clickOnItem(item); scroll(detailDiv)" [oscarItem]="item" [parent]="'#globalAccordion'"></app-item-detail>
+    </div>
+  </div>
+  <div #detailDiv class="detail-div">
+    <button (click)="backButtonClick($event); scroll(listDiv)">Back</button>
+    <app-item-kv-table  class="item-detail" [oscarItem]="detailItem"></app-item-kv-table>
+  </div>
+</div>
+

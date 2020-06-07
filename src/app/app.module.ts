@@ -37,6 +37,9 @@ import {MatSliderModule} from '@angular/material/slider';
 import {RoutingComponent} from './components/routing/routing.component';
 import { GeoPointViewComponent } from './components/routing/geo-point-view/geo-point-view.component';
 import { SearchResultViewComponent } from './components/search-result-view/search-result-view.component';
+import {MatChipsModule} from '@angular/material/chips';
+import { ItemCountComponent } from './components/item-count/item-count.component';
+import { NewItemListComponent } from './components/new-item-list/new-item-list.component';
 
 @NgModule({
   declarations: [
@@ -61,7 +64,9 @@ import { SearchResultViewComponent } from './components/search-result-view/searc
     KeepHtmlPipe,
     RoutingComponent,
     GeoPointViewComponent,
-    SearchResultViewComponent
+    SearchResultViewComponent,
+    ItemCountComponent,
+    NewItemListComponent
   ],
   imports: [
     BrowserModule,
@@ -76,7 +81,8 @@ import { SearchResultViewComponent } from './components/search-result-view/searc
     OverlayModule,
     MatInputModule,
     MatAutocompleteModule,
-    MatSliderModule
+    MatSliderModule,
+    MatChipsModule
   ],
   providers: [OscarItemsService, ConfigService, ItemStoreService],
   bootstrap: [AppComponent]

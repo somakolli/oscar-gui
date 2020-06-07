@@ -79,10 +79,10 @@ export class MapService {
       this.route.addLatLng([point.lat, point.lon]);
     }
   }
-  drawItemsHeatmap(items: OscarMinItem[]) {
+  drawItemsHeatmap(items: OscarMinItem[], intensity: number) {
     const dataPoints = [];
     for (const item of items) {
-      dataPoints.push([item.lat, item.lon, 1]);
+      dataPoints.push([item.lat, item.lon, intensity]);
     }
     this.clearHeatMap();
     this.heatmap.setData( dataPoints );

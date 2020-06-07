@@ -1,1 +1,8 @@
-<app-item-list *ngIf="items.length > 0" [currentMinItems]="currentItems" [minItems]="items"></app-item-list>
+<mat-slider title="point intensity" class="intensity-slider" *ngIf="heatmapSliderVisible" vertical thumbLabel min="0" max="1" step="0.01" [(value)] = "heatMapIntensity" (change)="intensityChange()"></mat-slider>
+<mat-chip-list class="my-chip-list" aria-label="Item Count">
+  <app-item-count [active]="showGlobal" [hidden]="items.length <= 0" [itemCount]="items.length" iconClass="fas fa-globe-europe" (chipClick)="globalClick($event)"></app-item-count>
+  <app-item-count [active]="showLocal" [hidden]="items.length <= 0" [itemCount]="currentItems.length" iconClass="fas fa-eye" (chipClick)="localClick($event)"></app-item-count>
+</mat-chip-list>
+
+<app-new-item-list class="item-list" [hidden]="!showGlobal" [minItems]="items"></app-new-item-list>
+<app-new-item-list class="item-list" [hidden]="!showLocal" [minItems]="currentItems"></app-new-item-list>

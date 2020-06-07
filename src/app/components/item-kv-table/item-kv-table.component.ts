@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {OscarItem} from '../../models/oscar/oscar-item';
 
 @Component({
@@ -6,13 +6,24 @@ import {OscarItem} from '../../models/oscar/oscar-item';
   templateUrl: './item-kv-table.component.html',
   styleUrls: ['./item-kv-table.component.sass']
 })
-export class ItemKvTableComponent implements OnInit {
+export class ItemKvTableComponent implements OnInit, OnChanges {
   @Input() oscarItem: OscarItem;
   keyValues: object[] = [];
   constructor() { }
   lat: number;
   lon: number;
   ngOnInit() {
+    if (this.oscarItem) {
+      this.upDateModel();
+    }
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    if (this.oscarItem) {
+      this.upDateModel();
+    }
+  }
+  upDateModel() {
+    this.keyValues = [];
     this.lat = this.oscarItem.firstPoint.lat;
     this.lon = this.oscarItem.firstPoint.lon;
     this.keyValues.push({k: 'osm-id', v: this.oscarItem.properties.osmid});
