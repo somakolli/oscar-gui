@@ -9,7 +9,7 @@ export class ItemCountComponent implements OnInit, OnChanges {
   private arrowVisible: boolean;
   constructor() { }
   @Input()
-  itemCount: number;
+  text: string;
   @Input()
   iconClass: string;
   @Input()

@@ -40,6 +40,7 @@ import { SearchResultViewComponent } from './components/search-result-view/searc
 import {MatChipsModule} from '@angular/material/chips';
 import { ItemCountComponent } from './components/item-count/item-count.component';
 import { NewItemListComponent } from './components/new-item-list/new-item-list.component';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 @NgModule({
   declarations: [
@@ -68,22 +69,23 @@ import { NewItemListComponent } from './components/new-item-list/new-item-list.c
     ItemCountComponent,
     NewItemListComponent
   ],
-  imports: [
-    BrowserModule,
-    FormsModule,
-    HttpClientModule,
-    LeafletModule.forRoot(),
-    BrowserAnimationsModule,
-    InfiniteScrollModule,
-    RouterModule,
-    DragDropModule,
-    ReactiveFormsModule,
-    OverlayModule,
-    MatInputModule,
-    MatAutocompleteModule,
-    MatSliderModule,
-    MatChipsModule
-  ],
+    imports: [
+        BrowserModule,
+        FormsModule,
+        HttpClientModule,
+        LeafletModule.forRoot(),
+        BrowserAnimationsModule,
+        InfiniteScrollModule,
+        RouterModule,
+        DragDropModule,
+        ReactiveFormsModule,
+        OverlayModule,
+        MatInputModule,
+        MatAutocompleteModule,
+        MatSliderModule,
+        MatChipsModule,
+        MatProgressBarModule
+    ],
   providers: [OscarItemsService, ConfigService, ItemStoreService],
   bootstrap: [AppComponent]
 })

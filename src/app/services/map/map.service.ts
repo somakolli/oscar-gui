@@ -150,4 +150,13 @@ export class MapService {
     this.clearRoutingMarkers();
     this.clearSearchMarkers();
   }
+  fitBounds(bounds: L.LatLngBounds) {
+    this._map.fitBounds(bounds);
+  }
+  deleteMarker(id: string) {
+    if (this.routingMarkers.has(id)) {
+      this.routingMarkers.get(id).removeFrom(this.map);
+      this.routingMarkers.delete(id);
+    }
+  }
 }

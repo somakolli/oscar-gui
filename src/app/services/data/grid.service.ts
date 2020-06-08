@@ -68,11 +68,7 @@ export class GridService {
     // calculate distance from the first cell in the grid divided by the divisor("resolution") and rounded down
     return Math.floor(lon / this.divLon);
   }
-  getBBox(): Promise<L.LatLngBounds> {
-    return new Promise((resolve, reject) => {
-      if (!this.buildStatus) {
-        reject('grid not finished');
-      }
+  getBBox(): L.LatLngBounds {
       let minLat = 100000;
       let minLon = 100000;
       let maxLat = -100000;
@@ -96,7 +92,6 @@ export class GridService {
       });
       const southWest = L.latLng(minLat , minLon);
       const northEast = L.latLng(maxLat , maxLon);
-      resolve(new L.latLngBounds(southWest, northEast));
-    });
+      return new L.latLngBounds(southWest, northEast);
   }
 }

@@ -1,4 +1,4 @@
-import {Component, NgZone, OnInit} from '@angular/core';
+import {Component, Input, NgZone, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {FacetRefinements} from '../../../models/oscar/refinements';
 import {SearchService} from '../../../services/state/search.service';
 import {OscarItemsService} from '../../../services/oscar/oscar-items.service';
@@ -10,18 +10,26 @@ import {RefinementsService} from '../../../services/data/refinements.service';
   templateUrl: './facets.component.html',
   styleUrls: ['./facets.component.sass']
 })
-export class FacetsComponent implements OnInit {
-
+export class FacetsComponent implements OnInit, OnChanges {
   constructor(private searchService: SearchService, private oscarService: OscarItemsService, private zone: NgZone, private refinementsService: RefinementsService) { }
   queryId = 0;
+  show = false;
+  @Input()
   facets: FacetRefinements;
   ngOnInit() {
-    this.searchService.newQuery$.subscribe(queryState => {
-        this.facets = null;
-        this.oscarService.getFacets(this.searchService.getQuery(), this.queryId).subscribe( facets => {
-          this.facets = facets;
-          this.refinementsService.loadedFacetRefinements = this.facets.clustering.length > 0;
-        });
-    });
+    this.checkVisibility();
+  }
+  ngOnChanges(changes: SimpleChanges): void {
+    this.checkVisibility();
+    if (this.show) {
+      document.getElementById('refinementsDiv').scrollIntoView({behavior: 'auto'});
+    }
+  }
+  checkVisibility() {
+    if (this.facets && this.facets.clustering.length > 0) {
+      this.show = true;
+    } else {
+      this.show = false;
+    }
   }
 }

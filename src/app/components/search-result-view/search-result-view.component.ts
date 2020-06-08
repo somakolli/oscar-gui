@@ -5,6 +5,7 @@ import {MapService} from '../../services/map/map.service';
 import {OscarItemsService} from '../../services/oscar/oscar-items.service';
 import {GridService} from '../../services/data/grid.service';
 import _ from 'lodash';
+import {FacetRefinements, ParentRefinements} from '../../models/oscar/refinements';
 
 @Component({
   selector: 'app-search-result-view',
@@ -20,20 +21,35 @@ export class SearchResultViewComponent implements OnInit {
               private zone: NgZone) { }
   items: OscarMinItem[] = [];
   currentItems: OscarMinItem[] = [];
+  parentRefinements: ParentRefinements;
+  facetRefinements: FacetRefinements;
   markerThreshHold = 300;
   heatmapSliderVisible = false;
   heatMapIntensity = 1;
   showGlobal = false;
   showLocal = false;
+  showParents = false;
+  showFacets = false;
+  progress = 0;
   ngOnInit(): void {
     this.searchService.queryString$.subscribe(queryString => {
       if (queryString !== '') {
+        this.progress = 1;
         this.oscarItemsService.getItemsBinary(queryString).subscribe(itemsArray => {
           this.heatmapSliderVisible = false;
           this.mapService.clearAllLayers();
           this.items = this.oscarItemsService.binaryItemsToOscarMin(itemsArray);
           this.gridService.buildGrid(this.items);
           this.reDrawSearchMarkers();
+          this.mapService.fitBounds(this.gridService.getBBox());
+        });
+        this.oscarItemsService.getParents(queryString, 0).subscribe(parents => {
+          this.zone.run(() => this.parentRefinements = parents);
+          this.progress += 25;
+        });
+        this.oscarItemsService.getFacets(queryString, 0).subscribe(facets => {
+          this.zone.run(() => this.facetRefinements = facets);
+          this.progress += 25;
         });
       }
     });
@@ -51,8 +67,10 @@ export class SearchResultViewComponent implements OnInit {
   reDrawSearchMarkers() {
     this.mapService.clearSearchMarkers();
     const bounds = this.mapService.bounds;
-    this.zone.run(() => this.currentItems = this.gridService.getCurrentItems(bounds.getSouth(),
-      bounds.getWest(), bounds.getNorth(), bounds.getEast()));
+    this.zone.run(() => {
+      this.currentItems = this.gridService.getCurrentItems(bounds.getSouth(), bounds.getWest(), bounds.getNorth(), bounds.getEast());
+      this.progress += 25;
+    });
     if (this.currentItems.length < this.markerThreshHold) {
       this.heatmapSliderVisible = false;
       this.mapService.drawItemsMarker(this.currentItems);
@@ -60,6 +78,7 @@ export class SearchResultViewComponent implements OnInit {
       this.heatmapSliderVisible = true;
       this.mapService.drawItemsHeatmap(_.sampleSize(this.currentItems, 100000), this.heatMapIntensity);
     }
+    this.progress += 25;
   }
 
   intensityChange() {
@@ -68,11 +87,28 @@ export class SearchResultViewComponent implements OnInit {
   }
 
   globalClick($event: MouseEvent) {
-    this.showGlobal = !this.showGlobal;
     this.showLocal = false;
+    this.showGlobal = !this.showGlobal;
+    this.showParents = false;
+    this.showFacets = false;
   }
   localClick($event: MouseEvent) {
     this.showLocal = !this.showLocal;
     this.showGlobal = false;
+    this.showParents = false;
+    this.showFacets = false;
+  }
+
+  parentClick($event: MouseEvent) {
+    this.showLocal = false;
+    this.showGlobal = false;
+    this.showParents = !this.showParents;
+    this.showFacets = false;
+  }
+  facetClick($event: MouseEvent) {
+    this.showLocal = false;
+    this.showGlobal = false;
+    this.showParents = false;
+    this.showFacets = !this.showFacets;
   }
 }

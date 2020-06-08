@@ -1,4 +1,4 @@
-import {Component, NgZone, OnInit} from '@angular/core';
+import {Component, Input, NgZone, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {SearchService} from '../../../services/state/search.service';
 import {OscarItemsService} from '../../../services/oscar/oscar-items.service';
 import {ParentRefinements} from '../../../models/oscar/refinements';
@@ -10,24 +10,18 @@ import {RefinementsService} from '../../../services/data/refinements.service';
   templateUrl: './parents.component.html',
   styleUrls: ['./parents.component.sass']
 })
-export class ParentsComponent implements OnInit {
+export class ParentsComponent implements OnInit, OnChanges {
+
+  @Input()
   parents: ParentRefinements;
-  lastQuery = '';
-  queryId: 0;
-  constructor(private searchService: SearchService, private oscarService: OscarItemsService, private zone: NgZone, private refinementsService: RefinementsService) { }
+  constructor() { }
 
   ngOnInit() {
-    this.queryId = 0;
-    this.searchService.newQuery$.subscribe(searchState => {
-      if (this.lastQuery !== this.searchService.getQuery()) {
-        this.queryId++;
-        this.lastQuery = this.searchService.getQuery();
-      }
-      this.oscarService.getParents(this.searchService.getQuery(), this.queryId).subscribe( parents => {
-          this.parents = parents;
-          this.refinementsService.loadedParentRefinements = parents.clustering.length > 0;
-      });
-    });
   }
-
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log('changes');
+    if (this.parents && this.parents.clustering.length > 0) {
+      document.getElementById('parentsDiv').scrollIntoView();
+    }
+  }
 }
