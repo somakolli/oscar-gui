@@ -74,6 +74,7 @@ export class MapService {
     });
   }
   drawRoute(route: GeoPoint[]) {
+    console.log('route', route);
     this.route.setLatLngs([]);
     for (const point of route) {
       this.route.addLatLng([point.lat, point.lon]);

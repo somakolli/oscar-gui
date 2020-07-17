@@ -17,10 +17,7 @@ export class RoutingService {
     const lat2 = target.lat;
     const lon2 = target.lon;
     let params = new HttpParams();
-    params = params.append('lat1', String(source.lat));
-    params = params.append('lon1', String(source.lon));
-    params = params.append('lat2', String(target.lat));
-    params = params.append('lon2', String(target.lon));
+    params = params.append('q', String('[[' + source.lat + ',' + source.lon + '],[' + target.lat + ',' + target.lon + ']]'));
     return this.http.get<RoutingPath>(this.configService.getRoutingUrl(), {params});
   }
 }
