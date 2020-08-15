@@ -19,7 +19,10 @@ export class RoutingService {
     const lon2 = target.lon;
     let params = new HttpParams();
     params = params.append('q', String('[[' + source.lat + ',' + source.lon + '],[' + target.lat + ',' + target.lon + ']]'));
+<<<<<<< HEAD
     params = params.append('d', String(maxCellDiagInM));
+=======
+>>>>>>> store-data-in-components
     return this.http.get<RoutingPath>(this.configService.getRoutingUrl(), {params});
   }
 }
