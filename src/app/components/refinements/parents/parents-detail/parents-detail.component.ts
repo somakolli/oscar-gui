@@ -14,9 +14,7 @@ export class ParentsDetailComponent implements OnInit {
   constructor(private refinementService: RefinementsService) { }
 
   ngOnInit() {
-
   }
-
   addRefinement(parent: Parent) {
     this.refinementService.addRefinement({id: 0, value: parent.name, key: '', refinementType: RefinementType.Parent, excluding: false});
   }

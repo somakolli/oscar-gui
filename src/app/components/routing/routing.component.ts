@@ -5,10 +5,7 @@ import {GeoPoint} from '../../models/geo-point';
 import {RoutingService} from '../../services/routing/routing.service';
 import {MapService} from '../../services/map/map.service';
 import {OscarItemsService} from '../../services/oscar/oscar-items.service';
-<<<<<<< HEAD
 import {OscarMinItem} from '../../models/oscar/oscar-min-item';
-=======
->>>>>>> store-data-in-components
 
 @Component({
   selector: 'app-routing',
@@ -19,10 +16,7 @@ export class RoutingComponent implements OnInit {
   source = new GeoPoint(49, 9);
   target = new GeoPoint(49, 8);
   distance = 0;
-<<<<<<< HEAD
   maxCellDiag = 1000;
-=======
->>>>>>> store-data-in-components
   constructor(public searchService: SearchService, public routingService: RoutingService, public mapService: MapService,
               public oscarItemsService: OscarItemsService) { }
 
@@ -33,7 +27,6 @@ export class RoutingComponent implements OnInit {
   }
 
   getRoute() {
-<<<<<<< HEAD
     this.routingService.getRoute(this.source, this.target, this.maxCellDiag).subscribe(response => {
       this.routingService.currentRoute = response;
       this.distance = response.distance;
@@ -54,17 +47,6 @@ export class RoutingComponent implements OnInit {
   }
   _base64ToArrayBuffer(base64) {
     console.log(base64);
-=======
-    this.routingService.getRoute(this.source, this.target).subscribe(response => {
-      this.distance = response.distance;
-      this.mapService.drawRoute(RoutingPath.getGeoPoints(response.path));
-      const items = this.oscarItemsService.binaryItemsToOscarMin(this._base64ToArrayBuffer(response.itemsBinary));
-      this.mapService.drawItemsHeatmap(items, 1);
-      console.log(items);
-    });
-  }
-  _base64ToArrayBuffer(base64) {
->>>>>>> store-data-in-components
     const binaryString = window.atob(base64);
     const len = binaryString.length;
     const bytes = new Uint8Array(len);
