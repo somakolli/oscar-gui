@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-
+$base-color: #007884;
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 .refinement-item{
@@ -9,12 +9,10 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   float: right
 }
 .refinement-list{
-
   margin-top: 10px;
   width: 90%;
   margin-left: 5%;
 }
-
 .refinement-button{
   cursor: pointer;
   margin-top: -10px;

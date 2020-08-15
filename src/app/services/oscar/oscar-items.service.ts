@@ -18,7 +18,7 @@ import {LocationService} from '../location.service';
 })
 export class OscarItemsService {
   constructor(private http: HttpClient,
-              private configService: ConfigService,) { }
+              private configService: ConfigService) { }
   getItemsBinary(queryString: string): Observable<any> {
     const itemUrl = this.configService.getOscarUrl() + `/oscar/cqr/clustered/itemswithlocation?q=${encodeURIComponent(queryString)}`;
     return this.http.get(itemUrl, {responseType: 'arraybuffer'});
@@ -34,6 +34,7 @@ export class OscarItemsService {
   public binaryItemsToOscarMin(itemArray): OscarMinItem[] {
     const itemList = new Array<OscarMinItem>();
     const returnArray = new Uint32Array(itemArray);
+    console.log(itemArray);
     for (let i = 0; i < returnArray.length; i += 3) {
       itemList.push({id: returnArray[i], lat: this.toDoubleLat(returnArray[i + 1]), lon: this.toDoubleLon(returnArray[i + 2])});
     }

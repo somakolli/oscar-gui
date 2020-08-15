@@ -1,3 +1,5 @@
 <app-geo-point-view [(geoPoint)]="source" name="source"></app-geo-point-view>
 <app-geo-point-view class="target" [(geoPoint)]="target" name="target"></app-geo-point-view>
+<span *ngIf="distance != 0">{{distance}}</span>
 <button (click)="getRoute()">Get route</button>
+<button (click)="showSearch()">Show Search</button>

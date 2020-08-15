@@ -23,7 +23,6 @@ export class NewItemListComponent implements OnInit, OnChanges {
     this.queryNewItems(this.fetchCount);
   }
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('changes', changes);
     this.items = [];
     this.queryNewItems(this.fetchCount);
     document.getElementById('list-div').scrollIntoView({behavior: 'smooth'});

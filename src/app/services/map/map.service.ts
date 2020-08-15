@@ -20,6 +20,7 @@ export class MapService {
   heatmap = L.webGLHeatmap({size: 10, units: 'px'});
   searchMarkerLayer = new L.LayerGroup();
   routingMarkerLayer = new L.LayerGroup();
+  rectLayer = new L.LayerGroup();
   private readonly _zoom = new BehaviorSubject<any>(null);
   readonly onZoom$ = this._zoom.asObservable();
   private readonly _move = new BehaviorSubject<any>(null);
@@ -66,6 +67,7 @@ export class MapService {
     this.searchMarkerLayer.addTo(this.map);
     this._map.addLayer(this.heatmap);
     this._map.addLayer(this.routingMarkerLayer);
+    this._map.addLayer(this.rectLayer);
     this._map.on('zoom', (event) => {
       this._zoom.next(event);
     });
@@ -74,6 +76,7 @@ export class MapService {
     });
   }
   drawRoute(route: GeoPoint[]) {
+    console.log('route', route);
     this.route.setLatLngs([]);
     for (const point of route) {
       this.route.addLatLng([point.lat, point.lon]);
@@ -152,6 +155,12 @@ export class MapService {
   }
   fitBounds(bounds: L.LatLngBounds) {
     this._map.fitBounds(bounds);
+  }
+  drawRect(id: string, bounds: L.LatLngBounds, color: string, weight: number, hover: string) {
+    const rect = L.rectangle(bounds, {color, weight}).bindTooltip(hover).addTo(this.rectLayer);
+  }
+  clearRects() {
+    this.rectLayer.clearLayers();
   }
   deleteMarker(id: string) {
     if (this.routingMarkers.has(id)) {

@@ -15,6 +15,7 @@ declare function getOscarQuery(input);
 declare function autoFillSuggestions(input);
 declare function coloredInput(input);
 import keyValueTags from '../../../assets/keyValueTags.json';
+import {RoutingService} from '../../services/routing/routing.service';
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
@@ -23,7 +24,7 @@ import keyValueTags from '../../../assets/keyValueTags.json';
 export class SearchComponent implements OnInit {
   constructor(private oscarItemService: OscarItemsService, public itemStore: ItemStoreService, public searchService: SearchService,
               private osmService: OsmService, private suggestionStore: SuggestionsService, public refinementStore: RefinementsService,
-              private sanitizer: DomSanitizer) { }
+              private sanitizer: DomSanitizer, private routingService: RoutingService) { }
   error = false;
   inputString = '';
   queryString = '';
@@ -106,9 +107,20 @@ export class SearchComponent implements OnInit {
     if (this.searchService.getInitState() === InitState.SetQuery) {
       return;
     }
+    let idPrependix = '(';
+    if (this.routingService.currentRoute) {
+      let first = true;
+      for (const cellId of this.routingService.currentRoute.cellIds) {
+        if (!first)
+          idPrependix += ' + ';
+        first = false;
+        idPrependix += '$cell:' + cellId ;
+      }
+    }
     this.searchService.queryId++;
-    const fullQueryString = this.keyPrependix + this.keyValuePrependix + this.parentPrependix
+    const fullQueryString =  idPrependix + ') ' + this.keyPrependix + this.keyValuePrependix + this.parentPrependix
       + this.inputString + this.keyAppendix + this.parentAppendix + this.keyValueAppendix;
+    console.log('queryString', fullQueryString);
     if (fullQueryString === '') {
       this.searchService.setState(SearchState.NoQuery);
       return;
