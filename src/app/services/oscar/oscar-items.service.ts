@@ -34,7 +34,6 @@ export class OscarItemsService {
   public binaryItemsToOscarMin(itemArray): OscarMinItem[] {
     const itemList = new Array<OscarMinItem>();
     const returnArray = new Uint32Array(itemArray);
-    console.log(itemArray);
     for (let i = 0; i < returnArray.length; i += 3) {
       itemList.push({id: returnArray[i], lat: this.toDoubleLat(returnArray[i + 1]), lon: this.toDoubleLon(returnArray[i + 2])});
     }
@@ -59,9 +58,7 @@ export class OscarItemsService {
     return this.http.get<OscarItem[]>(queryString);
   }
   getParents(query: string, queryId: number): Observable<ParentRefinements> {
-    console.log(queryId);
     return this.http.get<ParentRefinements>(
-
       this.configService.getOscarUrl() + `/oscar/kvclustering/get?queryId=${queryId}&q=${encodeURIComponent(query)}+&rf=admin_level&type=p&maxRefinements=20`
     );
   }

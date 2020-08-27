@@ -42,11 +42,9 @@ export class RoutingComponent implements OnInit {
             'blue', 1, cell.id.toString(10));
       }*/
       this.mapService.drawItemsHeatmap(heatmapItems, 1);
-      console.log(response);
     });
   }
   _base64ToArrayBuffer(base64) {
-    console.log(base64);
     const binaryString = window.atob(base64);
     const len = binaryString.length;
     const bytes = new Uint8Array(len);

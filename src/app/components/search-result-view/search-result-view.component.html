@@ -1,8 +1,8 @@
 <mat-progress-bar *ngIf="progress > 0 && progress < 100" mode="indeterminate"></mat-progress-bar>
 <mat-slider title="point intensity" class="intensity-slider" *ngIf="heatmapSliderVisible" vertical thumbLabel min="0" max="1" step="0.01" [(value)] = "heatMapIntensity" (change)="intensityChange()"></mat-slider>
 <mat-chip-list class="my-chip-list" aria-label="Item Count">
-  <app-item-count [active]="showGlobal" [hidden]="items.length <= 0" [text]="items.length" iconClass="fas fa-globe-europe" (chipClick)="globalClick($event)"></app-item-count>
-  <app-item-count [active]="showLocal" [hidden]="items.length <= 0" [text]="currentItems.length" iconClass="fas fa-eye" (chipClick)="localClick($event)"></app-item-count>
+  <app-item-count [active]="showGlobal" [hidden]="items.length <= 0" [text]="items.length | humanReadableNumbersPipe" iconClass="fas fa-globe-europe" (chipClick)="globalClick($event)"></app-item-count>
+  <app-item-count [active]="showLocal" [hidden]="items.length <= 0" [text]="currentItems.length | humanReadableNumbersPipe" iconClass="fas fa-eye" (chipClick)="localClick($event)"></app-item-count>
   <app-item-count [active]="showParents" [hidden]="items.length <= 0  || !parentRefinements || parentRefinements.clustering.length <= 0" text="Parents" iconClass="fas fa-sitemap" (chipClick)="parentClick($event)"></app-item-count>
   <app-item-count [active]="showFacets" [hidden]="items.length <= 0  || !facetRefinements || facetRefinements.clustering.length <= 0" text="Facets" iconClass="fas fa-align-justify" (chipClick)="facetClick($event)"></app-item-count>
 </mat-chip-list>

@@ -1,7 +1,8 @@
+<div style="background-color: white"><span style="margin-left: 10">Item Count: {{minItems.length}}</span></div>
 <div class="scrolling-wrapper">
   <div id="list-div" #listDiv class="list-div" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="30" (scrolled)="onScrollDown()" [scrollWindow]="false">
-    <div class="item-list" class="card item-card" *ngFor="let item of items">
-      <app-item-detail (itemClick)="clickOnItem(item); scroll(detailDiv)" [oscarItem]="item" [parent]="'#globalAccordion'"></app-item-detail>
+    <div class="item-list" class="" *ngFor="let item of items">
+      <app-item-detail (itemClick)="clickOnItem(item); scroll(detailDiv)" [oscarItem]="item"></app-item-detail>
     </div>
   </div>
   <div #detailDiv class="detail-div">

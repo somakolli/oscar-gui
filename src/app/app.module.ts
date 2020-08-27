@@ -41,6 +41,7 @@ import {MatChipsModule} from '@angular/material/chips';
 import { ItemCountComponent } from './components/item-count/item-count.component';
 import { NewItemListComponent } from './components/new-item-list/new-item-list.component';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
+import { HumanReadableNumbersPipePipe } from './pipes/human-readable-numbers-pipe.pipe';
 
 @NgModule({
   declarations: [
@@ -67,7 +68,8 @@ import {MatProgressBarModule} from '@angular/material/progress-bar';
     GeoPointViewComponent,
     SearchResultViewComponent,
     ItemCountComponent,
-    NewItemListComponent
+    NewItemListComponent,
+    HumanReadableNumbersPipePipe
   ],
     imports: [
         BrowserModule,
