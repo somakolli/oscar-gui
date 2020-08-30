@@ -7,15 +7,13 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {OscarItemsService} from './services/oscar/oscar-items.service';
 import {HttpClientModule} from '@angular/common/http';
 import {ConfigService} from './config/config.service';
-import { ItemListComponent } from './components/items/item-list/item-list.component';
-import { ItemDetailComponent } from './components/items/item-list/item-detail/item-detail.component';
+import { ItemDetailComponent } from './components/item-detail/item-detail.component';
 import {ItemStoreService} from './services/data/item-store.service';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { MapComponent } from './components/map/map.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SideBarComponent } from './components/side-bar/side-bar.component';
-import { ItemsComponent } from './components/items/items.component';
-import { ItemDetailPipe } from './components/items/item-list/item-detail/item-detail.pipe';
+import { ItemDetailPipe } from './components/item-detail/item-detail.pipe';
 import {InfiniteScrollModule} from 'ngx-infinite-scroll';
 import { ItemInfoComponent } from './components/item-info/item-info.component';
 import { ItemKvTableComponent } from './components/item-kv-table/item-kv-table.component';
@@ -47,11 +45,9 @@ import { HumanReadableNumbersPipePipe } from './pipes/human-readable-numbers-pip
   declarations: [
     AppComponent,
     SearchComponent,
-    ItemListComponent,
     ItemDetailComponent,
     MapComponent,
     SideBarComponent,
-    ItemsComponent,
     ItemDetailPipe,
     ItemInfoComponent,
     ItemKvTableComponent,

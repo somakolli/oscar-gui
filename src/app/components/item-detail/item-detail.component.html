@@ -1,6 +1,6 @@
-<button (click)="handleClick($event)" class="btn btn-link item-name" type="button">
+<a (click)="handleClick($event)" class="item-name">
   {{oscarItem.properties.name}}
   <span *ngIf="distance" class="badge distance_badge">{{distance}} km</span>
-</button>
+</a>
 <i (click) = "panTo()" class="fas fa-map-marker-alt pan-to-button"></i>
 

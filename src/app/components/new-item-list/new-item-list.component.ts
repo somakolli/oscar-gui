@@ -3,7 +3,6 @@ import {OscarMinItem} from '../../models/oscar/oscar-min-item';
 import {OscarItem} from '../../models/oscar/oscar-item';
 import {OscarItemsService} from '../../services/oscar/oscar-items.service';
 import {MapService} from '../../services/map/map.service';
-import {GeoPoint} from '../../models/geo-point';
 
 @Component({
   selector: 'app-new-item-list',
