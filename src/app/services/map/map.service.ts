@@ -50,13 +50,15 @@ export class MapService {
   get map() {
     return this._map;
   }
-  setMarker(geoPoint: GeoPoint, name: string) {
+  setMarker(geoPoint: GeoPoint, name: string): L.Marker {
     if (this.routingMarkers.has(name)) {
       this.routingMarkers.get(name).setLatLng([geoPoint.lat, geoPoint.lon]);
     } else {
       // @ts-ignore
-      const marker = L.marker([geoPoint.lat, geoPoint.lon]).addTo(this.routingMarkerLayer).bindPopup(name).openPopup();
+      const marker = L.marker([geoPoint.lat, geoPoint.lon]);
+      marker.addTo(this.routingMarkerLayer).bindPopup(name).openPopup();
       this.routingMarkers.set(name, marker);
+      return marker;
     }
   }
   setMapReady(condition: boolean) {
@@ -77,9 +79,11 @@ export class MapService {
   }
   drawRoute(route: GeoPoint[]) {
     this.route.setLatLngs([]);
+    const latLngs = [];
     for (const point of route) {
-      this.route.addLatLng([point.lat, point.lon]);
+      latLngs.push(L.latLng([point.lat, point.lon]));
     }
+    this.route.setLatLngs(latLngs);
   }
   drawItemsHeatmap(items: OscarMinItem[], intensity: number) {
     const dataPoints = [];

@@ -40,6 +40,7 @@ import { ItemCountComponent } from './components/item-count/item-count.component
 import { NewItemListComponent } from './components/new-item-list/new-item-list.component';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { HumanReadableNumbersPipePipe } from './pipes/human-readable-numbers-pipe.pipe';
+import { AddressInputComponent } from './components/address-input/address-input.component';
 
 @NgModule({
   declarations: [
@@ -65,7 +66,8 @@ import { HumanReadableNumbersPipePipe } from './pipes/human-readable-numbers-pip
     SearchResultViewComponent,
     ItemCountComponent,
     NewItemListComponent,
-    HumanReadableNumbersPipePipe
+    HumanReadableNumbersPipePipe,
+    AddressInputComponent
   ],
     imports: [
         BrowserModule,

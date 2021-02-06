@@ -29,8 +29,17 @@ export class GeoPointViewComponent implements OnInit {
               const {lng, lat} = event.latlng;
               this.geoPoint.lat = lat;
               this.geoPoint.lon = lng;
+              this.geoPointChanged();
             });
-            this.mapService.setMarker(this.geoPoint, this.name);
+            const marker = this.mapService.setMarker(this.geoPoint, this.name);
+            marker.dragging.enable();
+            marker.on('drag', (dragEvent: any) => {
+              zone.run(() => {
+                this.geoPoint.lat = dragEvent.latlng.lat;
+                this.geoPoint.lon = dragEvent.latlng.lng;
+                this.geoPointChanged();
+              });
+            });
           }
         });
       }

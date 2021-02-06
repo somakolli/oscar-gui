@@ -17,6 +17,8 @@ export class RoutingComponent implements OnInit {
   target = new GeoPoint(49, 8);
   distance = 0;
   maxCellDiag = 1000;
+  noRoute = false;
+  sourceQuery: string;
   constructor(public searchService: SearchService, public routingService: RoutingService, public mapService: MapService,
               public oscarItemsService: OscarItemsService) { }
 
@@ -28,20 +30,14 @@ export class RoutingComponent implements OnInit {
 
   getRoute() {
     this.routingService.getRoute(this.source, this.target, this.maxCellDiag).subscribe(response => {
-      this.routingService.currentRoute = response;
-      this.distance = response.distance;
-      this.mapService.drawRoute(RoutingPath.getGeoPoints(response.path));
-      this.mapService.clearRects();
-      let heatmapItems = new Array<OscarMinItem>();
-      heatmapItems = this.oscarItemsService.binaryItemsToOscarMin(this._base64ToArrayBuffer(response.itemsBinary));
-      /*for (const cell of response.cells) {
-        heatmapItems = heatmapItems.concat(items);
-        this.mapService.drawRect(cell.id.toString(10),
-          new L.LatLngBounds(new L.LatLng(cell.leafletBoundary[1], cell.leafletBoundary[0]),
-            new L.LatLng(cell.leafletBoundary[3], cell.leafletBoundary[2])),
-            'blue', 1, cell.id.toString(10));
-      }*/
-      this.mapService.drawItemsHeatmap(heatmapItems, 1);
+      if (response) {
+        this.routingService.currentRoute = response;
+        this.distance = response.distance;
+        this.mapService.drawRoute(RoutingPath.getGeoPoints(response.path));
+        this.noRoute = false;
+      } else {
+        this.noRoute = true;
+      }
     });
   }
   _base64ToArrayBuffer(base64) {
