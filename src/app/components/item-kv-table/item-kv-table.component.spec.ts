@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ItemKvTableComponent } from './item-kv-table.component';
 
@@ -6,7 +6,7 @@ describe('ItemKvTableComponent', () => {
   let component: ItemKvTableComponent;
   let fixture: ComponentFixture<ItemKvTableComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ItemKvTableComponent ]
     })

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ItemCountComponent } from './item-count.component';
 
@@ -6,7 +6,7 @@ describe('ItemCountComponent', () => {
   let component: ItemCountComponent;
   let fixture: ComponentFixture<ItemCountComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ItemCountComponent ]
     })
