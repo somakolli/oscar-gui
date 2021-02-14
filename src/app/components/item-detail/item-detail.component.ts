@@ -25,7 +25,8 @@ export class ItemDetailComponent implements OnInit {
   ngOnInit() {
     OscarItem.setName(this.oscarItem);
     this.locationService.getPosition().then(pos => {
-      this.distance = this.locationService.getDistanceFromLatLonInKm(pos.lat, pos.lng, this.oscarItem.firstPoint.lat, this.oscarItem.firstPoint.lon).toFixed(3);
+      this.distance = this.locationService.
+      getDistanceFromLatLonInKm(pos.lat, pos.lng, this.oscarItem.firstPoint.lat, this.oscarItem.firstPoint.lon).toFixed(3);
     }, () => {});
   }
   panTo() {

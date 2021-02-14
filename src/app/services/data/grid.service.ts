@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import {OscarMinItem} from '../../models/oscar/oscar-min-item';
-import {ItemStoreService} from './item-store.service';
-import {BehaviorSubject, Observable} from 'rxjs';
-import {LatLngBounds} from 'leaflet';
+
 
 
 declare var L;

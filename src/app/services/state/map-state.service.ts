@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import {BehaviorSubject} from 'rxjs';
-import {SearchState} from '../../models/state/search-state.enum';
 
 @Injectable({
   providedIn: 'root'

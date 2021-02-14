@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {SearchService} from '../../services/state/search.service';
 import {OscarItemsService} from '../../services/oscar/oscar-items.service';
 import {FacetRefinements} from '../../models/oscar/refinements';
 import {SearchState} from '../../models/state/search-state.enum';
@@ -11,7 +10,7 @@ import {SearchState} from '../../models/state/search-state.enum';
 })
 export class RefinementsComponent implements OnInit {
 
-  constructor(private searchService: SearchService, private oscarService: OscarItemsService) { }
+  constructor(private oscarService: OscarItemsService) { }
 
   showTable = true;
   ngOnInit() {

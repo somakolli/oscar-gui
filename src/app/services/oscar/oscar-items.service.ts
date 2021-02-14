@@ -10,7 +10,6 @@ import {GridService} from '../data/grid.service';
 import {OscarApxstats} from '../../models/oscar/oscar-apxstats';
 import {FacetRefinements, ParentRefinements} from '../../models/oscar/refinements';
 import {SearchState} from '../../models/state/search-state.enum';
-import {SearchService} from '../state/search.service';
 import {LocationService} from '../location.service';
 
 @Injectable({

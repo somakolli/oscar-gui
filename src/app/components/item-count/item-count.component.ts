@@ -1,4 +1,5 @@
 import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {isWhitespace} from 'codelyzer/angular/styles/chars';
 
 @Component({
   selector: 'app-item-count',
@@ -16,8 +17,8 @@ export class ItemCountComponent implements OnInit, OnChanges {
   active: boolean;
   @Output()
   public chipClick = new EventEmitter<MouseEvent>();
-  color = 'grey';
   chipClass = '';
+  backgroundColor = 'white';
   ngOnInit(): void {
   }
   @Output()
@@ -26,11 +27,11 @@ export class ItemCountComponent implements OnInit, OnChanges {
   }
   ngOnChanges(changes: SimpleChanges): void {
     if (this.active) {
-      this.color = 'primary';
+      this.backgroundColor = '#3f51b5';
       this.arrowVisible = true;
       this.chipClass = 'chip';
     } else {
-      this.color = 'grey';
+      this.backgroundColor = 'white';
       this.arrowVisible = false;
       this.chipClass = '';
     }

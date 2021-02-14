@@ -1,8 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ItemStoreService} from '../../services/data/item-store.service';
-import {SearchService} from '../../services/state/search.service';
-import {SearchState} from '../../models/state/search-state.enum';
 import {RefinementsService} from '../../services/data/refinements.service';
+import {SearchStateService} from '../../services/state/search-state.service';
 
 @Component({
   selector: 'app-side-bar',
@@ -11,12 +10,10 @@ import {RefinementsService} from '../../services/data/refinements.service';
 })
 export class SideBarComponent implements OnInit {
 
-  constructor(public itemStore: ItemStoreService, public refinementsService: RefinementsService, public searchState: SearchService) { }
+  constructor(public itemStore: ItemStoreService, public refinementsService: RefinementsService) { }
   routing = false;
+  routesVisible = false;
   ngOnInit() {
-    this.searchState.showRouting$.subscribe(
-      visible => this.routing = visible
-    );
   }
 
 }

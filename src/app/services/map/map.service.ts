@@ -3,30 +3,35 @@ import {ItemStoreService} from '../data/item-store.service';
 import {OscarMinItem} from '../../models/oscar/oscar-min-item';
 import {GeoPoint} from '../../models/geo-point';
 import {BehaviorSubject} from 'rxjs';
-declare var L;
-import '../../../../node_modules/leaflet-webgl-heatmap/dist/leaflet-webgl-heatmap.min';
 import '../../../../node_modules/leaflet-webgl-heatmap/src/webgl-heatmap/webgl-heatmap';
+
 import {OscarItemsService} from '../oscar/oscar-items.service';
-
-
+import {RoutingMarker} from '../../models/routing-marker';
+import {LatLng, LatLngBounds, LayerGroup, Map as LeafletMap} from 'leaflet';
+declare var L;
 
 @Injectable({
   providedIn: 'root'
 })
 export class MapService {
-  _map = L.Map;
   routingMarkers = new Map<string, L.Marker>();
+  maxZoom = 17;
 
-  heatmap = L.webGLHeatmap({size: 10, units: 'px'});
+  heatmap = new L.webGLHeatmap({size: 10, units: 'px'});
+
   searchMarkerLayer = new L.LayerGroup();
   routingMarkerLayer = new L.LayerGroup();
-  rectLayer = new L.LayerGroup();
+  rectLayer = new LayerGroup();
+  zoom: number;
   private readonly _zoom = new BehaviorSubject<any>(null);
   readonly onZoom$ = this._zoom.asObservable();
   private readonly _move = new BehaviorSubject<any>(null);
   readonly onMove$ = this._move.asObservable();
+  private readonly _click = new BehaviorSubject<any>(null);
+  readonly onClick$ = this._click.asObservable();
   private readonly _mapReady = new BehaviorSubject<boolean>(false);
   readonly onMapReady$ = this._mapReady.asObservable();
+  _map: LeafletMap;
   route: L.Polyline = L.polyline([], {
     color: 'red',
     weight: 3,
@@ -67,15 +72,17 @@ export class MapService {
     // this.heatmapLayer.addTo(this.map);
     this._mapReady.next(condition);
     this.searchMarkerLayer.addTo(this.map);
-    this._map.addLayer(this.heatmap);
-    this._map.addLayer(this.routingMarkerLayer);
-    this._map.addLayer(this.rectLayer);
-    this._map.on('zoom', (event) => {
+    this.map.addLayer(this.heatmap);
+    this.map.addLayer(this.routingMarkerLayer);
+    this.map.addLayer(this.rectLayer);
+    this.map.on('zoom', (event) => {
+      this.zoom = event.target._zoom;
       this._zoom.next(event);
     });
-    this._map.on('moveend', (event) => {
+    this.map.on('moveend', (event) => {
       this._move.next(event);
     });
+    this.map.on('click', (event => this._click.next(event)));
   }
   drawRoute(route: GeoPoint[]) {
     this.route.setLatLngs([]);
@@ -122,25 +129,50 @@ export class MapService {
           popupText += `<li>${k.k}:${k.v}</li>`;
         });
         popupText += '</ul></div>';
-        L.geoJSON(item, {
-          title: `${item.properties.id}`,
-          pointToLayer: (geoJsonPoint, latlng) => {
-            const smallIcon = new L.Icon({
-              iconSize: [ 25, 41 ],
-              iconAnchor: [ 13, 41 ],
-              iconUrl: 'leaflet/marker-icon.png',
-              shadowUrl: 'leaflet/marker-shadow.png',
-              popupAnchor:  [1, -24],
-            });
-            return L.marker(latlng, {icon: smallIcon});
-          },
-          onEachFeature: ((feature, layer) => {
-            layer.bindPopup(popupText);
-          }),
-          style: {color: 'blue', stroke: true, fill: false, opacity: 0.7}
-        }).addTo(this.searchMarkerLayer);
+
+        if (item.geometry.type === 'LineString') {
+          this.drawGeoJSON(
+            {
+              type: item.type,
+              properties: item.properties,
+              geometry:
+                {
+                  type: 'Point',
+                  coordinates: item.geometry.coordinates[0]
+                }
+                },
+            popupText);
+        }
+        this.drawGeoJSON(item, popupText);
+
       });
     });
+  }
+
+  private drawGeoJSON(item, popupText: string) {
+    L.geoJSON(item, {
+      title: `${item.properties.id}`,
+      pointToLayer: (geoJsonPoint, latlng) => {
+        const smallIcon = new L.Icon({
+          iconSize: [25, 41],
+          iconAnchor: [13, 41],
+          iconUrl: 'leaflet/marker-icon.png',
+          shadowUrl: 'leaflet/marker-shadow.png',
+          popupAnchor: [1, -24],
+        });
+        return L.marker(latlng, {icon: smallIcon});
+      },
+      onEachFeature: ((feature, layer) => {
+        layer.bindPopup(popupText);
+      }),
+      style: {color: 'blue', stroke: true, fill: false, opacity: 0.7}
+    }).addTo(this.searchMarkerLayer);
+  }
+
+  drawRoutingMarker(routingMarkers: RoutingMarker[]) {
+    // Creates a red marker with the coffee icon
+
+
   }
   clearHeatMap() {
     this.heatmap.setData([]);
@@ -157,7 +189,10 @@ export class MapService {
     this.clearSearchMarkers();
   }
   fitBounds(bounds: L.LatLngBounds) {
-    this._map.fitBounds(bounds);
+    if (bounds.getNorthEast().lat === 100000) {
+      bounds  = new LatLngBounds(new LatLng(55.203953, 4.21875), new LatLng(47.219568, 14.897462));
+    }
+    this.map.fitBounds(bounds);
   }
   drawRect(id: string, bounds: L.LatLngBounds, color: string, weight: number, hover: string) {
     const rect = L.rectangle(bounds, {color, weight}).bindTooltip(hover).addTo(this.rectLayer);

@@ -5,7 +5,7 @@
     </ul>
   </div>
   <div #detailDiv class="detail-div">
-    <button (click)="backButtonClick($event); scroll(listDiv)">Back</button>
+    <button mat-button (click)="backButtonClick($event); scroll(listDiv)"><i class="fas fa-chevron-left"></i></button>
     <app-item-kv-table  class="item-detail" [oscarItem]="detailItem"></app-item-kv-table>
   </div>
 </div>

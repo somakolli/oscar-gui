@@ -1,8 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {OscarItemsService} from '../../services/oscar/oscar-items.service';
 import {ItemStoreService} from '../../services/data/item-store.service';
-import {SearchService} from '../../services/state/search.service';
-import {InitState, SearchState} from '../../models/state/search-state.enum';
+import {SearchState} from '../../models/state/search-state.enum';
 import {OsmService} from '../../services/osm/osm.service';
 import {SuggestionsService} from '../../services/data/suggestions.service';
 import {RefinementsService} from '../../services/data/refinements.service';
@@ -11,20 +10,25 @@ import {FormControl} from '@angular/forms';
 import {ColorTag} from '../../models/natural-language/color-tag';
 import {DomSanitizer} from '@angular/platform-browser';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
+import keyValueTags from '../../../assets/keyValueTags.json';
+import {RoutingService} from '../../services/routing/routing.service';
+import {RoutingDataStoreService} from '../../services/data/routing-data-store.service';
+import {SearchService} from '../../services/search/search.service';
+
 declare function getOscarQuery(input);
 declare function autoFillSuggestions(input);
 declare function coloredInput(input);
-import keyValueTags from '../../../assets/keyValueTags.json';
-import {RoutingService} from '../../services/routing/routing.service';
+
 @Component({
   selector: 'app-search',
   templateUrl: './search.component.html',
   styleUrls: ['./search.component.sass']
 })
 export class SearchComponent implements OnInit {
-  constructor(private oscarItemService: OscarItemsService, public itemStore: ItemStoreService, public searchService: SearchService,
+  constructor(private oscarItemService: OscarItemsService, public itemStore: ItemStoreService,
               private osmService: OsmService, private suggestionStore: SuggestionsService, public refinementStore: RefinementsService,
-              private sanitizer: DomSanitizer, private routingService: RoutingService) { }
+              private sanitizer: DomSanitizer, private routingService: RoutingService, private routingDataStoreService: RoutingDataStoreService,
+              private searchService: SearchService) { }
   error = false;
   inputString = '';
   queryString = '';
@@ -41,34 +45,15 @@ export class SearchComponent implements OnInit {
   naturalPrefix = [];
   waitTime = 200;
   myControl = new FormControl();
-  normalControl = new FormControl();
   options: string[] = ['One', 'Two', 'Three'];
   normalSuggestions = [];
   oscarQuery = true;
   maxitems = 100000000;
+  queryId = -1;
+  @Output() routesVisibleEvent = new EventEmitter<boolean>();
+  routesVisible = false;
+  sideButtonClass = 'side-button';
   ngOnInit() {
-    this.searchService.initState$.subscribe(state => {
-      console.log(state);
-      if (state === InitState.LoadedRefinements) {
-        this.search();
-      }
-    });
-    this.searchService.inputQueryString$.subscribe(queryString => {
-      this.inputString = decodeURIComponent(queryString);
-      if (queryString !== '' && this.first) {
-        this.first = false;
-        this.search();
-      }
-    });
-    this.searchService.newQuery$.subscribe(state => {
-      if (state === SearchState.ToManyItems)  {
-        this.error = true;
-      } else if (state === SearchState.Success) {
-        this.error = false;
-      } else if (state === SearchState.DrawingComplete) {
-        this.error = false;
-      }
-    });
     this.refinementStore.refinements$.subscribe(refinements => {
       this.keyValuePrependix = '';
       refinements.filter(refinement => refinement.refinementType === RefinementType.KeyValue && refinement.excluding === false)
@@ -104,9 +89,6 @@ export class SearchComponent implements OnInit {
     });
   }
   search(): void {
-    if (this.searchService.getInitState() === InitState.SetQuery) {
-      return;
-    }
     let idPrependix = '(';
     if (this.routingService.currentRoute) {
       let first = true;
@@ -117,26 +99,21 @@ export class SearchComponent implements OnInit {
         idPrependix += '$cell:' + cellId ;
       }
     }
-    this.searchService.queryId++;
+    this.queryId++;
+
+    const routeQueryString = this.getRouteQueryString();
+
     const fullQueryString =  idPrependix + ') ' + this.keyPrependix + this.keyValuePrependix + this.parentPrependix
-      + this.inputString + this.keyAppendix + this.parentAppendix + this.keyValueAppendix;
-    console.log('queryString', fullQueryString);
+      + this.inputString + this.keyAppendix + this.parentAppendix + this.keyValueAppendix + routeQueryString;
+
     if (fullQueryString === '') {
-      this.searchService.setState(SearchState.NoQuery);
       return;
     }
-    console.log('translated query', getOscarQuery(this.inputString));
-    console.log('suggestions query', autoFillSuggestions(this.inputString));
-    this.searchService.setInputQueryString(this.inputString);
-    this.searchService.setQuery(fullQueryString);
-    this.searchService.setState(SearchState.Pending);
     this.itemStore.setHighlightedItem(null);
     this.oscarItemService.getApxItemCount(fullQueryString).subscribe(apxStats => {
       if (apxStats.items < this.maxitems) {
-        this.oscarItemService.getItemsBinary(fullQueryString);
-        this.searchService.setState(SearchState.Success);
+        this.searchService.queryToDraw.next(fullQueryString);
       } else {
-        this.searchService.setState(SearchState.ToManyItems);
       }
     });
   }
@@ -225,6 +202,25 @@ export class SearchComponent implements OnInit {
     this.itemStore.changeRadius(radius);
   }
   showRouting() {
-    this.searchService.setShowRouting(true);
+    this.routesVisibleEvent.emit(!this.routesVisible);
+    this.routesVisible = !this.routesVisible;
+    this.sideButtonClass = this.routesVisible ? 'side-button-active' : 'side-button';
+  }
+
+  private getRouteQueryString(): string {
+    let returnString = '';
+    const routes = this.routingDataStoreService.routesToAdd.values();
+    if (!routes) {
+      return returnString;
+    }
+    for (const points of this.routingDataStoreService.routesToAdd.values()) {
+      returnString += ' $route(0,0';
+      for (const point of points) {
+        returnString += `,${point.lat},${point.lon}`;
+      }
+      returnString += ')';
+    }
+    console.log(returnString);
+    return returnString;
   }
 }

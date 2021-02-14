@@ -7,10 +7,10 @@ export class ConfigService {
 
   constructor() { }
   getOscarUrl(): string {
-    return 'https://oscar-web.de';
+    return 'http://routing.oscar-web.de';
     // return 'http://localhost';
   }
   getRoutingUrl(): string {
-    return 'http://localhost/oscar/routing/route';
+    return 'http://routing.oscar-web.de/oscar/routing/route';
   }
 }

@@ -1,9 +1,5 @@
 import {Component, Input, NgZone, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {SearchService} from '../../../services/state/search.service';
-import {OscarItemsService} from '../../../services/oscar/oscar-items.service';
 import {ParentRefinements} from '../../../models/oscar/refinements';
-import {SearchState} from '../../../models/state/search-state.enum';
-import {RefinementsService} from '../../../services/data/refinements.service';
 
 @Component({
   selector: 'app-parents',

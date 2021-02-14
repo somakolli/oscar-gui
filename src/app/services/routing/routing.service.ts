@@ -12,13 +12,20 @@ export class RoutingService {
   currentRoute: RoutingPath;
 
   constructor(private configService: ConfigService, private http: HttpClient) { }
-  getRoute(source: GeoPoint, target: GeoPoint, maxCellDiagInM: number): Observable<RoutingPath> {
-    const lat1 = source.lat;
-    const lon1 = source.lon;
-    const lat2 = target.lat;
-    const lon2 = target.lon;
+  getRoute(points: GeoPoint[], maxCellDiagInM: number): Observable<RoutingPath> {
     let params = new HttpParams();
-    params = params.append('q', String('[[' + source.lat + ',' + source.lon + '],[' + target.lat + ',' + target.lon + ']]'));
+    let pointString = '[';
+    let first = true;
+    for (const point of points) {
+      if (first) {
+        first = false;
+      } else {
+        pointString += ',';
+      }
+      pointString += `[${point.lat},${point.lon}]`;
+    }
+    pointString += ']';
+    params = params.append('q', pointString);
     params = params.append('d', String(maxCellDiagInM));
     return this.http.get<RoutingPath>(this.configService.getRoutingUrl(), {params});
   }

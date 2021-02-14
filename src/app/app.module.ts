@@ -1,5 +1,8 @@
+declare var L;
+
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+
 
 import { AppComponent } from './app.component';
 import { SearchComponent } from './components/search/search.component';
@@ -25,22 +28,21 @@ import { FacetsComponent } from './components/refinements/facets/facets.componen
 import { FacetsDetailComponent } from './components/refinements/facets/facets-detail/facets-detail.component';
 import { ParentsComponent } from './components/refinements/parents/parents.component';
 import { ParentsDetailComponent } from './components/refinements/parents/parents-detail/parents-detail.component';
-import {RouterModule} from '@angular/router';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {OverlayModule} from '@angular/cdk/overlay';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { KeepHtmlPipe } from './components/search/keep-html.pipe';
 import {MatSliderModule} from '@angular/material/slider';
-import {RoutingComponent} from './components/routing/routing.component';
-import { GeoPointViewComponent } from './components/routing/geo-point-view/geo-point-view.component';
 import { SearchResultViewComponent } from './components/search-result-view/search-result-view.component';
-import {MatChipsModule} from '@angular/material/chips';
 import { ItemCountComponent } from './components/item-count/item-count.component';
 import { NewItemListComponent } from './components/new-item-list/new-item-list.component';
-import {MatProgressBarModule} from '@angular/material/progress-bar';
 import { HumanReadableNumbersPipePipe } from './pipes/human-readable-numbers-pipe.pipe';
 import { AddressInputComponent } from './components/address-input/address-input.component';
+import { RoutingProgressBarComponent } from './components/routing-progress-bar/routing-progress-bar.component';
+import { RoutesComponent } from './components/routes/routes.component';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatButtonModule} from '@angular/material/button';
 
 @NgModule({
   declarations: [
@@ -61,13 +63,13 @@ import { AddressInputComponent } from './components/address-input/address-input.
     ParentsComponent,
     ParentsDetailComponent,
     KeepHtmlPipe,
-    RoutingComponent,
-    GeoPointViewComponent,
     SearchResultViewComponent,
     ItemCountComponent,
     NewItemListComponent,
     HumanReadableNumbersPipePipe,
-    AddressInputComponent
+    AddressInputComponent,
+    RoutingProgressBarComponent,
+    RoutesComponent,
   ],
     imports: [
         BrowserModule,
@@ -76,17 +78,17 @@ import { AddressInputComponent } from './components/address-input/address-input.
         LeafletModule.forRoot(),
         BrowserAnimationsModule,
         InfiniteScrollModule,
-        RouterModule,
         DragDropModule,
         ReactiveFormsModule,
         OverlayModule,
         MatInputModule,
         MatAutocompleteModule,
         MatSliderModule,
-        MatChipsModule,
-        MatProgressBarModule
+        MatTabsModule,
+        MatButtonModule
     ],
   providers: [OscarItemsService, ConfigService, ItemStoreService],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

@@ -1,0 +1,25 @@
+<div style="border-radius: 2px" class="wrapper-routing-list">
+  <div style="padding: 5px;display: inline-flex; width: 100%; justify-items: auto" class="route-options">
+    <button style="width: 50%;" mat-raised-button (click)="clearList()">clear</button>
+    <div style="padding-left: 20px; display: inline-flex; justify-content: space-between; width: 50%; align-items: center">
+      <label style="margin-bottom: -2px" for="add-to-search">Add To Search</label>
+      <input style=""  id="add-to-search" name="add-to-search" type="checkbox" [(ngModel)]="checkboxActive" (change)="addToSearch()">
+    </div>
+  </div>
+
+    <div style="margin-top: 5px; width: 95%; text-align: left; margin-left: 3%" *ngIf="routingMarkers.length > 0" cdkDropList class="routing-list" (cdkDropListDropped)="drop($event)">
+      <div *ngFor="let routingMarker of routingMarkers" cdkDrag class="routing-list-item"
+           style="display: inline-flex; justify-content: space-between; width: 100%; padding: 7px 14px">
+        <div style="width: 13%; display: inline-flex; justify-content: space-around">
+          <i class="fas fa-bars"></i>
+          <i class="fas fa-map-marker-alt" style="color:{{routingMarker.color}}"></i>
+        </div>
+        <div style="display: inline-flex; align-items: center; justify-content: space-evenly; width: 60%">
+          <span>lat: {{routingMarker.geoPoint.lat | number : '1.0-6'}}</span>
+        <span>lon: {{routingMarker.geoPoint.lon | number : '1.0-6'}}</span>
+        </div>
+        <i style="cursor: pointer; float: right;" (click)="removePoint(routingMarker.color)" class="fas fa-times"></i>
+      </div>
+    </div>
+    <div style="text-align: center; width: 100%; margin-top: 50px" *ngIf="routingMarkers.length === 0">Click on the map to add routing points.</div>
+</div>

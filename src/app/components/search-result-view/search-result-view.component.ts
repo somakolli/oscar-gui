@@ -1,11 +1,11 @@
 import {Component, NgZone, OnInit} from '@angular/core';
 import {OscarMinItem} from '../../models/oscar/oscar-min-item';
-import {SearchService} from '../../services/state/search.service';
 import {MapService} from '../../services/map/map.service';
 import {OscarItemsService} from '../../services/oscar/oscar-items.service';
 import {GridService} from '../../services/data/grid.service';
 import _ from 'lodash';
 import {FacetRefinements, ParentRefinements} from '../../models/oscar/refinements';
+import {SearchService} from '../../services/search/search.service';
 
 @Component({
   selector: 'app-search-result-view',
@@ -14,16 +14,16 @@ import {FacetRefinements, ParentRefinements} from '../../models/oscar/refinement
 })
 export class SearchResultViewComponent implements OnInit {
 
-  constructor(private searchService: SearchService,
-              private mapService: MapService,
+  constructor(private mapService: MapService,
               private oscarItemsService: OscarItemsService,
               private gridService: GridService,
-              private zone: NgZone) { }
+              private zone: NgZone,
+              private searchService: SearchService) { }
   items: OscarMinItem[] = [];
   currentItems: OscarMinItem[] = [];
   parentRefinements: ParentRefinements;
   facetRefinements: FacetRefinements;
-  markerThreshHold = 300;
+  markerThreshHold = 40;
   heatmapSliderVisible = false;
   heatMapIntensity = 1;
   showGlobal = false;
@@ -32,7 +32,7 @@ export class SearchResultViewComponent implements OnInit {
   showFacets = false;
   progress = 0;
   ngOnInit(): void {
-    this.searchService.queryString$.subscribe(queryString => {
+    this.searchService.queryToDraw$.subscribe(queryString => {
       if (queryString !== '') {
         this.progress = 1;
         this.oscarItemsService.getItemsBinary(queryString).subscribe(itemsArray => {
@@ -66,12 +66,13 @@ export class SearchResultViewComponent implements OnInit {
   }
   reDrawSearchMarkers() {
     this.mapService.clearSearchMarkers();
+    this.mapService.clearHeatMap();
     const bounds = this.mapService.bounds;
     this.zone.run(() => {
       this.currentItems = this.gridService.getCurrentItems(bounds.getSouth(), bounds.getWest(), bounds.getNorth(), bounds.getEast());
       this.progress += 25;
     });
-    if (this.currentItems.length < this.markerThreshHold) {
+    if (this.currentItems.length < this.markerThreshHold || this.mapService.zoom === this.mapService.maxZoom) {
       this.heatmapSliderVisible = false;
       this.mapService.drawItemsMarker(this.currentItems);
     } else {

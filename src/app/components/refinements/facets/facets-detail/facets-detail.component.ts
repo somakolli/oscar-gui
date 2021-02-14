@@ -18,20 +18,25 @@ export class FacetsDetailComponent implements OnInit {
 
   addKeyRefinement() {
     this.refinementService
-      .addRefinement({key: this.facet.key, value: '', id: this.facet.keyId, refinementType: RefinementType.Key, excluding: false});
+      .addRefinement(
+        {key: this.facet.key, value: '', id: this.facet.keyId, refinementType: RefinementType.Key, excluding: false}
+        );
   }
 
   addkeyValueRefinement(value: FacetValues) {
     this.refinementService
-      .addRefinement({key: this.facet.key, value: value.name, id: this.facet.keyId, refinementType: RefinementType.KeyValue, excluding: false});
+      .addRefinement(
+        {key: this.facet.key, value: value.name, id: this.facet.keyId, refinementType: RefinementType.KeyValue, excluding: false});
   }
   addExKeyRefinement() {
     this.refinementService
-      .addRefinement({key: this.facet.key, value: '', id: this.facet.keyId, refinementType: RefinementType.Key, excluding: true});
+      .addRefinement(
+        {key: this.facet.key, value: '', id: this.facet.keyId, refinementType: RefinementType.Key, excluding: true});
   }
 
   addExKeyValueRefinement(value: FacetValues) {
     this.refinementService
-      .addRefinement({key: this.facet.key, value: value.name, id: this.facet.keyId, refinementType: RefinementType.KeyValue, excluding: true});
+      .addRefinement(
+        {key: this.facet.key, value: value.name, id: this.facet.keyId, refinementType: RefinementType.KeyValue, excluding: true});
   }
 }
