@@ -1,7 +1,8 @@
-FROM node:14.8.0-alpine AS builder
+FROM node AS builder
 COPY . /oscar-gui
 WORKDIR /oscar-gui
-RUN npm i
+RUN rm package-lock.json; exit 0
+RUN yarn install
 RUN $(npm bin)/ng build --prod
 RUN ls dist/oscar-gui
 
