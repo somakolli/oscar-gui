@@ -1,6 +1,11 @@
 import {Component, NgZone, OnInit} from '@angular/core';
 import {MatTabChangeEvent} from '@angular/material/tabs';
+import {Subject} from 'rxjs';
+import {GeoPoint} from '../../models/geo-point';
+import {activateRouting} from '../search/search.component';
 
+export let routesEmpty = true;
+export const addRoutingPointEvent = new Subject<{point: GeoPoint, name: string}>();
 @Component({
   selector: 'app-routes',
   templateUrl: './routes.component.html',
@@ -8,19 +13,25 @@ import {MatTabChangeEvent} from '@angular/material/tabs';
 })
 export class RoutesComponent implements OnInit {
   constructor(private zone: NgZone) { }
-  routes: {active: boolean, name: string, color: string; destroyed: boolean}[] = [];
+  routes: {active: boolean, name: string, color: string; destroyed: boolean; initialPoint: {point: GeoPoint, name: string}}[] = [];
   ngOnInit(): void {
+    addRoutingPointEvent.subscribe(point => {
+      if (routesEmpty) {
+        activateRouting.next(true);
+        this.addTab(point);
+      }
+    });
   }
 
-  addTab() {
-    this.routes.push({active: false, name: 'route', color: this.getRandomColor(), destroyed: false});
+  addTab(initialPoint = null) {
+    this.routes.push({active: false, name: 'route', color: this.getRandomColor(), destroyed: false, initialPoint});
+    routesEmpty = false;
   }
 
   changeTab($event: MatTabChangeEvent) {
     if (this.routes.length === 0){
       return;
     }
-    console.log($event);
     for (const route of this.routes) {
       route.active = false;
     }
@@ -40,5 +51,6 @@ export class RoutesComponent implements OnInit {
       this.routes.find(value => value.color === route.color).destroyed = true
     );
     this.routes = this.routes.filter((value) => value.color !== route.color);
+    routesEmpty = this.routes.length === 0;
   }
 }

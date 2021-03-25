@@ -5,6 +5,6 @@
     <i class="fas fa-route" style="color:{{route.color}};"></i>
 
     <i style="cursor: pointer; position: absolute; left: 140px;" (click)="closeTab(route)" class="fas fa-times"></i> </ng-template>
-    <app-routing-progress-bar [destroy] = "route.destroyed" [active]="route.active" [color]="route.color"></app-routing-progress-bar>
+    <app-routing-progress-bar [destroy] = "route.destroyed" [active]="route.active" [color]="route.color" [initialPoint]="route.initialPoint"></app-routing-progress-bar>
   </mat-tab>
 </mat-tab-group>

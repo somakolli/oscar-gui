@@ -17,7 +17,7 @@
       <span class="vertical-line"></span>
       <i [hidden]="oscarQuery" (click)="oscarQuery = !oscarQuery" class="fas fa-language side-button-active" title="Use Oscar Query Language"></i>
       <i [hidden]="!oscarQuery" (click)="oscarQuery = !oscarQuery" class="fas fa-language side-button" title="Use Natural Query Language"></i>
-      <i (click)="showRouting()" class="fas fa-route {{sideButtonClass}}"></i>
+      <i (click)="toggleRouting()" class="fas fa-route {{sideButtonClass}}"></i>
     </div>
   </div>
 </div>

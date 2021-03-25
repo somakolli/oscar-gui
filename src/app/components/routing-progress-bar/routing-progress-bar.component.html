@@ -14,9 +14,12 @@
           <i class="fas fa-bars"></i>
           <i class="fas fa-map-marker-alt" style="color:{{routingMarker.color}}"></i>
         </div>
-        <div style="display: inline-flex; align-items: center; justify-content: space-evenly; width: 60%">
+        <div *ngIf="routingMarker.name === ''" style="display: inline-flex; align-items: center; justify-content: space-evenly; width: 60%">
           <span>lat: {{routingMarker.geoPoint.lat | number : '1.0-6'}}</span>
-        <span>lon: {{routingMarker.geoPoint.lon | number : '1.0-6'}}</span>
+          <span>lon: {{routingMarker.geoPoint.lon | number : '1.0-6'}}</span>
+        </div>
+        <div *ngIf="routingMarker.name !== ''">
+          {{routingMarker.name}}
         </div>
         <i style="cursor: pointer; float: right;" (click)="removePoint(routingMarker.color)" class="fas fa-times"></i>
       </div>

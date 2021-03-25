@@ -6,8 +6,11 @@ import {moveItemInArray} from '@angular/cdk/drag-drop';
 import {RoutingService} from '../../services/routing/routing.service';
 import {GeoPoint} from '../../models/geo-point';
 import {RoutingDataStoreService} from '../../services/data/routing-data-store.service';
+import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {addRoutingPointEvent} from '../routes/routes.component';
 declare var L;
 
+export const removeRoutingPointEvent = new Subject<GeoPoint>();
 @Component({
   selector: 'app-routing-progress-bar',
   templateUrl: './routing-progress-bar.component.html',
@@ -21,6 +24,9 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
   active: boolean;
   @Input()
   color: string;
+  @Input()
+  initialPoint: {point: GeoPoint, name: string} = null;
+  @Input()
   routingMarkers: Array<RoutingMarker> = [];
   routingMarkerLayer = new L.LayerGroup();
   polyLine: L.Polyline;
@@ -29,6 +35,7 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
   destroy = false;
 
   ngOnInit(): void {
+    let init = true;
     this.polyLine = L.polyline([], {
       color: this.color,
       weight: 3,
@@ -36,19 +43,27 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
       smoothFactor: 1
     });
     this.mapService.onClick$.subscribe(event => {
-      if (!this.active){
-        return;
-      }
       if (!event) {
         return;
       }
-      console.log('click routing', event);
+      if (!this.active) {
+        return;
+      }
       this.zone.run(() => {
-        const routingMarker = {color: this.getRandomColor(), geoPoint: {lat: event.latlng.lat, lon: event.latlng.lng}};
-        this.routingMarkers.push(routingMarker);
-        this.drawMarkers();
-        this.updateRoute();
+        this.addRoutingPoint({point: new GeoPoint(event.latlng.lat, event.latlng.lng), name: ''});
       });
+    });
+    if (this.initialPoint) {
+      this.addRoutingPoint(this.initialPoint);
+    }
+    addRoutingPointEvent.asObservable().subscribe(point => {
+      if (init) {
+        return;
+      }
+      if (!this.active) {
+        return;
+      }
+      this.addRoutingPoint(point);
     });
     this.mapService.onMapReady$.subscribe((mapReady) => {
         if (mapReady) {
@@ -57,13 +72,19 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
         }
       }
     );
+    init = false;
   }
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
   }
   ngOnDestroy(): void {
     this.clearList();
     this.active = false;
+  }
+  addRoutingPoint({point, name}) {
+    const routingMarker = {color: this.getRandomColor(), geoPoint: {lat: point.lat, lon: point.lon}, name};
+    this.routingMarkers.push(routingMarker);
+    this.drawMarkers();
+    this.updateRoute();
   }
   getRandomColor(): string {
     const letters = '0123456789ABCDEF';
@@ -77,7 +98,6 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
     moveItemInArray(this.routingMarkers, event.previousIndex, event.currentIndex);
     this.updateRoute();
   }
-
   updateRoute() {
     this.routingService.getRoute(this.routingMarkers.map(marker =>  marker.geoPoint), 1000)
       .subscribe((result) => {
@@ -108,7 +128,6 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
     } else {
       this.routingDataStoreService.routesToAdd.delete(this.color);
     }
-    console.log(this.routingDataStoreService.routesToAdd);
   }
 
   removePoint(color: string) {

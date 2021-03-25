@@ -14,10 +14,16 @@ import keyValueTags from '../../../assets/keyValueTags.json';
 import {RoutingService} from '../../services/routing/routing.service';
 import {RoutingDataStoreService} from '../../services/data/routing-data-store.service';
 import {SearchService} from '../../services/search/search.service';
+import {Subject} from 'rxjs';
+import {getActiveOffset} from '@angular/material/datepicker/multi-year-view';
 
 declare function getOscarQuery(input);
+
 declare function autoFillSuggestions(input);
+
 declare function coloredInput(input);
+
+export const activateRouting = new Subject<boolean>();
 
 @Component({
   selector: 'app-search',
@@ -28,7 +34,9 @@ export class SearchComponent implements OnInit {
   constructor(private oscarItemService: OscarItemsService, public itemStore: ItemStoreService,
               private osmService: OsmService, private suggestionStore: SuggestionsService, public refinementStore: RefinementsService,
               private sanitizer: DomSanitizer, private routingService: RoutingService, private routingDataStoreService: RoutingDataStoreService,
-              private searchService: SearchService) { }
+              private searchService: SearchService) {
+  }
+
   error = false;
   inputString = '';
   queryString = '';
@@ -53,6 +61,7 @@ export class SearchComponent implements OnInit {
   @Output() routesVisibleEvent = new EventEmitter<boolean>();
   routesVisible = false;
   sideButtonClass = 'side-button';
+
   ngOnInit() {
     this.refinementStore.refinements$.subscribe(refinements => {
       this.keyValuePrependix = '';
@@ -87,23 +96,26 @@ export class SearchComponent implements OnInit {
         });
       this.search();
     });
+    activateRouting.subscribe(() => this.showRouting());
   }
+
   search(): void {
     let idPrependix = '(';
     if (this.routingService.currentRoute) {
       let first = true;
       for (const cellId of this.routingService.currentRoute.cellIds) {
-        if (!first)
+        if (!first) {
           idPrependix += ' + ';
+        }
         first = false;
-        idPrependix += '$cell:' + cellId ;
+        idPrependix += '$cell:' + cellId;
       }
     }
     this.queryId++;
 
     const routeQueryString = this.getRouteQueryString();
 
-    const fullQueryString =  idPrependix + ') ' + this.keyPrependix + this.keyValuePrependix + this.parentPrependix
+    const fullQueryString = idPrependix + ') ' + this.keyPrependix + this.keyValuePrependix + this.parentPrependix
       + this.inputString + this.keyAppendix + this.parentAppendix + this.keyValueAppendix + routeQueryString;
 
     if (fullQueryString === '') {
@@ -154,6 +166,7 @@ export class SearchComponent implements OnInit {
     this.eventCount++;
     setTimeout(() => this.showSuggestions(10, this.eventCount), 10);
   }
+
   showSuggestions(waitTime: number, eventId: number) {
     if (this.eventCount !== eventId) {
       return;
@@ -201,10 +214,17 @@ export class SearchComponent implements OnInit {
     }
     this.itemStore.changeRadius(radius);
   }
-  showRouting() {
+
+  toggleRouting() {
     this.routesVisibleEvent.emit(!this.routesVisible);
     this.routesVisible = !this.routesVisible;
     this.sideButtonClass = this.routesVisible ? 'side-button-active' : 'side-button';
+  }
+
+  showRouting() {
+    if (!this.routesVisible) {
+      this.toggleRouting();
+    }
   }
 
   private getRouteQueryString(): string {

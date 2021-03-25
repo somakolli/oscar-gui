@@ -1,6 +1,10 @@
-<a (click)="handleClick($event)" class="item-name">
-  {{oscarItem.properties.name}}
-  <span *ngIf="distance" class="badge distance_badge">{{distance}} km</span>
-</a>
-<i (click) = "panTo()" class="fas fa-map-marker-alt pan-to-button"></i>
-
+<div class="d-flex w-100 flex-row justify-content-between">
+  <a (click)="handleClick($event)" class="item-name">
+    {{oscarItem.properties.name}}
+    <span *ngIf="distance" class="badge distance_badge">{{distance}} km</span>
+  </a>
+  <span class="d-flex flex-row justify-content-between icons">
+    <i (click)="addToRouting()" class="fas fa-route pan-to-button"></i>
+    <i (click)="panTo()" class="fas fa-map-marker-alt pan-to-button"></i>
+  </span>
+</div>
