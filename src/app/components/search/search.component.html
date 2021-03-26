@@ -6,8 +6,7 @@
              placeholder="Search">
       <mat-autocomplete #normal_auto="matAutocomplete" (optionSelected)="normalSelectEvent($event)">
         <mat-option *ngFor="let option of normalSuggestions"
-                    [value]="inputWithoutLastWord(inputString) + '@' + option.k + ':' + option.v">@{{option.k}}
-          :{{option.v}}</mat-option>
+                    [value]="inputWithoutLastWord(inputString) + '@' + option.k + ':' + option.v">@{{option.k}}:{{option.v}}</mat-option>
       </mat-autocomplete>
     </form>
     <form class="search-input-form" [hidden]="oscarQuery">
