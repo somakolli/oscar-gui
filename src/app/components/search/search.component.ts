@@ -102,7 +102,7 @@ export class SearchComponent implements OnInit {
     activateRouting.subscribe(() => this.showRouting());
   }
 
-  search(): void {
+  async search() {
     let idPrependix = '(';
     if (this.routingService.currentRoute) {
       let first = true;
@@ -126,7 +126,11 @@ export class SearchComponent implements OnInit {
     }
     if (this.localSearch && this.mapService.ready) {
       const bounds = this.mapService.bounds;
-      fullQueryString = fullQueryString + ` $geo:${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+      const localString =  fullQueryString + ` $geo:${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+      const apxStats = await this.oscarItemService.getApxItemCount(localString).toPromise();
+      if (apxStats.items > 0) {
+        fullQueryString = localString;
+      }
     }
     this.itemStore.setHighlightedItem(null);
     this.oscarItemService.getApxItemCount(fullQueryString).subscribe(apxStats => {
