@@ -1,7 +1,6 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {OscarItemsService} from '../../services/oscar/oscar-items.service';
 import {ItemStoreService} from '../../services/data/item-store.service';
-import {SearchState} from '../../models/state/search-state.enum';
 import {OsmService} from '../../services/osm/osm.service';
 import {SuggestionsService} from '../../services/data/suggestions.service';
 import {RefinementsService} from '../../services/data/refinements.service';
@@ -15,7 +14,6 @@ import {RoutingService} from '../../services/routing/routing.service';
 import {RoutingDataStoreService} from '../../services/data/routing-data-store.service';
 import {SearchService} from '../../services/search/search.service';
 import {Subject} from 'rxjs';
-import {getActiveOffset} from '@angular/material/datepicker/multi-year-view';
 import {MapService} from '../../services/map/map.service';
 
 declare function getOscarQuery(input);
@@ -33,8 +31,10 @@ export const activateRouting = new Subject<boolean>();
 })
 export class SearchComponent implements OnInit {
   constructor(private oscarItemService: OscarItemsService, public itemStore: ItemStoreService,
-              private osmService: OsmService, private suggestionStore: SuggestionsService, public refinementStore: RefinementsService,
-              private sanitizer: DomSanitizer, private routingService: RoutingService, private routingDataStoreService: RoutingDataStoreService,
+              private osmService: OsmService, private suggestionStore: SuggestionsService,
+              public refinementStore: RefinementsService,
+              private sanitizer: DomSanitizer, private routingService: RoutingService,
+              private routingDataStoreService: RoutingDataStoreService,
               private searchService: SearchService, private mapService: MapService) {
   }
 

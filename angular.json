@@ -30,9 +30,7 @@
                 "output": "leaflet/"
               },
               "src/favicon.ico",
-              "src/assets",
-              "src/vendor/coloredTextBox.js",
-              "src/vendor/localsFile.js"
+              "src/assets"
             ],
             "styles": [
               "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
