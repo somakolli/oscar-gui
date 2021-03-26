@@ -21,7 +21,7 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
   constructor(private mapService: MapService, private zone: NgZone, private routingService: RoutingService,
               private routingDataStoreService: RoutingDataStoreService) { }
   @Input()
-  active: boolean;
+  active = true;
   @Input()
   color: string;
   @Input()

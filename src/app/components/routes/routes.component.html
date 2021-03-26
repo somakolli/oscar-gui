@@ -1,10 +1,14 @@
-<button style="margin-top: 10px" class="add-route-button" mat-raised-button color="primary" (click)="addTab()">Add Route</button>
+<button style="margin-top: 10px" class="add-route-button" mat-raised-button color="primary" (click)="addTab()">Add
+  Route
+</button>
 
-<mat-tab-group style="margin-top: 10px; border-radius: 3px" class="route-tabs" (selectedTabChange)="changeTab($event)">
-  <mat-tab *ngFor="let route of routes" > <ng-template mat-tab-label>
-    <i class="fas fa-route" style="color:{{route.color}};"></i>
-
-    <i style="cursor: pointer; position: absolute; left: 140px;" (click)="closeTab(route)" class="fas fa-times"></i> </ng-template>
-    <app-routing-progress-bar [destroy] = "route.destroyed" [active]="route.active" [color]="route.color" [initialPoint]="route.initialPoint"></app-routing-progress-bar>
+<mat-tab-group [hidden]="routes.length == 0" mat-stretch-tabs style="margin-top: 10px; border-radius: 3px" class="route-tabs" (selectedTabChange)="changeTab($event)">
+  <mat-tab *ngFor="let route of routes">
+    <ng-template class="w-100 d-flex justify-content-between" mat-tab-label>
+      <i class="fas fa-route" style="color:{{route.color}};"></i>
+      <i style="cursor: pointer;" (click)="closeTab(route)" class="fas fa-times ml-4"></i>
+    </ng-template>
+    <app-routing-progress-bar [destroy]="route.destroyed" [active]="route.active" [color]="route.color"
+                              [initialPoint]="route.initialPoint"></app-routing-progress-bar>
   </mat-tab>
 </mat-tab-group>

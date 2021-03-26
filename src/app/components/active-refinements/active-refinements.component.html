@@ -1,27 +1,30 @@
-<div class="active-refinements_wrapper">
-  <i *ngIf="refinementsService.hasRefinements()" (click)="refinementsService.clearRefinements()" class="far fa-times-circle remove-all_button"></i>
-  <span *ngFor="let refinement of keyValueRefinements" class="badge" style="background-color: lightgreen">
-    <span (click)="removeRefinement(refinement)" class="active-refinement" style="cursor: pointer">x</span>
-    {{refinement.key}}:{{refinement.value}}
-  </span>
-  <span *ngFor="let refinement of keyRefinements" class="badge" style="background-color: lightgreen">
-    <span (click)="removeRefinement(refinement)" class="active-refinement" style="cursor: pointer">x</span>
-    {{refinement.key}}
-  </span>
-  <span *ngFor="let refinement of parentRefinements" class="badge" style="background-color: lightgreen">
-    <span (click)="removeRefinement(refinement)" class="active-refinement" style="cursor: pointer">x</span>
-    {{refinement.value}}
-  </span>
-  <span *ngFor="let refinement of exKeyValueRefinements" class="badge" style="background-color: #ff6162">
-    <span (click)="removeRefinement(refinement)" class="active-refinement" style="cursor: pointer">x</span>
-    {{refinement.key}}:{{refinement.value}}
-  </span>
-  <span *ngFor="let refinement of exKeyRefinements" class="badge" style="background-color: #ff6162">
-    <span (click)="removeRefinement(refinement)" class="active-refinement" style="cursor: pointer">x</span>
-    {{refinement.key}}
-  </span>
-  <span *ngFor="let refinement of exParentRefinements" class="badge" style="background-color: #ff6162">
-    <span (click)="removeRefinement(refinement)" class="active-refinement" style="cursor: pointer">x</span>
-    {{refinement.value}}
-  </span>
+<div *ngIf="refinementsService.hasRefinements()" class="mt-1 px-1 py-2 rounded">
+  <i (click)="refinementsService.clearRefinements()"
+     class="far fa-times-circle remove-all_button"></i>
+  <div class="d-flex flex-wrap refinements-wrapper">
+    <span *ngFor="let refinement of keyValueRefinements" class="badge" style="background-color: lightgreen">
+      <span (click)="removeRefinement(refinement)" class="active-refinement" style="cursor: pointer">x</span>
+      {{refinement.key}}:{{refinement.value}}
+    </span>
+    <span *ngFor="let refinement of keyRefinements" class="badge" style="background-color: lightgreen">
+      <span (click)="removeRefinement(refinement)" class="active-refinement" style="cursor: pointer">x</span>
+      {{refinement.key}}
+    </span>
+    <span *ngFor="let refinement of parentRefinements" class="badge" style="background-color: lightgreen">
+      <span (click)="removeRefinement(refinement)" class="active-refinement" style="cursor: pointer">x</span>
+      {{refinement.value}}
+    </span>
+    <span *ngFor="let refinement of exKeyValueRefinements" class="badge" style="background-color: #ff6162">
+      <span (click)="removeRefinement(refinement)" class="active-refinement" style="cursor: pointer">x</span>
+      {{refinement.key}}:{{refinement.value}}
+    </span>
+    <span *ngFor="let refinement of exKeyRefinements" class="badge" style="background-color: #ff6162">
+      <span (click)="removeRefinement(refinement)" class="active-refinement" style="cursor: pointer">x</span>
+      {{refinement.key}}
+    </span>
+    <span *ngFor="let refinement of exParentRefinements" class="badge" style="background-color: #ff6162">
+      <span (click)="removeRefinement(refinement)" class="active-refinement" style="cursor: pointer">x</span>
+      {{refinement.value}}
+    </span>
+  </div>
 </div>

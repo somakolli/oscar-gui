@@ -1,3 +1,4 @@
+
 declare var L;
 
 import { BrowserModule } from '@angular/platform-browser';
@@ -44,6 +45,7 @@ import { RoutesComponent } from './components/routes/routes.component';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatButtonModule} from '@angular/material/button';
 
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 @NgModule({
   declarations: [
     AppComponent,
@@ -85,7 +87,8 @@ import {MatButtonModule} from '@angular/material/button';
         MatAutocompleteModule,
         MatSliderModule,
         MatTabsModule,
-        MatButtonModule
+        MatButtonModule,
+        MatSlideToggleModule
     ],
   providers: [OscarItemsService, ConfigService, ItemStoreService],
   bootstrap: [AppComponent]

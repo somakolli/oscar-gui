@@ -1,27 +1,43 @@
 <div class="input-group">
-  <div class="search-form">
-    <form class="search-input-form" [hidden]="!oscarQuery">
-      <input name="normal_input" [matAutocomplete]="normal_auto" [(ngModel)]="inputString" (ngModelChange)="inputUpdate($event)" (keydown.enter)="search()" type="text" class="search-input" placeholder="Search" >
+  <div class="search-form d-flex">
+    <form class="search-input-form w-100" [hidden]="!oscarQuery">
+      <input name="normal_input" [matAutocomplete]="normal_auto" [(ngModel)]="inputString"
+             (ngModelChange)="inputUpdate($event)" (keydown.enter)="search()" type="text" class="search-input"
+             placeholder="Search">
       <mat-autocomplete #normal_auto="matAutocomplete" (optionSelected)="normalSelectEvent($event)">
-        <mat-option *ngFor="let option of normalSuggestions" [value]="inputWithoutLastWord(inputString) + '@' + option.k + ':' + option.v">@{{option.k}}:{{option.v}}</mat-option>
+        <mat-option *ngFor="let option of normalSuggestions"
+                    [value]="inputWithoutLastWord(inputString) + '@' + option.k + ':' + option.v">@{{option.k}}
+          :{{option.v}}</mat-option>
       </mat-autocomplete>
     </form>
     <form class="search-input-form" [hidden]="oscarQuery">
-      <input name="natural-input" class="search-input" placeholder="Natural Language Search" (ngModelChange)="naturalUpdate($event)" (keydown.enter)="search()" [formControl]="myControl" [matAutocomplete]="auto">
+      <input name="natural-input" class="search-input" placeholder="Natural Language Search"
+             (ngModelChange)="naturalUpdate($event)" (keydown.enter)="search()" [formControl]="myControl"
+             [matAutocomplete]="auto">
       <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectEvent($event)">
-        <mat-option *ngFor="let option of suggestions" [value]="option.prefix + option.suggestion">{{option.suggestion}}</mat-option>
+        <mat-option *ngFor="let option of suggestions"
+                    [value]="option.prefix + option.suggestion">{{option.suggestion}}</mat-option>
       </mat-autocomplete>
     </form>
 
-    <div class="button-area">
+    <div class="button-area" style="width: 25%">
       <span class="vertical-line"></span>
-      <i [hidden]="oscarQuery" (click)="oscarQuery = !oscarQuery" class="fas fa-language side-button-active" title="Use Oscar Query Language"></i>
-      <i [hidden]="!oscarQuery" (click)="oscarQuery = !oscarQuery" class="fas fa-language side-button" title="Use Natural Query Language"></i>
-      <i (click)="toggleRouting()" class="fas fa-route {{sideButtonClass}}"></i>
+      <!--<i [hidden]="oscarQuery" (click)="oscarQuery = !oscarQuery" class="fas fa-language side-button-active"
+         title="Use Oscar Query Language"></i>
+      <i [hidden]="!oscarQuery" (click)="oscarQuery = !oscarQuery" class="fas fa-language side-button"
+         title="Use Natural Query Language"></i>-->
+      <div class="d-flex w-100 justify-content-around align-items-center">
+        <i (click)="toggleRouting()" class="fas fa-route {{sideButtonClass}}"></i>
+        <i (click)="togglePreferences()" class="fas fa-cog" [ngClass]="{'side-button': !preferences, 'side-button-active': preferences}" ></i>
+      </div>
     </div>
   </div>
 </div>
-<div [hidden] = "!error" class="alert alert-danger" role="alert">
+<div *ngIf="preferences" class="bg-white mt-2 rounded px-3 py-2 d-flex justify-content-between">
+  <span>Local Search</span>
+  <mat-slide-toggle color="primary" [(ngModel)]="localSearch"></mat-slide-toggle>
+</div>
+<div [hidden]="!error" class="alert alert-danger" role="alert">
   Result to large. Please refine query.
 </div>
 

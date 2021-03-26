@@ -16,6 +16,7 @@ import {RoutingDataStoreService} from '../../services/data/routing-data-store.se
 import {SearchService} from '../../services/search/search.service';
 import {Subject} from 'rxjs';
 import {getActiveOffset} from '@angular/material/datepicker/multi-year-view';
+import {MapService} from '../../services/map/map.service';
 
 declare function getOscarQuery(input);
 
@@ -34,7 +35,7 @@ export class SearchComponent implements OnInit {
   constructor(private oscarItemService: OscarItemsService, public itemStore: ItemStoreService,
               private osmService: OsmService, private suggestionStore: SuggestionsService, public refinementStore: RefinementsService,
               private sanitizer: DomSanitizer, private routingService: RoutingService, private routingDataStoreService: RoutingDataStoreService,
-              private searchService: SearchService) {
+              private searchService: SearchService, private mapService: MapService) {
   }
 
   error = false;
@@ -56,11 +57,13 @@ export class SearchComponent implements OnInit {
   options: string[] = ['One', 'Two', 'Three'];
   normalSuggestions = [];
   oscarQuery = true;
-  maxitems = 100000000;
+  maxitems = 1000000;
   queryId = -1;
   @Output() routesVisibleEvent = new EventEmitter<boolean>();
   routesVisible = false;
   sideButtonClass = 'side-button';
+  localSearch = true;
+  preferences = false;
 
   ngOnInit() {
     this.refinementStore.refinements$.subscribe(refinements => {
@@ -115,11 +118,15 @@ export class SearchComponent implements OnInit {
 
     const routeQueryString = this.getRouteQueryString();
 
-    const fullQueryString = idPrependix + ') ' + this.keyPrependix + this.keyValuePrependix + this.parentPrependix
+    let fullQueryString = idPrependix + ') ' + this.keyPrependix + this.keyValuePrependix + this.parentPrependix
       + this.inputString + this.keyAppendix + this.parentAppendix + this.keyValueAppendix + routeQueryString;
 
     if (fullQueryString === '') {
       return;
+    }
+    if (this.localSearch && this.mapService.ready) {
+      const bounds = this.mapService.bounds;
+      fullQueryString = fullQueryString + ` $geo:${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
     }
     this.itemStore.setHighlightedItem(null);
     this.oscarItemService.getApxItemCount(fullQueryString).subscribe(apxStats => {
@@ -240,7 +247,10 @@ export class SearchComponent implements OnInit {
       }
       returnString += ')';
     }
-    console.log(returnString);
     return returnString;
+  }
+
+  togglePreferences() {
+    this.preferences = !this.preferences;
   }
 }

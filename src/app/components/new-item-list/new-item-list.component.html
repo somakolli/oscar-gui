@@ -1,5 +1,5 @@
-<div class="scrolling-wrapper">
-  <div id="list-div" #listDiv class="list-div" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="30" (scrolled)="onScrollDown()" [scrollWindow]="false">
+<div [hidden]="items.length === 0" class="scrolling-wrapper rounded">
+  <div id="list-div" #listDiv class="list-div rounded" infinite-scroll [infiniteScrollDistance]="2" [infiniteScrollThrottle]="30" (scrolled)="onScrollDown()" [scrollWindow]="false">
     <ul class="list-group list-inner-div" >
       <li class="list-group-item" *ngFor="let item of items"><app-item-detail (itemClick)="clickOnItem(item); scroll(detailDiv)" [oscarItem]="item"></app-item-detail></li>
     </ul>

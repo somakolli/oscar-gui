@@ -206,4 +206,7 @@ export class MapService {
       this.routingMarkers.delete(id);
     }
   }
+  get ready() {
+    return this._mapReady.value;
+  }
 }

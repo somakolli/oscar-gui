@@ -1,5 +1,7 @@
 import {Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
 import {OscarItem} from '../../models/oscar/oscar-item';
+import {GeoPoint} from '../../models/geo-point';
+import {addRoutingPointEvent} from '../routes/routes.component';
 
 @Component({
   selector: 'app-item-kv-table',
@@ -41,4 +43,10 @@ export class ItemKvTableComponent implements OnInit, OnChanges {
     }
   }
 
+  addToRoute() {
+    addRoutingPointEvent.next({
+      point: new GeoPoint(this.oscarItem.firstPoint.lat, this.oscarItem.firstPoint.lon),
+      name: this.oscarItem.properties.name
+    });
+  }
 }

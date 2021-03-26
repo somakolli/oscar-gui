@@ -15,7 +15,6 @@ export class ParentsComponent implements OnInit, OnChanges {
   ngOnInit() {
   }
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('changes');
     if (this.parents && this.parents.clustering.length > 0) {
       document.getElementById('parentsDiv').scrollIntoView();
     }

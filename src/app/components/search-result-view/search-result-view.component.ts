@@ -26,7 +26,7 @@ export class SearchResultViewComponent implements OnInit {
   markerThreshHold = 40;
   heatmapSliderVisible = false;
   heatMapIntensity = 1;
-  showGlobal = false;
+  showGlobal = true;
   showLocal = false;
   showParents = false;
   showFacets = false;
@@ -83,7 +83,6 @@ export class SearchResultViewComponent implements OnInit {
   }
 
   intensityChange() {
-    console.log(this.heatMapIntensity);
     this.reDrawSearchMarkers();
   }
 

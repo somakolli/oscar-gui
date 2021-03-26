@@ -24,7 +24,7 @@ export class NewItemListComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     this.items = [];
     this.queryNewItems(this.fetchCount);
-    document.getElementById('list-div').scrollIntoView({behavior: 'smooth'});
+    // document.getElementById('list-div').scrollIntoView({behavior: 'smooth'});
     this.mapService.deleteMarker(this.markerId);
   }
   onScrollDown() {
