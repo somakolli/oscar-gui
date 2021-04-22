@@ -1,3 +1,4 @@
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 
 declare var L;
 
@@ -46,6 +47,7 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatButtonModule} from '@angular/material/button';
 
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { RegionComponent } from './components/region/region.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -72,6 +74,7 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     AddressInputComponent,
     RoutingProgressBarComponent,
     RoutesComponent,
+    RegionComponent,
   ],
     imports: [
         BrowserModule,
@@ -88,7 +91,8 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
         MatSliderModule,
         MatTabsModule,
         MatButtonModule,
-        MatSlideToggleModule
+        MatSlideToggleModule,
+        MatProgressBarModule
     ],
   providers: [OscarItemsService, ConfigService, ItemStoreService],
   bootstrap: [AppComponent]

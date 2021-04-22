@@ -8,7 +8,7 @@
       <i class="fas fa-route" style="color:{{route.color}};"></i>
       <i style="cursor: pointer;" (click)="closeTab(route)" class="fas fa-times ml-4"></i>
     </ng-template>
-    <app-routing-progress-bar [destroy]="route.destroyed" [active]="route.active" [color]="route.color"
+    <app-routing-progress-bar [routesVisible]="routesVisible" [destroy]="route.destroyed" [active]="route.active" [color]="route.color"
                               [initialPoint]="route.initialPoint"></app-routing-progress-bar>
   </mat-tab>
 </mat-tab-group>

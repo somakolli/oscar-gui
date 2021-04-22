@@ -1,4 +1,4 @@
-import {Component, NgZone, OnInit} from '@angular/core';
+import {Component, Input, NgZone, OnInit} from '@angular/core';
 import {MatTabChangeEvent} from '@angular/material/tabs';
 import {Subject} from 'rxjs';
 import {GeoPoint} from '../../models/geo-point';
@@ -12,6 +12,8 @@ export const addRoutingPointEvent = new Subject<{point: GeoPoint, name: string}>
   styleUrls: ['./routes.component.sass']
 })
 export class RoutesComponent implements OnInit {
+  @Input()
+  routesVisible = false;
   constructor(private zone: NgZone) { }
   routes: {active: boolean, name: string, color: string; destroyed: boolean; initialPoint: {point: GeoPoint, name: string}}[] = [];
   ngOnInit(): void {

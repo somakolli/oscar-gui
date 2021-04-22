@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, NgZone, OnInit, Output} from '@angular/core';
 import {OscarItemsService} from '../../services/oscar/oscar-items.service';
 import {ItemStoreService} from '../../services/data/item-store.service';
 import {OsmService} from '../../services/osm/osm.service';
@@ -15,6 +15,10 @@ import {RoutingDataStoreService} from '../../services/data/routing-data-store.se
 import {SearchService} from '../../services/search/search.service';
 import {Subject} from 'rxjs';
 import {MapService} from '../../services/map/map.service';
+import {WikiServiceService} from '../../services/wikipedia/wiki-service.service';
+import {OscarItem} from '../../models/oscar/oscar-item';
+import {displayRegion} from '../region/region.component';
+import {clearItems} from '../search-result-view/search-result-view.component';
 
 declare function getOscarQuery(input);
 
@@ -35,8 +39,12 @@ export class SearchComponent implements OnInit {
               public refinementStore: RefinementsService,
               private sanitizer: DomSanitizer, private routingService: RoutingService,
               private routingDataStoreService: RoutingDataStoreService,
-              private searchService: SearchService, private mapService: MapService) {
+              private searchService: SearchService, private mapService: MapService,
+              private zone: NgZone,
+              private wikiService: WikiServiceService) {
   }
+  @Input()
+  loading = false;
 
   error = false;
   inputString = '';
@@ -62,7 +70,7 @@ export class SearchComponent implements OnInit {
   @Output() routesVisibleEvent = new EventEmitter<boolean>();
   routesVisible = false;
   sideButtonClass = 'side-button';
-  localSearch = true;
+  localSearch = false;
   preferences = false;
 
   ngOnInit() {
@@ -126,19 +134,36 @@ export class SearchComponent implements OnInit {
     }
     if (this.localSearch && this.mapService.ready) {
       const bounds = this.mapService.bounds;
-      const localString =  fullQueryString + ` $geo:${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
+      const localString = fullQueryString + ` $geo:${bounds.getWest()},${bounds.getSouth()},${bounds.getEast()},${bounds.getNorth()}`;
       const apxStats = await this.oscarItemService.getApxItemCount(localString).toPromise();
       if (apxStats.items > 0) {
         fullQueryString = localString;
       }
     }
     this.itemStore.setHighlightedItem(null);
-    this.oscarItemService.getApxItemCount(fullQueryString).subscribe(apxStats => {
-      if (apxStats.items < this.maxitems) {
-        this.searchService.queryToDraw.next(fullQueryString);
+    this.oscarItemService.getRegion(fullQueryString).subscribe(async regions => {
+      displayRegion.next(null);
+      if (regions && regions.length > 0) {
+        // get region with most items
+        clearItems.next('clear');
+        this.mapService.drawRegion(regions[0]);
+        const region = regions[0];
+        displayRegion.next(OscarItem.getValue(region, 'wikidata'));
       } else {
+        displayRegion.next(null);
+        this.mapService.clearRegions();
+        this.oscarItemService.getApxItemCount(fullQueryString).subscribe(apxStats => {
+          if (apxStats.items < this.maxitems) {
+            this.searchService.queryToDraw.next(fullQueryString);
+          } else {
+            this.error = true;
+          }
+        });
       }
     });
+  }
+
+  searchPoint(point: L.LatLng) {
   }
 
   inputUpdate($event) {

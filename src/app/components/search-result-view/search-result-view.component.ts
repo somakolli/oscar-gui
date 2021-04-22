@@ -1,4 +1,4 @@
-import {Component, NgZone, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, NgZone, OnInit, Output} from '@angular/core';
 import {OscarMinItem} from '../../models/oscar/oscar-min-item';
 import {MapService} from '../../services/map/map.service';
 import {OscarItemsService} from '../../services/oscar/oscar-items.service';
@@ -6,6 +6,9 @@ import {GridService} from '../../services/data/grid.service';
 import _ from 'lodash';
 import {FacetRefinements, ParentRefinements} from '../../models/oscar/refinements';
 import {SearchService} from '../../services/search/search.service';
+import {Subject} from 'rxjs';
+
+export const clearItems = new Subject<string>();
 
 @Component({
   selector: 'app-search-result-view',
@@ -18,7 +21,9 @@ export class SearchResultViewComponent implements OnInit {
               private oscarItemsService: OscarItemsService,
               private gridService: GridService,
               private zone: NgZone,
-              private searchService: SearchService) { }
+              private searchService: SearchService) {
+  }
+
   items: OscarMinItem[] = [];
   currentItems: OscarMinItem[] = [];
   parentRefinements: ParentRefinements;
@@ -31,27 +36,14 @@ export class SearchResultViewComponent implements OnInit {
   showParents = false;
   showFacets = false;
   progress = 0;
+
+  @Output()
+  searchLoading = new EventEmitter<boolean>();
+  @Input()
+  routesVisible = false;
   ngOnInit(): void {
-    this.searchService.queryToDraw$.subscribe(queryString => {
-      if (queryString !== '') {
-        this.progress = 1;
-        this.oscarItemsService.getItemsBinary(queryString).subscribe(itemsArray => {
-          this.heatmapSliderVisible = false;
-          this.mapService.clearAllLayers();
-          this.items = this.oscarItemsService.binaryItemsToOscarMin(itemsArray);
-          this.gridService.buildGrid(this.items);
-          this.reDrawSearchMarkers();
-          this.mapService.fitBounds(this.gridService.getBBox());
-        });
-        this.oscarItemsService.getParents(queryString, 0).subscribe(parents => {
-          this.zone.run(() => this.parentRefinements = parents);
-          this.progress += 25;
-        });
-        this.oscarItemsService.getFacets(queryString, 0).subscribe(facets => {
-          this.zone.run(() => this.facetRefinements = facets);
-          this.progress += 25;
-        });
-      }
+    this.searchService.queryToDraw$.subscribe(async queryString => {
+      await this.drawQuery(queryString);
     });
     this.mapService.onZoom$.subscribe((event) => {
       if (event !== null) {
@@ -63,7 +55,60 @@ export class SearchResultViewComponent implements OnInit {
         this.reDrawSearchMarkers();
       }
     });
+    clearItems.asObservable().subscribe((value) => {
+      if (value) {
+        this.clearItems();
+      }
+    });
+    this.mapService._mapReady.subscribe((ready) => {
+      if (!ready)
+        return;
+      console.log('ready');
+      this.mapService._map.on('click', async (event: any) => {
+        if (this.routesVisible)
+          return;
+        const clickLatLng = event.latlng;
+        const maxRadius = 100;
+        const increments = 10;
+        for (let i = 1; i < 200; i = i + 10) {
+          const {query, items } = await this.oscarItemsService.getPoint(i, clickLatLng.lat, clickLatLng.lng);
+          const binaryItems = await items.toPromise();
+          const oscarMin = this.oscarItemsService.binaryItemsToOscarMin(binaryItems);
+          console.log(oscarMin.length);
+          if (oscarMin.length > 0) {
+            console.log(binaryItems);
+            await this.drawQuery(query);
+            break;
+          }
+        }
+
+      });
+    });
   }
+  async drawQuery(queryString: string) {
+    if (queryString !== '') {
+        this.searchLoading.emit(true);
+        this.clearItems();
+        this.progress = 1;
+        const itemsArray = await this.oscarItemsService.getItemsBinary(queryString).toPromise();
+        this.heatmapSliderVisible = false;
+        this.mapService.clearAllLayers();
+        this.items = this.oscarItemsService.binaryItemsToOscarMin(itemsArray);
+        this.gridService.buildGrid(this.items);
+        this.reDrawSearchMarkers();
+        this.mapService.fitBounds(this.gridService.getBBox());
+        this.oscarItemsService.getParents(queryString, 0).subscribe(parents => {
+          this.zone.run(() => this.parentRefinements = parents);
+          this.progress += 25;
+        });
+        this.oscarItemsService.getFacets(queryString, 0).subscribe(facets => {
+          this.zone.run(() => this.facetRefinements = facets);
+          this.progress += 25;
+        });
+        this.searchLoading.emit(false);
+      }
+  }
+
   reDrawSearchMarkers() {
     this.mapService.clearSearchMarkers();
     this.mapService.clearHeatMap();
@@ -72,7 +117,7 @@ export class SearchResultViewComponent implements OnInit {
       this.currentItems = this.gridService.getCurrentItems(bounds.getSouth(), bounds.getWest(), bounds.getNorth(), bounds.getEast());
       this.progress += 25;
     });
-    if (this.currentItems.length < this.markerThreshHold || this.mapService.zoom === this.mapService.maxZoom) {
+    if (this.currentItems.length < this.markerThreshHold /*|| this.mapService.zoom === this.mapService.maxZoom*/) {
       this.heatmapSliderVisible = false;
       this.mapService.drawItemsMarker(this.currentItems);
     } else {
@@ -92,6 +137,7 @@ export class SearchResultViewComponent implements OnInit {
     this.showParents = false;
     this.showFacets = false;
   }
+
   localClick($event: MouseEvent) {
     this.showLocal = !this.showLocal;
     this.showGlobal = false;
@@ -105,10 +151,21 @@ export class SearchResultViewComponent implements OnInit {
     this.showParents = !this.showParents;
     this.showFacets = false;
   }
+
   facetClick($event: MouseEvent) {
     this.showLocal = false;
     this.showGlobal = false;
     this.showParents = false;
     this.showFacets = !this.showFacets;
+  }
+
+  clearItems() {
+    console.log('clearing heatmap');
+    this.mapService.clearHeatMap();
+    this.mapService.clearAllLayers();
+    this.items = [];
+    this.currentItems = [];
+    this.parentRefinements = null;
+    this.facetRefinements = null;
   }
 }

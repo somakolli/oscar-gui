@@ -8,6 +8,7 @@ import {GeoPoint} from '../../models/geo-point';
 import {RoutingDataStoreService} from '../../services/data/routing-data-store.service';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {addRoutingPointEvent} from '../routes/routes.component';
+import {latLng} from 'leaflet';
 declare var L;
 
 export const removeRoutingPointEvent = new Subject<GeoPoint>();
@@ -31,8 +32,12 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
   routingMarkerLayer = new L.LayerGroup();
   polyLine: L.Polyline;
   checkboxActive = false;
+  distance: number;
+  time: number;
   @Input()
   destroy = false;
+  @Input()
+  routesVisible = false;
 
   ngOnInit(): void {
     let init = true;
@@ -47,6 +52,9 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
         return;
       }
       if (!this.active) {
+        return;
+      }
+      if (!this.routesVisible) {
         return;
       }
       this.zone.run(() => {
@@ -65,6 +73,7 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
       }
       this.addRoutingPoint(point);
     });
+
     this.mapService.onMapReady$.subscribe((mapReady) => {
         if (mapReady) {
           this.mapService._map.addLayer(this.routingMarkerLayer);
@@ -103,7 +112,19 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
       .subscribe((result) => {
         this.drawRoute(result.path.map(point => new GeoPoint(point[0], point[1])));
         this.addToSearch();
+        this.time = result.distance;
       });
+  }
+  calcDistance() {
+    let previousPoint: L.LatLng = null;
+    let distance = 0;
+    this.polyLine.getLatLngs().forEach(currLatLng => {
+      if (previousPoint) {
+        distance += previousPoint.distanceTo(currLatLng);
+      }
+      previousPoint = currLatLng;
+    });
+    this.distance = distance / 1000;
   }
   drawRoute(route: GeoPoint[]) {
     this.polyLine.setLatLngs([]);
@@ -112,6 +133,7 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
       latLngs.push(L.latLng([point.lat, point.lon]));
     }
     this.polyLine.setLatLngs(latLngs);
+    this.calcDistance();
   }
 
   clearList() {
@@ -119,6 +141,8 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
     this.routingMarkerLayer.clearLayers();
     this.routingMarkers = [];
     this.checkboxActive = false;
+    this.distance = null;
+    this.time = null;
     this.addToSearch();
   }
 

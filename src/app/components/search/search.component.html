@@ -32,6 +32,7 @@
     </div>
   </div>
 </div>
+<mat-progress-bar *ngIf="loading" mode="indeterminate"></mat-progress-bar>
 <div *ngIf="preferences" class="bg-white mt-2 rounded px-3 py-2 d-flex justify-content-between">
   <span>Local Search</span>
   <mat-slide-toggle color="primary" [(ngModel)]="localSearch"></mat-slide-toggle>

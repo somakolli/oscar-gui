@@ -11,6 +11,7 @@ import {OscarApxstats} from '../../models/oscar/oscar-apxstats';
 import {FacetRefinements, ParentRefinements} from '../../models/oscar/refinements';
 import {SearchState} from '../../models/state/search-state.enum';
 import {LocationService} from '../location.service';
+import {Region} from '../../models/oscar/region';
 
 @Injectable({
   providedIn: 'root'
@@ -75,6 +76,15 @@ export class OscarItemsService {
     formdata.append('shape', 'true');
     const queryString = this.configService.getOscarUrl() + `/oscar/itemdb/multiple`;
     return this.http.post(queryString, formdata);
+  }
+  getRegion(query: string, queryId: number = 0): Observable<OscarItem[]> {
+    return this.http.get<OscarItem[]>(
+      this.configService.getOscarUrl() + `/oscar/items/isregion?q=${encodeURIComponent(query)}`
+    );
+  }
+  getPoint(radius: number, lat: number, lon: number) {
+    const query = `$point:${radius},${lat},${lon}`;
+    return {query, items: this.getItemsBinary(query)};
   }
   private toDoubleLat(lat: number) {
     // tslint:disable-next-line:no-bitwise

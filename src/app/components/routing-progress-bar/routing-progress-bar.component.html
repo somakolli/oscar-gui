@@ -7,6 +7,8 @@
     </div>
   </div>
 
+  <span class="m-2" *ngIf="distance > 0">Distance: {{distance | number}} km</span>
+  <span class="m-2" *ngIf="time > 0">Time: {{time}} ?</span>
     <div style="margin-top: 5px; width: 95%; text-align: left; margin-left: 3%" *ngIf="routingMarkers.length > 0" cdkDropList class="routing-list" (cdkDropListDropped)="drop($event)">
       <div *ngFor="let routingMarker of routingMarkers" cdkDrag class="routing-list-item"
            style="display: inline-flex; justify-content: space-between; width: 100%; padding: 7px 14px">

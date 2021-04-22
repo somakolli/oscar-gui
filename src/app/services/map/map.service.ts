@@ -8,6 +8,8 @@ import '../../../../node_modules/leaflet-webgl-heatmap/src/webgl-heatmap/webgl-h
 import {OscarItemsService} from '../oscar/oscar-items.service';
 import {RoutingMarker} from '../../models/routing-marker';
 import {LatLng, LatLngBounds, LayerGroup, Map as LeafletMap} from 'leaflet';
+import {Region} from '../../models/oscar/region';
+import {OscarItem} from '../../models/oscar/oscar-item';
 declare var L;
 
 @Injectable({
@@ -21,6 +23,7 @@ export class MapService {
 
   searchMarkerLayer = new L.LayerGroup();
   routingMarkerLayer = new L.LayerGroup();
+  regionLayer = new L.LayerGroup();
   rectLayer = new LayerGroup();
   zoom: number;
   private readonly _zoom = new BehaviorSubject<any>(null);
@@ -29,7 +32,7 @@ export class MapService {
   readonly onMove$ = this._move.asObservable();
   private readonly _click = new BehaviorSubject<any>(null);
   readonly onClick$ = this._click.asObservable();
-  private readonly _mapReady = new BehaviorSubject<boolean>(false);
+  readonly _mapReady = new BehaviorSubject<boolean>(false);
   readonly onMapReady$ = this._mapReady.asObservable();
   _map: LeafletMap;
   route: L.Polyline = L.polyline([], {
@@ -75,6 +78,7 @@ export class MapService {
     this.map.addLayer(this.heatmap);
     this.map.addLayer(this.routingMarkerLayer);
     this.map.addLayer(this.rectLayer);
+    this.map.addLayer(this.regionLayer);
     this.map.on('zoom', (event) => {
       this.zoom = event.target._zoom;
       this._zoom.next(event);
@@ -168,11 +172,19 @@ export class MapService {
       style: {color: 'blue', stroke: true, fill: false, opacity: 0.7}
     }).addTo(this.searchMarkerLayer);
   }
+  drawRegion(region: OscarItem) {
+    this.clearRegions();
+    const feature = L.geoJSON(region.geometry).addTo(this.regionLayer);
+    this.fitBounds(feature.getBounds());
+  }
 
   drawRoutingMarker(routingMarkers: RoutingMarker[]) {
     // Creates a red marker with the coffee icon
 
 
+  }
+  clearRegions() {
+    this.regionLayer.clearLayers();
   }
   clearHeatMap() {
     this.heatmap.setData([]);
@@ -189,6 +201,7 @@ export class MapService {
     this.clearSearchMarkers();
   }
   fitBounds(bounds: L.LatLngBounds) {
+    console.log(bounds);
     if (bounds.getNorthEast().lat === 100000) {
       bounds  = new LatLngBounds(new LatLng(55.203953, 4.21875), new LatLng(47.219568, 14.897462));
     }

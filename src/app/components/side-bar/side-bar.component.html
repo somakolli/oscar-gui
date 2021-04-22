@@ -1,7 +1,8 @@
 <div class="side-bar">
   <div>
-    <app-search (routesVisibleEvent)="routesVisible = $event.valueOf()"></app-search>
-    <app-routes [hidden]="!routesVisible"></app-routes>
-    <app-search-result-view></app-search-result-view>
+    <app-search [loading]="searchLoading" (routesVisibleEvent)="routesVisible = $event.valueOf()"></app-search>
+    <app-routes [routesVisible]="routesVisible" [hidden]="!routesVisible"></app-routes>
+    <app-search-result-view (searchLoading)="searchLoading = $event" [routesVisible]="routesVisible"></app-search-result-view>
+    <app-region></app-region>
   </div>
 </div>
