@@ -39,8 +39,11 @@ export class SearchResultViewComponent implements OnInit {
 
   @Output()
   searchLoading = new EventEmitter<boolean>();
+  @Output()
+  noResult = new EventEmitter<boolean>();
   @Input()
   routesVisible = false;
+
   ngOnInit(): void {
     this.searchService.queryToDraw$.subscribe(async queryString => {
       await this.drawQuery(queryString);
@@ -61,17 +64,19 @@ export class SearchResultViewComponent implements OnInit {
       }
     });
     this.mapService._mapReady.subscribe((ready) => {
-      if (!ready)
+      if (!ready) {
         return;
+      }
       console.log('ready');
       this.mapService._map.on('click', async (event: any) => {
-        if (this.routesVisible)
+        if (this.routesVisible) {
           return;
+        }
         const clickLatLng = event.latlng;
         const maxRadius = 100;
         const increments = 10;
         for (let i = 1; i < 200; i = i + 10) {
-          const {query, items } = await this.oscarItemsService.getPoint(i, clickLatLng.lat, clickLatLng.lng);
+          const {query, items} = await this.oscarItemsService.getPoint(i, clickLatLng.lat, clickLatLng.lng);
           const binaryItems = await items.toPromise();
           const oscarMin = this.oscarItemsService.binaryItemsToOscarMin(binaryItems);
           console.log(oscarMin.length);
@@ -81,32 +86,42 @@ export class SearchResultViewComponent implements OnInit {
             break;
           }
         }
-
       });
     });
   }
+
   async drawQuery(queryString: string) {
-    if (queryString !== '') {
-        this.searchLoading.emit(true);
-        this.clearItems();
-        this.progress = 1;
-        const itemsArray = await this.oscarItemsService.getItemsBinary(queryString).toPromise();
-        this.heatmapSliderVisible = false;
-        this.mapService.clearAllLayers();
-        this.items = this.oscarItemsService.binaryItemsToOscarMin(itemsArray);
-        this.gridService.buildGrid(this.items);
-        this.reDrawSearchMarkers();
-        this.mapService.fitBounds(this.gridService.getBBox());
-        this.oscarItemsService.getParents(queryString, 0).subscribe(parents => {
-          this.zone.run(() => this.parentRefinements = parents);
-          this.progress += 25;
-        });
-        this.oscarItemsService.getFacets(queryString, 0).subscribe(facets => {
-          this.zone.run(() => this.facetRefinements = facets);
-          this.progress += 25;
-        });
+    if (queryString) {
+      this.noResult.emit(false);
+      this.searchLoading.emit(true);
+      this.clearItems();
+      this.progress = 1;
+      const itemsArray = await this.oscarItemsService.getItemsBinary(queryString).toPromise();
+      this.heatmapSliderVisible = false;
+      this.mapService.clearAllLayers();
+      this.items = this.oscarItemsService.binaryItemsToOscarMin(itemsArray);
+      console.log(queryString);
+      if (this.items.length === 0 && queryString !== '() ') {
+        this.noResult.emit(true);
+        this.searchLoading.emit(false);
+        return;
+      } else {
+        this.noResult.emit(false);
         this.searchLoading.emit(false);
       }
+      this.gridService.buildGrid(this.items);
+      this.reDrawSearchMarkers();
+      this.mapService.fitBounds(this.gridService.getBBox());
+      this.oscarItemsService.getParents(queryString, 0).subscribe(parents => {
+        this.zone.run(() => this.parentRefinements = parents);
+        this.progress += 25;
+      });
+      this.oscarItemsService.getFacets(queryString, 0).subscribe(facets => {
+        this.zone.run(() => this.facetRefinements = facets);
+        this.progress += 25;
+      });
+      this.searchLoading.emit(false);
+    }
   }
 
   reDrawSearchMarkers() {

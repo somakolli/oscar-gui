@@ -15,7 +15,7 @@ export class SideBarComponent implements OnInit {
 
   routing = false;
   routesVisible = false;
-
+  noResult = false;
   searchLoading = false;
   ngOnInit() {
 

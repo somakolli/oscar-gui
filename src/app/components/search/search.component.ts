@@ -46,6 +46,8 @@ export class SearchComponent implements OnInit {
   @Input()
   loading = false;
 
+  @Input()
+  noResult = false;
   error = false;
   inputString = '';
   queryString = '';
