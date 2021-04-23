@@ -1,8 +1,15 @@
+<div class="position-absolute" style="top: {{contextMenuY}}px; left: {{contextMenuX}}px" [matMenuTriggerFor]="contextMenu"></div>
+<mat-menu #contextMenu="matMenu" class="position-absolute">
+  <button (click)="openCopiedSnackBar()" [cdkCopyToClipboard]="contextMenuLatLng.lat + ',' + contextMenuLatLng.lng"mat-menu-item *ngIf="contextMenuLatLng">{{contextMenuLatLng.lat | number}},{{contextMenuLatLng.lng | number}}</button>
+  <button *ngIf="contextMenuLatLng"  (click)="startRadiusSearch()" mat-menu-item>
+  <span>What's here?</span>
+    </button>
+  <button *ngIf="contextMenuLatLng"  (click)="addToRouting()" mat-menu-item>
+  <span>Add To Route!</span>
+  </button>
+</mat-menu>
 <div class="map-container"
      leaflet
      [leafletOptions]="options"
      (leafletMapReady)="onMapReady($event)">
-  <mat-menu #menu="matMenu" class="position-absolute" style="top: 0; right: 0">
-
-  </mat-menu>
 </div>

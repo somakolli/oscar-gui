@@ -7,8 +7,10 @@ import _ from 'lodash';
 import {FacetRefinements, ParentRefinements} from '../../models/oscar/refinements';
 import {SearchService} from '../../services/search/search.service';
 import {Subject} from 'rxjs';
+import {MatSnackBar} from '@angular/material/snack-bar';
 
 export const clearItems = new Subject<string>();
+export const radiusSearchTrigger = new Subject<L.LatLng>();
 
 @Component({
   selector: 'app-search-result-view',
@@ -21,7 +23,8 @@ export class SearchResultViewComponent implements OnInit {
               private oscarItemsService: OscarItemsService,
               private gridService: GridService,
               private zone: NgZone,
-              private searchService: SearchService) {
+              private searchService: SearchService,
+              private snackBar: MatSnackBar) {
   }
 
   items: OscarMinItem[] = [];
@@ -63,35 +66,45 @@ export class SearchResultViewComponent implements OnInit {
         this.clearItems();
       }
     });
-    this.mapService.onContextMenu$.subscribe(async (event) => await this.searchRadius(event.latlng));
+    this.mapService.onContextMenu$.subscribe(async (event) => {
+      if (event){}
+        // await this.searchRadius(event.latlng);
+    });
     this.mapService._mapReady.subscribe((ready) => {
       if (!ready) {
         return;
       }
       console.log('ready');
       this.mapService._map.on('click', async (event: any) => {
-        await this.searchRadius(event.latlng);
+        // await this.searchRadius(event.latlng);
       });
+    });
+    radiusSearchTrigger.asObservable().subscribe(async (latlng) => {
+      if(!latlng)
+        return;
+      await this.searchRadius(latlng);
     });
   }
 
   private async searchRadius(sourceLatLng: L.LatLng) {
-    if (this.routesVisible) {
-      return;
-    }
+    let foundSomething = false;
     const maxRadius = 100;
     const increments = 10;
     for (let i = 1; i < maxRadius; i = i + increments) {
-      console.log(i + ' m');
       const {query, items} = await this.oscarItemsService.getPoint(i, sourceLatLng.lat, sourceLatLng.lng);
       const binaryItems = await items.toPromise();
       const oscarMin = this.oscarItemsService.binaryItemsToOscarMin(binaryItems);
-      console.log(oscarMin.length);
       if (oscarMin.length > 0) {
         console.log(binaryItems);
         await this.drawQuery(query);
+        foundSomething = true;
         break;
       }
+    }
+    if(!foundSomething) {
+      this.snackBar.open('Nothing found!', 'close', {
+        duration: 2000
+      });
     }
   }
 

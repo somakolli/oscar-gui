@@ -50,6 +50,8 @@ import {MatExpansionModule} from '@angular/material/expansion';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { RegionComponent } from './components/region/region.component';
 import {MatMenuModule} from '@angular/material/menu';
+import {ClipboardModule} from '@angular/cdk/clipboard';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
 @NgModule({
   declarations: [
     AppComponent,
@@ -96,7 +98,9 @@ import {MatMenuModule} from '@angular/material/menu';
         MatSlideToggleModule,
         MatProgressBarModule,
         MatExpansionModule,
-        MatMenuModule
+        MatMenuModule,
+        ClipboardModule,
+        MatSnackBarModule,
     ],
   providers: [OscarItemsService, ConfigService, ItemStoreService],
   bootstrap: [AppComponent]
