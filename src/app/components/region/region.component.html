@@ -1,12 +1,22 @@
-<div class="p-3 rounded bg-white w-100" style="max-height: 600px; overflow: auto" *ngIf="wikiData">
-  <img class="w-100" *ngFor="let pictureUrl of wikiData.pictures" src="{{pictureUrl}}" />
-  <div class="mt-3">
-    <span>Coat of Arms:</span>
-    <br>
-    <img *ngIf="wikiData.coatOfArmsUrl" class="w-50 m-auto"  src="{{wikiData.coatOfArmsUrl}}" />
+<mat-expansion-panel expanded="true" *ngIf="wikiData">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      {{wikiData.name}}
+    </mat-panel-title>
+  </mat-expansion-panel-header>
+  <div class="p-3 rounded bg-white w-100" style="max-height: 600px; overflow: auto" *ngIf="wikiData">
+    <img class="w-100" *ngFor="let pictureUrl of wikiData.pictures" src="{{pictureUrl}}" />
+    <div class="mt-3">
+      <span>Coat of Arms:</span>
+      <br>
+      <img *ngIf="wikiData.coatOfArmsUrl" class="w-50 m-auto"  src="{{wikiData.coatOfArmsUrl}}" />
+    </div>
+    <div class="mt-5 w-100 d-flex flex-column">
+      <div *ngIf="wikiData.population" class="w-100 flex-row d-flex justify-content-between"><span>Population: </span><span>{{wikiData.population}}</span></div>
+      <div *ngIf="wikiData.area" class="w-100 flex-row d-flex justify-content-between"><span>Area: </span><span>{{wikiData.area}} km²</span></div>
+      <div *ngIf="wikiData.postalCode" class="w-100 flex-row d-flex justify-content-between"><span>PostalCode: </span><span>{{wikiData.postalCode}}</span></div>
+    </div>
   </div>
-  <div class="mt-5 w-100 d-flex flex-column">
-    <div *ngIf="wikiData.population" class="w-100 flex-row d-flex justify-content-between"><span>Population: </span><span>{{wikiData.population}}</span></div>
-    <div *ngIf="wikiData.area" class="w-100 flex-row d-flex justify-content-between"><span>Area: </span><span>{{wikiData.area}} km²</span></div>
-  </div>
-</div>
+</mat-expansion-panel>
+
+

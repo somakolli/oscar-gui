@@ -45,9 +45,11 @@ import { RoutingProgressBarComponent } from './components/routing-progress-bar/r
 import { RoutesComponent } from './components/routes/routes.component';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatButtonModule} from '@angular/material/button';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { RegionComponent } from './components/region/region.component';
+import {MatExpansionPanel, MatExpansionPanelDescription, MatExpansionPanelHeader} from '@angular/material/expansion';
 @NgModule({
   declarations: [
     AppComponent,
@@ -92,7 +94,8 @@ import { RegionComponent } from './components/region/region.component';
         MatTabsModule,
         MatButtonModule,
         MatSlideToggleModule,
-        MatProgressBarModule
+        MatProgressBarModule,
+        MatExpansionModule
     ],
   providers: [OscarItemsService, ConfigService, ItemStoreService],
   bootstrap: [AppComponent]

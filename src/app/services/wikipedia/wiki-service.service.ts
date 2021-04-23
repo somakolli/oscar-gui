@@ -6,6 +6,8 @@ export class WikiData {
   population: number;
   area: number;
   coatOfArmsUrl: string;
+  name = 'Region';
+  postalCode: string = null;
 }
 @Injectable({
   providedIn: 'root'
@@ -29,6 +31,10 @@ export class WikiServiceService {
       wikiData.area = Number.parseFloat(wikidata.claims.P2046.pop().mainsnak.datavalue.value.amount);
     if (wikidata.claims.P94)
       wikiData.coatOfArmsUrl = this.getPictureUrl(wikidata.claims.P94.pop().mainsnak.datavalue.value);
+    if (wikidata.claims.P373)
+      wikiData.name = 'Region: ' + wikidata.claims.P373.pop().mainsnak.datavalue.value;
+    if(wikidata.claims.P281)
+      wikiData.postalCode = wikidata.claims.P281.pop().mainsnak.datavalue.value;
     return wikiData;
   }
   getPictureUrl(pictureName: string) {
