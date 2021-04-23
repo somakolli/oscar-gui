@@ -153,7 +153,7 @@
   dependencies:
     "tslib" "^2.0.0"
 
-"@angular/cdk@^11.1.2", "@angular/cdk@11.2.0":
+"@angular/cdk@^11.1.2", "@angular/cdk@11.2.10":
   "integrity" "sha512-25k1giKAJ7DPzJBZfAVZmw/VfR4pZUaZnhgVAMwIdGPl5SaXJEW3e2znGlhzwkuQsiBgrSKfMgJmwKSyUbe2tg=="
   "resolved" "https://registry.yarnpkg.com/@angular/cdk/-/cdk-11.2.0.tgz"
   "version" "11.2.0"
@@ -250,10 +250,10 @@
   "resolved" "https://registry.yarnpkg.com/@angular/language-service/-/language-service-11.2.0.tgz"
   "version" "11.2.0"
 
-"@angular/material@^11.1.2":
-  "integrity" "sha512-duTQdHtzdZ3KWn90JcN+eI0oNwr7E7JGEOp7tZ9XOtqty0h158SJUCYSuDxhFOqyAgaY41enNPHdB2c4Xz0iBQ=="
-  "resolved" "https://registry.yarnpkg.com/@angular/material/-/material-11.2.0.tgz"
-  "version" "11.2.0"
+"@angular/material@^11.2.10":
+  "integrity" "sha512-itylLtTloyCrmtotccVzplso7DGoiFdN91ud2sopGacTpfKVkw4tO5nIWRGWDmuu3dvHCqGo3h6EoZN0l9G+Wg=="
+  "resolved" "https://registry.yarnpkg.com/@angular/material/-/material-11.2.10.tgz"
+  "version" "11.2.10"
   dependencies:
     "tslib" "^2.0.0"
 

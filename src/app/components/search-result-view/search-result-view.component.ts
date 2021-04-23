@@ -63,31 +63,36 @@ export class SearchResultViewComponent implements OnInit {
         this.clearItems();
       }
     });
+    this.mapService.onContextMenu$.subscribe(async (event) => await this.searchRadius(event.latlng));
     this.mapService._mapReady.subscribe((ready) => {
       if (!ready) {
         return;
       }
       console.log('ready');
       this.mapService._map.on('click', async (event: any) => {
-        if (this.routesVisible) {
-          return;
-        }
-        const clickLatLng = event.latlng;
-        const maxRadius = 100;
-        const increments = 10;
-        for (let i = 1; i < 200; i = i + 10) {
-          const {query, items} = await this.oscarItemsService.getPoint(i, clickLatLng.lat, clickLatLng.lng);
-          const binaryItems = await items.toPromise();
-          const oscarMin = this.oscarItemsService.binaryItemsToOscarMin(binaryItems);
-          console.log(oscarMin.length);
-          if (oscarMin.length > 0) {
-            console.log(binaryItems);
-            await this.drawQuery(query);
-            break;
-          }
-        }
+        await this.searchRadius(event.latlng);
       });
     });
+  }
+
+  private async searchRadius(sourceLatLng: L.LatLng) {
+    if (this.routesVisible) {
+      return;
+    }
+    const maxRadius = 100;
+    const increments = 10;
+    for (let i = 1; i < maxRadius; i = i + increments) {
+      console.log(i + ' m');
+      const {query, items} = await this.oscarItemsService.getPoint(i, sourceLatLng.lat, sourceLatLng.lng);
+      const binaryItems = await items.toPromise();
+      const oscarMin = this.oscarItemsService.binaryItemsToOscarMin(binaryItems);
+      console.log(oscarMin.length);
+      if (oscarMin.length > 0) {
+        console.log(binaryItems);
+        await this.drawQuery(query);
+        break;
+      }
+    }
   }
 
   async drawQuery(queryString: string) {

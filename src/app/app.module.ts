@@ -49,7 +49,7 @@ import {MatExpansionModule} from '@angular/material/expansion';
 
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { RegionComponent } from './components/region/region.component';
-import {MatExpansionPanel, MatExpansionPanelDescription, MatExpansionPanelHeader} from '@angular/material/expansion';
+import {MatMenuModule} from '@angular/material/menu';
 @NgModule({
   declarations: [
     AppComponent,
@@ -95,7 +95,8 @@ import {MatExpansionPanel, MatExpansionPanelDescription, MatExpansionPanelHeader
         MatButtonModule,
         MatSlideToggleModule,
         MatProgressBarModule,
-        MatExpansionModule
+        MatExpansionModule,
+        MatMenuModule
     ],
   providers: [OscarItemsService, ConfigService, ItemStoreService],
   bootstrap: [AppComponent]

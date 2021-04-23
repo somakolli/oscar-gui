@@ -32,6 +32,8 @@ export class MapService {
   readonly onMove$ = this._move.asObservable();
   private readonly _click = new BehaviorSubject<any>(null);
   readonly onClick$ = this._click.asObservable();
+  private readonly _contextMenu = new BehaviorSubject<any>(null);
+  readonly onContextMenu$ = this._contextMenu.asObservable();
   readonly _mapReady = new BehaviorSubject<boolean>(false);
   readonly onMapReady$ = this._mapReady.asObservable();
   _map: LeafletMap;
@@ -87,6 +89,10 @@ export class MapService {
       this._move.next(event);
     });
     this.map.on('click', (event => this._click.next(event)));
+    this.map.on('contextmenu', (event =>
+        {
+          this._contextMenu.next(event);
+        }));
   }
   drawRoute(route: GeoPoint[]) {
     this.route.setLatLngs([]);
