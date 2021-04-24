@@ -143,6 +143,7 @@ export class SearchComponent implements OnInit {
       }
     }
     this.itemStore.setHighlightedItem(null);
+    this.loading = true;
     this.oscarItemService.getRegion(fullQueryString).subscribe(async regions => {
       displayRegion.next(null);
       if (regions && regions.length > 0) {
@@ -151,6 +152,8 @@ export class SearchComponent implements OnInit {
         this.mapService.drawRegion(regions[0]);
         const region = regions[0];
         displayRegion.next(OscarItem.getValue(region, 'wikidata'));
+        this.loading = false;
+        this.error = false;
       } else {
         displayRegion.next(null);
         this.mapService.clearRegions();
@@ -159,6 +162,7 @@ export class SearchComponent implements OnInit {
             this.searchService.queryToDraw.next(fullQueryString);
           } else {
             this.error = true;
+            this.loading = false;
           }
         });
       }

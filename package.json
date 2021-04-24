@@ -33,6 +33,7 @@
     "leaflet-webgl-heatmap": "^0.2.7",
     "lodash": "^4.17.20",
     "ngx-infinite-scroll": "^7.1.0",
+    "ngx-skeleton-loader": "^2.9.1",
     "popper.js": "^1.16.1",
     "rxjs": "^6.6.3",
     "tslib": "^2.0.0",

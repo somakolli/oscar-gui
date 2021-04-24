@@ -52,6 +52,7 @@ import { RegionComponent } from './components/region/region.component';
 import {MatMenuModule} from '@angular/material/menu';
 import {ClipboardModule} from '@angular/cdk/clipboard';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {NgxSkeletonLoaderModule} from 'ngx-skeleton-loader';
 @NgModule({
   declarations: [
     AppComponent,
@@ -101,6 +102,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
         MatMenuModule,
         ClipboardModule,
         MatSnackBarModule,
+        NgxSkeletonLoaderModule
     ],
   providers: [OscarItemsService, ConfigService, ItemStoreService],
   bootstrap: [AppComponent]

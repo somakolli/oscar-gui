@@ -14,6 +14,8 @@ export class RegionComponent implements OnInit {
   constructor(private wikiService: WikiServiceService, private zone: NgZone) { }
 
 
+  visible =  false;
+  loading = false;
   wikiData: WikiData = null;
   ngOnInit(): void {
     displayRegion.asObservable().subscribe(async entity => {
@@ -22,7 +24,10 @@ export class RegionComponent implements OnInit {
         this.wikiData = null;
         return;
       }
+      this.visible = true;
+      this.loading = true;
       this.wikiData = await this.wikiService.getPictureUrls(entity);
+      this.loading = false;
     });
   }
 

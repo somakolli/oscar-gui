@@ -1,15 +1,17 @@
-<mat-expansion-panel expanded="true" *ngIf="wikiData">
+<mat-expansion-panel *ngIf="wikiData || loading" expanded="true">
   <mat-expansion-panel-header>
     <mat-panel-title>
-      {{wikiData.name}}
+      <span *ngIf="wikiData">
+        {{wikiData.name}}
+      </span>
     </mat-panel-title>
   </mat-expansion-panel-header>
   <div class="p-3 rounded bg-white w-100" style="max-height: 600px; overflow: auto" *ngIf="wikiData">
     <img class="w-100" *ngFor="let pictureUrl of wikiData.pictures" src="{{pictureUrl}}" />
-    <div class="mt-3">
+    <div class="mt-3" *ngIf="wikiData.coatOfArmsUrl">
       <span>Coat of Arms:</span>
       <br>
-      <img *ngIf="wikiData.coatOfArmsUrl" class="w-50 m-auto"  src="{{wikiData.coatOfArmsUrl}}" />
+      <img class="w-50 m-auto"  src="{{wikiData.coatOfArmsUrl}}" />
     </div>
     <div class="mt-5 w-100 d-flex flex-column">
       <div *ngIf="wikiData.population" class="w-100 flex-row d-flex justify-content-between"><span>Population: </span><span>{{wikiData.population}}</span></div>
@@ -17,6 +19,7 @@
       <div *ngIf="wikiData.postalCode" class="w-100 flex-row d-flex justify-content-between"><span>PostalCode: </span><span>{{wikiData.postalCode}}</span></div>
     </div>
   </div>
+  <ngx-skeleton-loader *ngIf="loading" [theme]="{height: '300px'}"></ngx-skeleton-loader>
 </mat-expansion-panel>
 
 
