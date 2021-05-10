@@ -41,7 +41,7 @@ import { ItemCountComponent } from './components/item-count/item-count.component
 import { NewItemListComponent } from './components/new-item-list/new-item-list.component';
 import { HumanReadableNumbersPipePipe } from './pipes/human-readable-numbers-pipe.pipe';
 import { AddressInputComponent } from './components/address-input/address-input.component';
-import { RoutingProgressBarComponent } from './components/routing-progress-bar/routing-progress-bar.component';
+import { RouteComponent } from './components/route/route.component';
 import { RoutesComponent } from './components/routes/routes.component';
 import {MatTabsModule} from '@angular/material/tabs';
 import {MatButtonModule} from '@angular/material/button';
@@ -77,7 +77,7 @@ import {NgxSkeletonLoaderModule} from 'ngx-skeleton-loader';
     NewItemListComponent,
     HumanReadableNumbersPipePipe,
     AddressInputComponent,
-    RoutingProgressBarComponent,
+    RouteComponent,
     RoutesComponent,
     RegionComponent,
   ],

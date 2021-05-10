@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { RoutingProgressBarComponent } from './routing-progress-bar.component';
+import { RouteComponent } from './route.component';
 
 describe('RoutingProgressBarComponent', () => {
-  let component: RoutingProgressBarComponent;
-  let fixture: ComponentFixture<RoutingProgressBarComponent>;
+  let component: RouteComponent;
+  let fixture: ComponentFixture<RouteComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ RoutingProgressBarComponent ]
+      declarations: [ RouteComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RoutingProgressBarComponent);
+    fixture = TestBed.createComponent(RouteComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

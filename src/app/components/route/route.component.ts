@@ -8,19 +8,20 @@ import {GeoPoint} from '../../models/geo-point';
 import {RoutingDataStoreService} from '../../services/data/routing-data-store.service';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import {addRoutingPointEvent} from '../routes/routes.component';
-import {latLng} from 'leaflet';
+import {latLng, LeafletMouseEvent} from 'leaflet';
+import {MatSnackBar} from '@angular/material/snack-bar';
 declare var L;
 
 export const removeRoutingPointEvent = new Subject<GeoPoint>();
 @Component({
-  selector: 'app-routing-progress-bar',
-  templateUrl: './routing-progress-bar.component.html',
-  styleUrls: ['./routing-progress-bar.component.sass']
+  selector: 'app-route',
+  templateUrl: './route.component.html',
+  styleUrls: ['./route.component.sass']
 })
-export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy {
+export class RouteComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(private mapService: MapService, private zone: NgZone, private routingService: RoutingService,
-              private routingDataStoreService: RoutingDataStoreService) { }
+              private routingDataStoreService: RoutingDataStoreService, private snackBar: MatSnackBar) { }
   @Input()
   active = true;
   @Input()
@@ -30,6 +31,7 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
   @Input()
   routingMarkers: Array<RoutingMarker> = [];
   routingMarkerLayer = new L.LayerGroup();
+  polyLineHoverLayer = new L.LayerGroup();
   polyLine: L.Polyline;
   checkboxActive = false;
   distance: number;
@@ -38,12 +40,13 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
   destroy = false;
   @Input()
   routesVisible = false;
+  lastUpdateTimeStamp = Date.now();
 
   ngOnInit(): void {
     let init = true;
     this.polyLine = L.polyline([], {
       color: this.color,
-      weight: 3,
+      weight: 4,
       opacity: 1,
       smoothFactor: 1
     });
@@ -78,6 +81,7 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
         if (mapReady) {
           this.mapService._map.addLayer(this.routingMarkerLayer);
           this.mapService._map.addLayer(this.polyLine);
+          this.mapService._map.addLayer(this.polyLineHoverLayer);
         }
       }
     );
@@ -107,12 +111,21 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
     moveItemInArray(this.routingMarkers, event.previousIndex, event.currentIndex);
     this.updateRoute();
   }
-  updateRoute() {
+  updateRoute(force: boolean = false) {
+    if (Date.now() - this.lastUpdateTimeStamp < 100 && !force){
+      this.snackBar.open('No Route!', 'close', {
+               duration: 2000
+             });
+    }
     this.routingService.getRoute(this.routingMarkers.map(marker =>  marker.geoPoint), 1000)
       .subscribe((result) => {
+        if (!result){
+         return;
+        }
         this.drawRoute(result.path.map(point => new GeoPoint(point[0], point[1])));
         this.addToSearch();
         this.time = result.distance;
+        this.lastUpdateTimeStamp = Date.now();
       });
   }
   calcDistance() {
@@ -133,6 +146,8 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
       latLngs.push(L.latLng([point.lat, point.lon]));
     }
     this.polyLine.setLatLngs(latLngs);
+    // this.polyLine.on('mouseover', (event: LeafletMouseEvent) => L.circle([event.latlng.lat, event.latlng.lng], {radius: 10}).addTo(this.polyLineHoverLayer));
+    // this.polyLine.on('mouseout', (event: LeafletMouseEvent) => this.polyLineHoverLayer.clearLayers());
     this.calcDistance();
   }
 
@@ -161,12 +176,35 @@ export class RoutingProgressBarComponent implements OnInit, OnChanges, OnDestroy
   }
   drawMarkers() {
     this.routingMarkerLayer.clearLayers();
+    let i = 0;
     for (const routingMarker of this.routingMarkers) {
       const redMarker = L.VectorMarkers.icon({
         icon: 'location',
         markerColor: routingMarker.color
       });
-      L.marker([routingMarker.geoPoint.lat, routingMarker.geoPoint.lon], {icon: redMarker}).addTo(this.routingMarkerLayer);
+      const marker = L.marker(
+        [routingMarker.geoPoint.lat, routingMarker.geoPoint.lon],
+        {icon: redMarker, draggable: true});
+      marker.addTo(this.routingMarkerLayer);
+      marker.on('dragend', (event) => this.markerDragHandler(event, true));
+      console.log(marker);
+      routingMarker.leafletId = marker._leaflet_id;
+      console.log(routingMarker);
+      i++;
     }
+  }
+  markerDragHandler(event, force = false) {
+    console.log(event);
+    this.routingMarkers[this.findMarker(event.target._leaflet_id)].geoPoint =
+      new GeoPoint(event.target._latlng.lat, event.target._latlng.lng);
+    this.updateRoute(force);
+  }
+  findMarker(leafletid: number) {
+    for (let i = 0; i < this.routingMarkers.length; i++) {
+      if (this.routingMarkers[i].leafletId === leafletid) {
+        return i;
+      }
+    }
+    return -1;
   }
 }
