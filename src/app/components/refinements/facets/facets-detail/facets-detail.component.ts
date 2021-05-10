@@ -13,6 +13,8 @@ export class FacetsDetailComponent implements OnInit {
   constructor(private refinementService: RefinementsService) { }
   @Input()
   facet: Facet;
+  @Input()
+  expanded: boolean;
   ngOnInit() {
   }
 
