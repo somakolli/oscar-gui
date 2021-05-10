@@ -4,4 +4,5 @@ export class RoutingMarker {
   color: string;
   geoPoint: GeoPoint;
   name: string;
+  leafletId?: number;
 }
