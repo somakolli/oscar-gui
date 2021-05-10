@@ -1,4 +1,4 @@
-<div class="input-group">
+<div class="input-group" style="margin-top: 10px">
   <div class="search-form d-flex">
     <form class="search-input-form w-100" [hidden]="!oscarQuery">
       <input name="normal_input" [matAutocomplete]="normal_auto" [(ngModel)]="inputString"
@@ -18,7 +18,6 @@
                     [value]="option.prefix + option.suggestion">{{option.suggestion}}</mat-option>
       </mat-autocomplete>
     </form>
-
     <div class="button-area" style="width: 25%">
       <span class="vertical-line"></span>
       <!--<i [hidden]="oscarQuery" (click)="oscarQuery = !oscarQuery" class="fas fa-language side-button-active"
