@@ -1,6 +1,6 @@
 <div class="side-bar" style="max-height: 100vh; overflow: auto; display: flex; flex-direction: column; position: fixed">
     <app-search [noResult]="noResult" [loading]="searchLoading" (routesVisibleEvent)="routesVisible = $event.valueOf()"></app-search>
-  <div style="overflow: auto">
+  <div style="overflow: auto; margin-top: 5px">
     <app-routes [routesVisible]="routesVisible" [hidden]="!routesVisible"></app-routes>
     <app-search-result-view (noResult)="noResult = $event" (searchLoading)="searchLoading = $event" [routesVisible]="routesVisible"></app-search-result-view>
     <app-region></app-region>
