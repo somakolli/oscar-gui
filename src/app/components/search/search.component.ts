@@ -10,7 +10,7 @@ import {ColorTag} from '../../models/natural-language/color-tag';
 import {DomSanitizer} from '@angular/platform-browser';
 import {MatAutocompleteSelectedEvent} from '@angular/material/autocomplete';
 import keyValueTags from '../../../assets/keyValueTags.json';
-import {RoutingService} from '../../services/routing/routing.service';
+import {RoutingService, RoutingType} from '../../services/routing/routing.service';
 import {RoutingDataStoreService} from '../../services/data/routing-data-store.service';
 import {SearchService} from '../../services/search/search.service';
 import {Subject} from 'rxjs';
@@ -271,13 +271,28 @@ export class SearchComponent implements OnInit {
 
   private getRouteQueryString(): string {
     let returnString = '';
-    const routes = this.routingDataStoreService.routesToAdd.values();
+    const routes =  [];
+    for (const route of this.routingDataStoreService.routesToAdd.values()) {
+      routes.push(route);
+    }
     if (!routes) {
       return returnString;
     }
-    for (const points of this.routingDataStoreService.routesToAdd.values()) {
-      returnString += ' $route(0,0';
-      for (const point of points) {
+    for (const route of routes) {
+      let routingTypeIndicator = 0;
+      switch (route.routingType) {
+        case RoutingType.Car:
+          routingTypeIndicator = 0;
+          break;
+        case RoutingType.Bike:
+          routingTypeIndicator = 1;
+          break;
+        case  RoutingType.Foot:
+          routingTypeIndicator = 2;
+          break;
+      }
+      returnString += ' $route(0,' + routingTypeIndicator;
+      for (const point of route.geoPoints) {
         returnString += `,${point.lat},${point.lon}`;
       }
       returnString += ')';

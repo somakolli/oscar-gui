@@ -53,6 +53,8 @@ import {MatMenuModule} from '@angular/material/menu';
 import {ClipboardModule} from '@angular/cdk/clipboard';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {NgxSkeletonLoaderModule} from 'ngx-skeleton-loader';
+import {MatIconModule} from '@angular/material/icon';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
 @NgModule({
   declarations: [
     AppComponent,
@@ -102,7 +104,9 @@ import {NgxSkeletonLoaderModule} from 'ngx-skeleton-loader';
         MatMenuModule,
         ClipboardModule,
         MatSnackBarModule,
-        NgxSkeletonLoaderModule
+        NgxSkeletonLoaderModule,
+        MatIconModule,
+        MatButtonToggleModule
     ],
   providers: [OscarItemsService, ConfigService, ItemStoreService],
   bootstrap: [AppComponent]

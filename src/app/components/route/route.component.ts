@@ -3,16 +3,19 @@ import {MapService} from '../../services/map/map.service';
 import {RoutingMarker} from '../../models/routing-marker';
 import {CdkDragDrop} from '@angular/cdk/drag-drop/drag-events';
 import {moveItemInArray} from '@angular/cdk/drag-drop';
-import {RoutingService} from '../../services/routing/routing.service';
+import {RoutingService, RoutingType} from '../../services/routing/routing.service';
 import {GeoPoint} from '../../models/geo-point';
 import {RoutingDataStoreService} from '../../services/data/routing-data-store.service';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {addRoutingPointEvent} from '../routes/routes.component';
-import {latLng, LeafletMouseEvent} from 'leaflet';
+import {LeafletEvent} from 'leaflet';
 import {MatSnackBar} from '@angular/material/snack-bar';
+import {debounceTime} from 'rxjs/operators';
+
 declare var L;
 
 export const removeRoutingPointEvent = new Subject<GeoPoint>();
+
 @Component({
   selector: 'app-route',
   templateUrl: './route.component.html',
@@ -36,11 +39,11 @@ export class RouteComponent implements OnInit, OnChanges, OnDestroy {
   checkboxActive = false;
   distance: number;
   time: number;
+  routingType: RoutingType = RoutingType.Car;
   @Input()
   destroy = false;
   @Input()
   routesVisible = false;
-  lastUpdateTimeStamp = Date.now();
 
   ngOnInit(): void {
     let init = true;
@@ -111,21 +114,17 @@ export class RouteComponent implements OnInit, OnChanges, OnDestroy {
     moveItemInArray(this.routingMarkers, event.previousIndex, event.currentIndex);
     this.updateRoute();
   }
-  updateRoute(force: boolean = false) {
-    if (Date.now() - this.lastUpdateTimeStamp < 100 && !force){
-      this.snackBar.open('No Route!', 'close', {
-               duration: 2000
-             });
-    }
-    this.routingService.getRoute(this.routingMarkers.map(marker =>  marker.geoPoint), 1000)
+  updateRoute() {
+    this.routingService.getRoute(this.routingMarkers.map(marker =>  marker.geoPoint), 1000, this.routingType)
       .subscribe((result) => {
         if (!result){
-         return;
+          this.snackBar.open('No Route!', 'close', {
+            duration: 2000
+          });
         }
         this.drawRoute(result.path.map(point => new GeoPoint(point[0], point[1])));
         this.addToSearch();
         this.time = result.distance;
-        this.lastUpdateTimeStamp = Date.now();
       });
   }
   calcDistance() {
@@ -146,8 +145,6 @@ export class RouteComponent implements OnInit, OnChanges, OnDestroy {
       latLngs.push(L.latLng([point.lat, point.lon]));
     }
     this.polyLine.setLatLngs(latLngs);
-    // this.polyLine.on('mouseover', (event: LeafletMouseEvent) => L.circle([event.latlng.lat, event.latlng.lng], {radius: 10}).addTo(this.polyLineHoverLayer));
-    // this.polyLine.on('mouseout', (event: LeafletMouseEvent) => this.polyLineHoverLayer.clearLayers());
     this.calcDistance();
   }
 
@@ -163,7 +160,11 @@ export class RouteComponent implements OnInit, OnChanges, OnDestroy {
 
   addToSearch() {
     if (this.checkboxActive) {
-      this.routingDataStoreService.routesToAdd.set(this.color, this.routingMarkers.map(value => value.geoPoint));
+      this.routingDataStoreService.routesToAdd.set(this.color,
+        {
+          geoPoints: this.routingMarkers.map(value => value.geoPoint),
+          routingType: this.routingType
+        });
     } else {
       this.routingDataStoreService.routesToAdd.delete(this.color);
     }
@@ -186,25 +187,27 @@ export class RouteComponent implements OnInit, OnChanges, OnDestroy {
         [routingMarker.geoPoint.lat, routingMarker.geoPoint.lon],
         {icon: redMarker, draggable: true});
       marker.addTo(this.routingMarkerLayer);
-      marker.on('dragend', (event) => this.markerDragHandler(event, true));
-      console.log(marker);
+      const dragSubject = new Subject<LeafletEvent>();
+      marker.on('drag', (event: LeafletEvent) => (dragSubject.next(event)));
+      dragSubject.pipe(debounceTime(18)).subscribe((event) => this.markerDragHandler(event));
       routingMarker.leafletId = marker._leaflet_id;
-      console.log(routingMarker);
       i++;
     }
   }
-  markerDragHandler(event, force = false) {
-    console.log(event);
+  async markerDragHandler(event) {
     this.routingMarkers[this.findMarker(event.target._leaflet_id)].geoPoint =
       new GeoPoint(event.target._latlng.lat, event.target._latlng.lng);
-    this.updateRoute(force);
+    this.updateRoute();
   }
-  findMarker(leafletid: number) {
+  findMarker(leafletId: number) {
     for (let i = 0; i < this.routingMarkers.length; i++) {
-      if (this.routingMarkers[i].leafletId === leafletid) {
+      if (this.routingMarkers[i].leafletId === leafletId) {
         return i;
       }
     }
     return -1;
+  }
+  updateRoutingType() {
+    this.updateRoute();
   }
 }

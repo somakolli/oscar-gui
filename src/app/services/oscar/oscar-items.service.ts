@@ -1,17 +1,11 @@
-import {Injectable, NgZone} from '@angular/core';
-import {HttpClient, HttpUrlEncodingCodec} from '@angular/common/http';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {OscarItem} from '../../models/oscar/oscar-item';
 import {ConfigService} from '../../config/config.service';
-import {ItemStoreService} from '../data/item-store.service';
-import {MapService} from '../map/map.service';
 import {OscarMinItem} from '../../models/oscar/oscar-min-item';
-import {GridService} from '../data/grid.service';
 import {OscarApxstats} from '../../models/oscar/oscar-apxstats';
 import {FacetRefinements, ParentRefinements} from '../../models/oscar/refinements';
-import {SearchState} from '../../models/state/search-state.enum';
-import {LocationService} from '../location.service';
-import {Region} from '../../models/oscar/region';
 
 @Injectable({
   providedIn: 'root'

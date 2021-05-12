@@ -5,6 +5,11 @@ import {RoutingPath} from '../../models/routing/routing';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 
+export enum RoutingType {
+  Car = 'car',
+  Bike = 'bike',
+  Foot = 'foot'
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -12,7 +17,7 @@ export class RoutingService {
   currentRoute: RoutingPath;
 
   constructor(private configService: ConfigService, private http: HttpClient) { }
-  getRoute(points: GeoPoint[], maxCellDiagInM: number): Observable<RoutingPath> {
+  getRoute(points: GeoPoint[], maxCellDiagInM: number, routingType: RoutingType = RoutingType.Car): Observable<RoutingPath> {
     let params = new HttpParams();
     let pointString = '[';
     let first = true;
@@ -27,6 +32,7 @@ export class RoutingService {
     pointString += ']';
     params = params.append('q', pointString);
     params = params.append('d', String(maxCellDiagInM));
+    params = params.append('t', routingType);
     return this.http.get<RoutingPath>(this.configService.getRoutingUrl(), {params});
   }
 }
