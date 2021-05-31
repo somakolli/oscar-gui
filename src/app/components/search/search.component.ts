@@ -74,6 +74,8 @@ export class SearchComponent implements OnInit {
   sideButtonClass = 'side-button';
   localSearch = false;
   preferences = false;
+  @Output() impressumVisibleEvent = new EventEmitter<boolean>();
+  impressumVisible = false;
 
   ngOnInit() {
     this.refinementStore.refinements$.subscribe(refinements => {
@@ -302,5 +304,9 @@ export class SearchComponent implements OnInit {
 
   togglePreferences() {
     this.preferences = !this.preferences;
+  }
+  toggleImpressum() {
+    this.impressumVisibleEvent.emit(!this.impressumVisible);
+    this.impressumVisible = !this.impressumVisible;
   }
 }

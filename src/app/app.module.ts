@@ -55,6 +55,7 @@ import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {NgxSkeletonLoaderModule} from 'ngx-skeleton-loader';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import { ImpressumComponent } from './components/impressum/impressum.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -82,6 +83,7 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
     RouteComponent,
     RoutesComponent,
     RegionComponent,
+    ImpressumComponent,
   ],
     imports: [
         BrowserModule,
