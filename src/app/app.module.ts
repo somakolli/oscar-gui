@@ -56,6 +56,7 @@ import {NgxSkeletonLoaderModule} from 'ngx-skeleton-loader';
 import {MatIconModule} from '@angular/material/icon';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { ImpressumComponent } from './components/impressum/impressum.component';
+import {MatCheckboxModule} from '@angular/material/checkbox';
 @NgModule({
   declarations: [
     AppComponent,
@@ -108,7 +109,8 @@ import { ImpressumComponent } from './components/impressum/impressum.component';
         MatSnackBarModule,
         NgxSkeletonLoaderModule,
         MatIconModule,
-        MatButtonToggleModule
+        MatButtonToggleModule,
+        MatCheckboxModule
     ],
   providers: [OscarItemsService, ConfigService, ItemStoreService],
   bootstrap: [AppComponent]
