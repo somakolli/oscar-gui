@@ -115,6 +115,7 @@ export class SearchComponent implements OnInit {
   }
 
   async search() {
+    this.error = false;
     let idPrependix = '(';
     if (this.routingService.currentRoute) {
       let first = true;
@@ -289,7 +290,7 @@ export class SearchComponent implements OnInit {
         case RoutingType.Bike:
           routingTypeIndicator = 1;
           break;
-        case  RoutingType.Foot:
+        case RoutingType.Foot:
           routingTypeIndicator = 2;
           break;
       }
