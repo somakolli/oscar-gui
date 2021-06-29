@@ -118,7 +118,6 @@ export class SearchResultViewComponent implements OnInit {
       this.heatmapSliderVisible = false;
       this.mapService.clearAllLayers();
       this.items = this.oscarItemsService.binaryItemsToOscarMin(itemsArray);
-      console.log(queryString);
       if (this.items.length === 0 && queryString !== '() ') {
         this.noResult.emit(true);
         this.searchLoading.emit(false);
