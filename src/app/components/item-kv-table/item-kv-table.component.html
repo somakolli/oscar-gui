@@ -1,5 +1,5 @@
 <div *ngIf="oscarItem">
-  <div style="display: flex; justify-content: center; width: 100%">
+  <div style="display: flex; justify-content: center; width: 100%" *ngIf="oscarItem.firstPoint">
     <div class="logo-wrapper">
       <a href="https://www.google.com/maps/place/{{lat}},{{lon}}" target="_blank"><svg class="link-logo" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
 width="48" height="48"
@@ -17,8 +17,8 @@ style=" fill:#000000;"><path fill="#1c9957" d="M42,39V9c0-1.657-1.343-3-3-3H9C7.
     </thead>
     <tbody>
     <tr *ngFor="let keyValue of keyValues">
-      <th scope="row">{{keyValue.k}}</th>
-      <td>{{keyValue.v}}</td>
+      <th class="text-truncate" scope="row">{{keyValue.k}}</th>
+      <td class="text-truncate">{{keyValue.v}}</td>
     </tr>
     </tbody>
   </table>

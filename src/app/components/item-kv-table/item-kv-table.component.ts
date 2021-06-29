@@ -26,8 +26,10 @@ export class ItemKvTableComponent implements OnInit, OnChanges {
   }
   upDateModel() {
     this.keyValues = [];
-    this.lat = this.oscarItem.firstPoint.lat;
-    this.lon = this.oscarItem.firstPoint.lon;
+    if (this.oscarItem.firstPoint) {
+      this.lat = this.oscarItem.firstPoint.lat;
+      this.lon = this.oscarItem.firstPoint.lon;
+    }
     this.keyValues.push({k: 'osm-id', v: this.oscarItem.properties.osmid});
     this.keyValues.push({k: 'oscar-id', v: this.oscarItem.properties.id});
     for (let i = 0; i < this.oscarItem.properties.k.length; i++) {

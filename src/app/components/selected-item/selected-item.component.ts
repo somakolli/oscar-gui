@@ -16,6 +16,7 @@ export class SelectedItemComponent implements OnInit {
       this.item = item;
     });
   }
+  expanded = false;
   item?: OscarItem;
   ngOnInit(): void {
   }
@@ -27,5 +28,10 @@ export class SelectedItemComponent implements OnInit {
     addRoutingPointEvent.next({
       point: new GeoPoint((this.item.geometry as any).coordinates[1], (this.item.geometry as any).coordinates[0]),
       name: this.item.properties.name});
+  }
+  showInfo() {
+    this.expanded = !this.expanded;
+    let oscarItem = new OscarItem();
+
   }
 }
