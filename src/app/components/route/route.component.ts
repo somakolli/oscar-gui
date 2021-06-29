@@ -226,4 +226,8 @@ export class RouteComponent implements OnInit, OnChanges, OnDestroy {
     }
     return hours + 'h ' + minutes + 'm';
   }
+  formatLabel(value: number) {
+    return Math.round(value) + 'km';
+  }
+
 }

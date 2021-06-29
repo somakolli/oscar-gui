@@ -57,6 +57,7 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { ImpressumComponent } from './components/impressum/impressum.component';
 import {MatCheckboxModule} from '@angular/material/checkbox';
+import { SelectedItemComponent } from './components/selected-item/selected-item.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -85,6 +86,7 @@ import {MatCheckboxModule} from '@angular/material/checkbox';
     RoutesComponent,
     RegionComponent,
     ImpressumComponent,
+    SelectedItemComponent,
   ],
     imports: [
         BrowserModule,

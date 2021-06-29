@@ -1,0 +1,13 @@
+<div *ngIf="item" class="" style="position:absolute; bottom: 10px; height: 50px; width: 100%; margin: 0 auto; display: flex; justify-content: center">
+  <div class="bg-light h-100 mat-elevation-z3" style="width: 400px; border-radius: 10px; display: flex;
+  align-items: center; justify-content: space-between; padding-left: 10px; padding-right: 5px">
+    <div class="d-flex align-items-center" style="gap: 2px">
+      <mat-icon color="primary">place</mat-icon>
+      <span style="margin-top: 2px">{{item.properties.name}}</span>
+    </div>
+    <div style="display: flex; gap: 2px">
+      <button mat-icon-button (click)="addToRoute()"><mat-icon>directions</mat-icon></button>
+      <button mat-icon-button (click)="close()"><mat-icon>close</mat-icon></button>
+    </div>
+  </div>
+</div>

@@ -10,6 +10,7 @@ import {RoutingMarker} from '../../models/routing-marker';
 import {LatLng, LatLngBounds, LayerGroup, Map as LeafletMap} from 'leaflet';
 import {Region} from '../../models/oscar/region';
 import {OscarItem} from '../../models/oscar/oscar-item';
+import {SelectedItemService} from '../ui/selected-item.service';
 declare var L;
 
 @Injectable({
@@ -45,7 +46,8 @@ export class MapService {
   });
   constructor(private itemStore: ItemStoreService,
               private zone: NgZone,
-              private oscarItemsService: OscarItemsService) {
+              private oscarItemsService: OscarItemsService,
+              private selectedItemService: SelectedItemService) {
 
   }
 
@@ -173,7 +175,9 @@ export class MapService {
         return L.marker(latlng, {icon: smallIcon});
       },
       onEachFeature: ((feature, layer) => {
-        layer.bindPopup(popupText);
+        layer.on('click', (event) => {
+          this.selectedItemService.subject.next(item);
+        });
       }),
       style: {color: 'blue', stroke: true, fill: false, opacity: 0.7}
     }).addTo(this.searchMarkerLayer);

@@ -11,9 +11,15 @@
         <mat-icon>directions_walk</mat-icon>
       </mat-button-toggle>
     </mat-button-toggle-group>
-    <mat-checkbox style="" id="add-to-search" name="add-to-search" [(ngModel)]="checkboxActive"
-                      (change)="addToSearch()">Add To Search
-    </mat-checkbox>
+      <mat-checkbox style="margin-top: 10px" id="add-to-search" name="add-to-search" [(ngModel)]="checkboxActive"
+                    (change)="addToSearch()">Add To Search
+      </mat-checkbox>
+      <div hidden class="position-relative">
+        <button class="position-" mat-icon-button><mat-icon>motion_photos_on</mat-icon></button>
+        <div class="position-absolute bg-white d-flex align-items-center mat-elevation-z1" style="width: 150px; margin-left: -60px; height: 25px; border-radius: 10px">
+          <mat-slider class="w-100" min="0" max="10" step="1" value="0" [thumbLabel]="true" [displayWith]="formatLabel"></mat-slider>
+        </div>
+      </div>
     <button mat-stroked-button (click)="clearList()">clear</button>
   </div>
   <span class="m-2" *ngIf="distance > 0">{{distance | number}} km</span>
