@@ -60,7 +60,6 @@ export class MapComponent implements OnInit {
   }
   @HostListener('document:click')
   leftClick() {
-    console.log('click');
     this.closeContextMenu();
   }
   startRadiusSearch() {

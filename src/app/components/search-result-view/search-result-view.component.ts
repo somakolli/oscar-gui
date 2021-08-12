@@ -149,7 +149,7 @@ export class SearchResultViewComponent implements OnInit {
       this.currentItems = this.gridService.getCurrentItems(bounds.getSouth(), bounds.getWest(), bounds.getNorth(), bounds.getEast());
       this.progress += 25;
     });
-    if (this.currentItems.length < this.markerThreshHold /*|| this.mapService.zoom === this.mapService.maxZoom*/) {
+    if (this.currentItems.length < this.markerThreshHold || this.mapService.zoom === this.mapService.maxZoom) {
       this.heatmapSliderVisible = false;
       this.mapService.drawItemsMarker(this.currentItems);
     } else {

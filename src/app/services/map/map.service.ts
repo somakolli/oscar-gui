@@ -18,7 +18,7 @@ declare var L;
 })
 export class MapService {
   routingMarkers = new Map<string, L.Marker>();
-  maxZoom = 17;
+  maxZoom = 20;
 
   heatmap = new L.webGLHeatmap({size: 10, units: 'px'});
 
