@@ -310,4 +310,7 @@ export class SearchComponent implements OnInit {
     this.impressumVisibleEvent.emit(!this.impressumVisible);
     this.impressumVisible = !this.impressumVisible;
   }
+  reload() {
+    location.reload();
+  }
 }

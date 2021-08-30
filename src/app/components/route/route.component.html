@@ -1,6 +1,7 @@
 <div style="border-radius: 2px" class="wrapper-routing-list">
-  <div style="display: flex; width: 100%; justify-content: space-between; align-items: center; padding: 5px">
-    <mat-button-toggle-group [(ngModel)]="routingType" (ngModelChange)="updateRoutingType()">
+  <div style="display: flex; width: 100%; justify-content: space-evenly; align-items: center; padding: 5px">
+
+    <!--<mat-button-toggle-group [(ngModel)]="routingType" (ngModelChange)="updateRoutingType()">
       <mat-button-toggle value="car" aria-label="Text align left">
         <mat-icon>directions_car</mat-icon>
       </mat-button-toggle>
@@ -10,7 +11,7 @@
       <mat-button-toggle value="foot" aria-label="Text align right">
         <mat-icon>directions_walk</mat-icon>
       </mat-button-toggle>
-    </mat-button-toggle-group>
+    </mat-button-toggle-group>-->
       <mat-checkbox style="margin-top: 10px" id="add-to-search" name="add-to-search" [(ngModel)]="checkboxActive"
                     (change)="addToSearch()">Add To Search
       </mat-checkbox>
