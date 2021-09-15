@@ -19,6 +19,7 @@ import {WikiServiceService} from '../../services/wikipedia/wiki-service.service'
 import {OscarItem} from '../../models/oscar/oscar-item';
 import {displayRegion} from '../region/region.component';
 import {clearItems} from '../search-result-view/search-result-view.component';
+import {TextUtil} from '../../util/text-util';
 
 declare function getOscarQuery(input);
 
@@ -149,8 +150,18 @@ export class SearchComponent implements OnInit {
     this.loading = true;
     this.oscarItemService.getRegion(fullQueryString).subscribe(async regions => {
       displayRegion.next(null);
+      // check all properties for similarity to see if the region name is similar to the input in all languages
+      let foundSimilarProperty = false;
       if (regions && regions.length > 0) {
-        // get region with most items
+        for (const property of regions[0].properties.v) {
+          const similarity = TextUtil.similarity(property, this.inputString.replaceAll('"', ''));
+          if (similarity > 0.7) {
+            foundSimilarProperty = true;
+          }
+        }
+      }
+      if (regions && regions.length > 0 && foundSimilarProperty) {
+        console.log(regions[0]);
         clearItems.next('clear');
         this.mapService.drawRegion(regions[0]);
         const region = regions[0];
